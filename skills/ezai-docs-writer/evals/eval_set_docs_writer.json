@@ -1,0 +1,23 @@
+{
+  "skill_name": "ezai-docs-writer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Écris la docstring Google-style complète pour cette fonction Python :\n\ndef calculate_discount(price: float, user_tier: str) -> float:\n    if user_tier == 'gold':\n        return price * 0.8\n    elif user_tier == 'silver':\n        return price * 0.9\n    return price",
+      "expected_output": "Docstring Google-style avec sections Args, Returns, Raises, exemple dans Examples. Types cohérents avec les annotations. Pas de redondance avec le nom de la fonction.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Génère une page MkDocs de type How-To (Diátaxis) pour expliquer comment configurer l'authentification JWT dans une API FastAPI. La lib s'appelle `authflow`.",
+      "expected_output": "Page How-To Diátaxis : titre 'How to...', badge PyPI, étapes numérotées orientées tâche, blocs de code avec annotations, pas d'explication théorique (renvoi vers Explanation), admonitions tip/warning.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Écris le JSDoc complet pour cette fonction TypeScript :\n\nasync function fetchUserOrders(userId: string, options?: { limit?: number; cursor?: string }): Promise<{ orders: Order[]; nextCursor: string | null }>",
+      "expected_output": "JSDoc TypeScript avec @param typés (pas de redondance avec les types TS inline), @returns documenté, @throws si applicable, @example avec await, format aligné avec TypeDoc.",
+      "files": []
+    }
+  ]
+}

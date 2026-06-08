@@ -1,0 +1,212 @@
+{
+  "version": 2,
+  "plugins": {
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\context7\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-01-13T22:03:47.965Z",
+        "lastUpdated": "2026-03-25T22:31:49.128Z",
+        "gitCommitSha": "f70b65538da094ff474a855e7a679fb2c2c8064f"
+      }
+    ],
+    "feature-dev@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\feature-dev\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-01-13T22:03:48.115Z",
+        "lastUpdated": "2026-03-25T22:31:49.207Z",
+        "gitCommitSha": "f70b65538da094ff474a855e7a679fb2c2c8064f"
+      }
+    ],
+    "commit-commands@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\commit-commands\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-01-13T22:03:48.260Z",
+        "lastUpdated": "2026-03-25T22:31:49.186Z",
+        "gitCommitSha": "f70b65538da094ff474a855e7a679fb2c2c8064f"
+      }
+    ],
+    "pyright-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\pyright-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-13T22:03:48.390Z",
+        "lastUpdated": "2026-01-13T22:03:48.390Z",
+        "gitCommitSha": "f70b65538da094ff474a855e7a679fb2c2c8064f"
+      }
+    ],
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\code-simplifier\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-28T17:56:20.832Z",
+        "lastUpdated": "2026-01-28T17:56:20.832Z",
+        "gitCommitSha": "e30768372b4150ca1bc0839d93283e8edc30d60d"
+      }
+    ],
+    "security-guidance@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\security-guidance\\2.0.3",
+        "version": "2.0.3",
+        "installedAt": "2026-01-28T17:56:20.917Z",
+        "lastUpdated": "2026-06-03T00:01:07.238Z",
+        "gitCommitSha": "e30768372b4150ca1bc0839d93283e8edc30d60d"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-02-26T00:37:35.078Z",
+        "lastUpdated": "2026-03-25T22:31:49.173Z",
+        "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
+      }
+    ],
+    "claude-md-management@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\claude-md-management\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-02-26T00:38:10.685Z",
+        "lastUpdated": "2026-02-26T00:38:10.685Z",
+        "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
+      }
+    ],
+    "greptile@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\greptile\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-02-26T00:38:40.721Z",
+        "lastUpdated": "2026-03-25T22:31:49.146Z",
+        "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
+      }
+    ],
+    "github@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\github\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-02-26T00:39:58.852Z",
+        "lastUpdated": "2026-03-25T22:31:48.971Z",
+        "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\claude-code-setup\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-02-26T00:40:33.952Z",
+        "lastUpdated": "2026-02-26T00:40:33.952Z",
+        "gitCommitSha": "55b58ec6e5649104f926ba7558b567dc8d33c5ff"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\5.1.0",
+        "version": "5.1.0",
+        "installedAt": "2026-05-09T16:39:43.878Z",
+        "lastUpdated": "2026-06-07T09:43:21.387Z",
+        "gitCommitSha": "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\skill-creator\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-05-09T16:43:16.275Z",
+        "lastUpdated": "2026-05-09T16:43:16.275Z"
+      }
+    ],
+    "typescript-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\typescript-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-05-09T16:43:16.321Z",
+        "lastUpdated": "2026-05-09T16:43:16.321Z"
+      }
+    ],
+    "vercel@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\vercel\\0.43.0",
+        "version": "0.43.0",
+        "installedAt": "2026-05-09T16:43:18.439Z",
+        "lastUpdated": "2026-06-07T09:43:21.495Z",
+        "gitCommitSha": "61f1903bed7b322c9745f6ba67095bc006de7e63"
+      }
+    ],
+    "supabase@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\supabase\\0.1.11",
+        "version": "0.1.11",
+        "installedAt": "2026-05-09T16:43:20.193Z",
+        "lastUpdated": "2026-06-06T07:30:59.724Z",
+        "gitCommitSha": "693a17a9970ba96e01afb9bef060d1dca48463ba"
+      }
+    ],
+    "remember@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\remember\\0.7.3",
+        "version": "0.7.3",
+        "installedAt": "2026-05-09T16:43:22.671Z",
+        "lastUpdated": "2026-05-30T17:45:47.329Z",
+        "gitCommitSha": "914445ac5f06a164800ea90ba4db41a0486321ae"
+      }
+    ],
+    "netlify-skills@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\netlify-skills\\1.1.0",
+        "version": "1.1.0",
+        "installedAt": "2026-05-09T16:43:24.973Z",
+        "lastUpdated": "2026-06-07T09:43:21.264Z",
+        "gitCommitSha": "a49ebc5965e0476edf958474d3feaeec754ffc6b"
+      }
+    ],
+    "sonarqube@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\claude-plugins-official\\sonarqube\\2.1.0",
+        "version": "2.1.0",
+        "installedAt": "2026-05-09T16:43:26.696Z",
+        "lastUpdated": "2026-05-27T19:47:34.477Z",
+        "gitCommitSha": "91eb175d6cf5d47a3edadbe61bdf782c31f0a65a"
+      }
+    ],
+    "ui-ux-pro-max@ui-ux-pro-max-skill": [
+      {
+        "scope": "local",
+        "projectPath": "G:\\.root\\dev\\.javascript\\SistaKaDash\\.claude\\worktrees\\feat+sistaka-ui-foundations",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\ui-ux-pro-max-skill\\ui-ux-pro-max\\2.5.0",
+        "version": "2.5.0",
+        "installedAt": "2026-05-13T17:23:33.832Z",
+        "lastUpdated": "2026-05-13T17:23:33.832Z",
+        "gitCommitSha": "b7e3af80f6e331f6fb456667b82b12cade7c9d35"
+      },
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\Utilisateur\\.claude\\plugins\\cache\\ui-ux-pro-max-skill\\ui-ux-pro-max\\2.5.0",
+        "version": "2.5.0",
+        "installedAt": "2026-05-16T13:25:47.286Z",
+        "lastUpdated": "2026-05-16T13:25:47.286Z",
+        "gitCommitSha": "b7e3af80f6e331f6fb456667b82b12cade7c9d35"
+      }
+    ]
+  }
+}

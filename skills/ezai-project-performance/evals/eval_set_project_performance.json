@@ -1,0 +1,23 @@
+{
+  "skill_name": "ezai-project-performance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Notre script Python charge un CSV de 4 Go avec pd.read_csv() puis itère ligne par ligne. Il consomme 8 Go de RAM. Refactorise pour traiter le fichier en streaming.",
+      "expected_output": "Générateur Python avec pathlib.Path, chunked reading ou yield ligne par ligne, annotations Generator[str, None, None], aucun chargement complet en mémoire, exemple d'utilisation.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "J'ai une fonction async JS qui fetch 200 URLs avec un `for...of` + `await fetch()`. C'est lent. Optimise en gardant une limite de 10 requêtes simultanées.",
+      "expected_output": "Remplacement par Promise.allSettled ou Array.fromAsync avec batching, AbortController pour timeout, concurrence limitée à 10 (semaphore pattern ou p-limit), TypeScript complet.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "On a du calcul matriciel CPU-intensif en Python 3.14. Faut-il utiliser asyncio, threading ou multiprocessing ? Explique et donne le code.",
+      "expected_output": "Explication GIL-less Python 3.14 → threading recommandé pour CPU-bound, ThreadPoolExecutor avec max_workers, comparaison avec multiprocessing (overhead IPC), code complet.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "ezai-project-config",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Génère un `pyproject.toml` complet pour une librairie Python 3.12 open-source appelée `dataflow`. Elle utilise ruff, ty, pytest, et mkdocs. Le build backend doit être hatchling.",
+      "expected_output": "pyproject.toml avec [build-system] hatchling, [project] complet, [tool.ruff.lint] avec règles commentées, [tool.ty], [tool.pytest.ini_options], emojis de section, ligne length cohérente.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Écris un Dockerfile multi-stage pour notre app Node.js 24 TypeScript. Elle doit être minimale en prod, non-root, et utiliser pnpm.",
+      "expected_output": "Stage builder (pnpm install --frozen-lockfile + tsc), stage runtime (node:24-alpine, user non-root, COPY dist + node_modules), HEALTHCHECK, tag exact pas latest.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Crée un tsconfig.json pour un projet Node.js 24 ESM TypeScript strict. On veut les meilleures perf de compilation possible.",
+      "expected_output": "target ES2026, module NodeNext, moduleResolution NodeNext, strict: true, noUncheckedIndexedAccess, exactOptionalPropertyTypes, types: [] pour perf, outDir/rootDir configurés.",
+      "files": []
+    }
+  ]
+}

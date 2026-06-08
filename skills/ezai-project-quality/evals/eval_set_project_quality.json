@@ -1,0 +1,23 @@
+{
+  "skill_name": "ezai-project-quality",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Écris des tests pytest pour la fonction `calculate_discount(price: float, user_tier: str) -> float` qui applique 10% pour 'silver', 20% pour 'gold', 0% sinon. Inclus un test property-based sur l'invariant que la remise ne dépasse jamais le prix.",
+      "expected_output": "Tests parametrize pour les 3 tiers + edge cases (prix nul, négatif), test hypothesis sur l'invariant discount <= price, conftest si fixtures partagées, pas d'Any.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Ce endpoint Express reçoit des données utilisateur depuis un form et les insère en base sans validation. Sécurise-le avec Zod et les bonnes pratiques 2026.",
+      "expected_output": "Schema Zod avec validation email/string, validation au boundary avant tout traitement, gestion des erreurs structurée, pas de sql injection possible, structured logging avec correlation ID.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Où stocker la clé API Stripe dans notre app Python (dev + prod) ? On a Docker en prod et des devs qui travaillent en local.",
+      "expected_output": "python-dotenv + .env pour dev (git-ignoré), système de vault ou env vars plateforme pour prod, jamais dans le code, audit scan recommandé, exemple de code os.getenv().",
+      "files": []
+    }
+  ]
+}

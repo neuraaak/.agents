@@ -1,0 +1,60 @@
+# ==============================================================================
+# GITIGNORE INVERSÉ OPTIMISÉ POUR WORKSPACE AGENT / CLAUDE
+# Objectif : Suivre uniquement les fichiers utilisateur (skills, plugins, etc.)
+# et ignorer tous les fichiers système et de fonctionnement de l'agent.
+# ==============================================================================
+
+# 1. Ignorer absolument tout par défaut
+*
+
+# 2. Autoriser la traversée des répertoires (permet à Git d'inspecter les dossiers)
+!**/
+
+# 3. FICHIERS ET DOSSIERS UTILISATEUR À TRACKER
+# ------------------------------------------------------------------------------
+# Fichiers de configuration et documentation à la racine
+!.gitignore
+!CLAUDE.md
+!README.md
+!package.json
+!claude_desktop_config.json
+!config.json
+!settings.json
+
+# Dossiers gérés à la main par l'utilisateur (et tout leur contenu)
+!skills/**
+!plugins/**
+!mcp-servers/**
+!tools/**
+!src/**
+
+# 4. EXCLUSIONS - FICHIERS CORE CLAUDE / SYSTÈME À IGNORER
+# (Ces règles de blocage prévalent sur les autorisations ci-dessus)
+# ------------------------------------------------------------------------------
+# Fichiers de fonctionnement interne de l'agent
+**/tasks/
+**/daemon/
+**/history/
+**/logs/
+**/cache/
+**/.cache/
+**/.claude/
+**/*.log
+
+# Bases de données locales et temporaires
+**/db/
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+
+# Dépendances, environnements virtuels et builds
+**/node_modules/
+**/dist/
+**/build/
+**/venv/
+**/.venv/
+**/__pycache__/
+
+# Fichiers système divers
+**/.DS_Store
+Thumbs.db

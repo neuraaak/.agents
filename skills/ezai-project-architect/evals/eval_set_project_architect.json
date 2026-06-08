@@ -1,0 +1,23 @@
+{
+  "skill_name": "ezai-project-architect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Conçois une classe `PaymentGateway` pour un projet Python qui doit supporter Stripe et PayPal. Utilise l'architecture hexagonale. Génère le Port, les deux Adapters, et l'entité domain.",
+      "expected_output": "Port défini comme Protocol dans application/, deux Adapters dans infrastructure/, entité domain pure, __all__ défini, typage strict sans Any, Google-style docstrings.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Refactorise ce module TypeScript — il a une classe `UserManager` avec 15 méthodes mélangées (CRUD, auth, email). Propose une architecture feature-based propre.",
+      "expected_output": "Décomposition en modules feature-based (user/, auth/, notification/), Repository pattern, interfaces TypeScript explicites, private class fields, zero any.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Notre petit script Python de 300 lignes qui lit un CSV et écrit en DB SQLite doit-il utiliser l'architecture hexagonale ? Justifie.",
+      "expected_output": "Application du Watchguard principle — score < 3 critères → Simple Layered recommandé. Proposition d'une structure models/services/repositories simple et justifiée.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "C:\\Users\\Utilisateur\\.claude\\plugins\\marketplaces\\claude-plugins-official",
+    "lastUpdated": "2026-06-08T04:36:27.317Z"
+  },
+  "ui-ux-pro-max-skill": {
+    "source": {
+      "source": "github",
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+    },
+    "installLocation": "C:\\Users\\Utilisateur\\.claude\\plugins\\marketplaces\\ui-ux-pro-max-skill",
+    "lastUpdated": "2026-05-13T17:23:06.452Z"
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "C:\\Users\\Utilisateur\\.claude\\plugins\\marketplaces\\anthropic-agent-skills",
+    "lastUpdated": "2026-06-08T04:36:27.184Z"
+  },
+  "prompts.chat": {
+    "source": {
+      "source": "github",
+      "repo": "f/prompts.chat"
+    },
+    "installLocation": "C:\\Users\\Utilisateur\\.claude\\plugins\\marketplaces\\prompts.chat",
+    "lastUpdated": "2026-05-13T17:30:08.448Z"
+  },
+  "ezai-marketplace": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/neuraaak/ezai-marketplace.git"
+    },
+    "installLocation": "C:\\Users\\Utilisateur\\.claude\\plugins\\marketplaces\\ezai-marketplace",
+    "lastUpdated": "2026-05-28T01:29:59.059Z"
+  }
+}
