@@ -4,11 +4,11 @@
     "frontend-design@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:50:46.626Z",
-        "lastUpdated": "2026-05-18T09:56:22.783Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.334Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "superpowers@claude-plugins-official": [
@@ -24,11 +24,11 @@
     "code-review@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\code-review\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\code-review\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:51:01.340Z",
-        "lastUpdated": "2026-05-18T09:56:22.775Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.298Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "code-simplifier@claude-plugins-official": [
@@ -45,11 +45,11 @@
     "skill-creator@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\skill-creator\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\skill-creator\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:51:08.672Z",
-        "lastUpdated": "2026-05-18T09:56:22.767Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.327Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "claude-md-management@claude-plugins-official": [
@@ -65,31 +65,31 @@
     "feature-dev@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\feature-dev\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\feature-dev\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:51:21.101Z",
-        "lastUpdated": "2026-05-18T09:56:22.779Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.320Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "greptile@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\greptile\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\greptile\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:51:43.695Z",
-        "lastUpdated": "2026-05-18T09:56:22.762Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.312Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "gitlab@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\gitlab\\unknown",
-        "version": "unknown",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\gitlab\\42450ffb1376",
+        "version": "42450ffb1376",
         "installedAt": "2026-05-18T09:52:00.287Z",
-        "lastUpdated": "2026-05-18T09:56:22.771Z",
-        "gitCommitSha": "f475d3ce5806c7edf9fc204ee276e7f45e24c798"
+        "lastUpdated": "2026-06-09T08:46:32.306Z",
+        "gitCommitSha": "42450ffb1376834df4e9257594942b7a34ce0e3f"
       }
     ],
     "semgrep@claude-plugins-official": [
@@ -100,6 +100,56 @@
         "installedAt": "2026-05-18T09:52:19.492Z",
         "lastUpdated": "2026-05-18T09:52:19.492Z",
         "gitCommitSha": "3711c33ad790df16e67c911eca792c473ec9a2a4"
+      }
+    ],
+    "remember@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\remember\\0.7.3",
+        "version": "0.7.3",
+        "installedAt": "2026-06-09T08:44:12.642Z",
+        "lastUpdated": "2026-06-09T08:44:12.642Z",
+        "gitCommitSha": "a4ff96f38622f7c4920dc349d59cc980663336f4"
+      }
+    ],
+    "security-guidance@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\security-guidance\\2.0.3",
+        "version": "2.0.3",
+        "installedAt": "2026-06-09T08:44:49.056Z",
+        "lastUpdated": "2026-06-09T08:44:49.056Z",
+        "gitCommitSha": "bbbff6ab54f0d4b62dad2df25536ed05a418b3ff"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\claude-code-setup\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-06-09T08:45:02.723Z",
+        "lastUpdated": "2026-06-09T08:45:02.723Z",
+        "gitCommitSha": "bbbff6ab54f0d4b62dad2df25536ed05a418b3ff"
+      }
+    ],
+    "sourcegraph@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\sourcegraph\\0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-06-09T08:47:13.980Z",
+        "lastUpdated": "2026-06-09T08:47:13.980Z",
+        "gitCommitSha": "332ee0ca9a409ccd791abee43c7abf2606469017"
+      }
+    ],
+    "pydantic-ai@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\g29285\\.claude\\plugins\\cache\\claude-plugins-official\\pydantic-ai\\0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-06-09T08:49:21.688Z",
+        "lastUpdated": "2026-06-09T08:49:21.688Z",
+        "gitCommitSha": "e412b6d8d4b6199ac577c5ee8653dcff840b3e92"
       }
     ]
   }

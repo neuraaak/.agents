@@ -19,8 +19,13 @@
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:writing-plans:*)"
     ],
-    "additionalDirectories": [
-    ]
+    "additionalDirectories": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
@@ -32,7 +37,12 @@
     "greptile@claude-plugins-official": true,
     "gitlab@claude-plugins-official": true,
     "semgrep@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true
+    "code-simplifier@claude-plugins-official": true,
+    "remember@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "sourcegraph@claude-plugins-official": true,
+    "pydantic-ai@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "superpowers-dev": {
@@ -55,11 +65,5 @@
     }
   },
   "effortLevel": "low",
-  "theme": "dark",
-  "statusLine": {
-    "type": "command",
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0,
-    "refreshInterval": 10
-  }
+  "theme": "dark"
 }
