@@ -1,4 +1,61 @@
 {
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:diataxis.fr)",
+      "WebFetch(domain:idratherbewriting.com)",
+      "WebFetch(domain:ubuntu.com)",
+      "WebFetch(domain:documentation.ai)",
+      "WebFetch(domain:ekline.io)",
+      "WebFetch(domain:squidfunk.github.io)",
+      "WebFetch(domain:diataxis-template.readthedocs.io)",
+      "WebFetch(domain:pypi.org)",
+      "Bash(xargs grep:*)",
+      "Bash(uv run:*)",
+      "Bash(python -c ':*)",
+      "Skill(ui-ux-pro-max)",
+      "Skill(ui-ux-pro-max:*)",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:writing-plans:*)"
+    ],
+    "additionalDirectories": [
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "greptile@claude-plugins-official": true,
+    "gitlab@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-dev": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/obra/superpowers.git"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    },
+    "ezai-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/neuraaak/ezai-marketplace.git"
+      }
+    }
+  },
+  "effortLevel": "low",
+  "theme": "dark",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",
