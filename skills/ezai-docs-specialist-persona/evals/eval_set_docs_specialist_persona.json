@@ -1,0 +1,212 @@
+{
+  "skill_name": "ezai-docs-specialist-persona",
+  "evals": [
+    {
+      "id": 1,
+      "capability": "docs-audit",
+      "prompt": "Audite et remets à niveau le site de docs de ce projet Python avec MkDocs. Le repo est sur GitHub.",
+      "expected_output": "Pipeline déclenché : sous-agent DETECTION produit 00-context.md (language:python, platform:github), sous-agent AUDIT produit 01-audit.md avec findings classifiés bloquant/majeur/mineur en sections A et B, agent principal rédige 02-plan.md et attend validation humaine avant de continuer.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "detection-artifact",
+          "description": "Artefact 00-context.md mentionné",
+          "type": "contains",
+          "value": "00-context.md"
+        },
+        {
+          "id": "language-python",
+          "description": "Language python détecté dans le contexte",
+          "type": "regex",
+          "value": "language:\\s*python"
+        },
+        {
+          "id": "platform-github",
+          "description": "Platform github détectée dans le contexte",
+          "type": "regex",
+          "value": "platform:\\s*github"
+        },
+        {
+          "id": "human-gate",
+          "description": "Pipeline s'arrête et attend validation humaine avant GENERATION",
+          "type": "regex",
+          "value": "(?i)(approu|valid|attend|approv|wait)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "capability": "docs-audit",
+      "prompt": "Écris-moi une page Getting Started pour ma lib Python.",
+      "expected_output": "Scope gate déclenché : tâche = une seule page, pas un audit de site. Le skill délègue directement à ezai-docs-writer via le Skill tool et s'arrête — aucun sous-agent de pipeline lancé.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "delegates-to-docs-writer",
+          "description": "Délégation à ezai-docs-writer mentionnée",
+          "type": "contains",
+          "value": "ezai-docs-writer"
+        },
+        {
+          "id": "no-detection-stage",
+          "description": "Aucun sous-agent DETECTION lancé (scope gate actif)",
+          "type": "not_contains",
+          "value": "DETECTION"
+        },
+        {
+          "id": "no-pipeline-artifact",
+          "description": "Pas d'artefact 00-context.md produit",
+          "type": "not_contains",
+          "value": "00-context.md"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "capability": "docs-upgrade-plan",
+      "prompt": "Mon site VitePress a l'air incomplet. Y a-t-il des sections manquantes ? Corrige ce qui ne va pas.",
+      "expected_output": "Pipeline complet (5 étapes) : DETECTION détecte JS/VitePress, AUDIT identifie les quadrants Diátaxis absents et les incohérences de badges, PLANNING produit un plan priorisé présenté à l'utilisateur, après approbation GENERATION invoque ezai-docs-writer pour chaque TODO, VALIDATION croise 01-audit.md et 03-changes.md et rapporte le statut par finding.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "detection-stage",
+          "description": "Stage DETECTION mentionné",
+          "type": "contains",
+          "value": "DETECTION"
+        },
+        {
+          "id": "audit-stage",
+          "description": "Stage AUDIT mentionné",
+          "type": "contains",
+          "value": "AUDIT"
+        },
+        {
+          "id": "planning-stage",
+          "description": "Stage PLANNING mentionné",
+          "type": "contains",
+          "value": "PLANNING"
+        },
+        {
+          "id": "generation-stage",
+          "description": "Stage GENERATION mentionné",
+          "type": "contains",
+          "value": "GENERATION"
+        },
+        {
+          "id": "validation-stage",
+          "description": "Stage VALIDATION mentionné",
+          "type": "contains",
+          "value": "VALIDATION"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "capability": "docs-audit",
+      "prompt": "Le projet n'a pas de dossier docs/, juste un README.md à la racine. Fais un audit.",
+      "expected_output": "DETECTION détecte l'absence de docs tooling et de dossier docs/. 00-context.md indique docs-tooling:none. AUDIT traite le README comme seul document disponible et flagge l'absence de structure Diátaxis comme bloquant. PLANNING présente un plan minimal avant de continuer — le pipeline ne s'arrête pas à DETECTION.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "docs-tooling-none",
+          "description": "docs-tooling: none détecté dans le contexte",
+          "type": "regex",
+          "value": "docs-tooling:\\s*none"
+        },
+        {
+          "id": "bloquant-finding",
+          "description": "Au moins un finding bloquant signalé",
+          "type": "contains",
+          "value": "bloquant"
+        },
+        {
+          "id": "pipeline-continues",
+          "description": "Pipeline continue après DETECTION (AUDIT ou PLANNING mentionné)",
+          "type": "regex",
+          "value": "AUDIT|PLANNING"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "capability": "docs-audit",
+      "prompt": "Ajoute un badge npm et un badge CI à mon README.",
+      "expected_output": "Scope gate déclenché : tâche = modification d'un seul fichier (README), pas un audit de site complet. Délégation à ezai-docs-writer, pas de pipeline lancé.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "delegates-to-docs-writer",
+          "description": "Délégation à ezai-docs-writer mentionnée",
+          "type": "contains",
+          "value": "ezai-docs-writer"
+        },
+        {
+          "id": "no-pipeline",
+          "description": "Pas de stage DETECTION (scope gate actif)",
+          "type": "not_contains",
+          "value": "DETECTION"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "capability": "docs-upgrade-plan",
+      "prompt": "Fais un audit complet de la doc, mais je veux juste voir les findings — pas de correctifs pour l'instant.",
+      "expected_output": "Pipeline partiel : DETECTION + AUDIT + PLANNING exécutés. Le plan 02-plan.md est présenté à l'utilisateur. Comme l'utilisateur n'approuve pas les correctifs, GENERATION n'est pas lancé. L'orchestrateur attend une décision explicite avant d'aller plus loin.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "audit-executed",
+          "description": "Stage AUDIT exécuté",
+          "type": "contains",
+          "value": "AUDIT"
+        },
+        {
+          "id": "planning-executed",
+          "description": "Stage PLANNING exécuté et plan présenté",
+          "type": "contains",
+          "value": "PLANNING"
+        },
+        {
+          "id": "no-generation",
+          "description": "Stage GENERATION non lancé",
+          "type": "not_contains",
+          "value": "GENERATION"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "capability": "docs-apply",
+      "prompt": "Mon site Sphinx sur GitLab a des badges qui viennent d'un ancien template corporate. Remplace-les par les bons.",
+      "expected_output": "Pipeline déclenché : DETECTION détecte Sphinx + GitLab. AUDIT flagge les badges corporate comme majeur (projet public-oss inféré) ou bloquant si profil internal confirmé. GENERATION invoque ezai-docs-writer pour corriger les badges. Pipeline complet en 5 étapes.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "gitlab-detected",
+          "description": "GitLab détecté dans le contexte",
+          "type": "regex",
+          "value": "(?i)gitlab"
+        },
+        {
+          "id": "badge-finding",
+          "description": "Finding sur les badges corporate signalé",
+          "type": "regex",
+          "value": "(?i)(badge|corporate|template)"
+        },
+        {
+          "id": "generation-invokes-docs-writer",
+          "description": "GENERATION invoque ezai-docs-writer",
+          "type": "contains",
+          "value": "ezai-docs-writer"
+        },
+        {
+          "id": "full-pipeline",
+          "description": "Pipeline complet — VALIDATION mentionné",
+          "type": "contains",
+          "value": "VALIDATION"
+        }
+      ]
+    }
+  ]
+}

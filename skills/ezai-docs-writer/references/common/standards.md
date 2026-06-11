@@ -2,7 +2,7 @@
 
 Load this file whenever writing or auditing documentation, in any language. It holds the rules that do not depend on the language or the site generator: the Diátaxis discipline, the emoji set, admonition semantics, anti-patterns, and success criteria.
 
-For the language-specific layer — docstring syntax (Google-style vs JSDoc/TSDoc), admonition **syntax** (`!!!` vs `:::`), and the API-reference generator — load the matching `python/standards.md` or `javascript/standards.md`.
+For the language-specific layer — docstring syntax (Google-style vs JSDoc/TSDoc), admonition **syntax** (`!!!` vs `:::`), and the API-reference generator — load the matching `languages/python/standards.md` or `languages/javascript/standards.md`.
 
 ## Core Rules
 

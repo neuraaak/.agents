@@ -5,19 +5,169 @@
       "id": 1,
       "prompt": "Notre script Python charge un CSV de 4 Go avec pd.read_csv() puis itère ligne par ligne. Il consomme 8 Go de RAM. Refactorise pour traiter le fichier en streaming.",
       "expected_output": "Générateur Python avec pathlib.Path, chunked reading ou yield ligne par ligne, annotations Generator[str, None, None], aucun chargement complet en mémoire, exemple d'utilisation.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "generator-used",
+          "description": "yield ou un générateur utilisé (pas pd.read_csv sans chunksize)",
+          "type": "contains",
+          "value": "yield"
+        },
+        {
+          "id": "no-full-load",
+          "description": "Pas de chargement complet du fichier en mémoire",
+          "type": "not_contains",
+          "value": "read_csv()"
+        },
+        {
+          "id": "pathlib-or-open",
+          "description": "pathlib.Path ou open() utilisé",
+          "type": "regex",
+          "value": "pathlib|open\\("
+        },
+        {
+          "id": "usage-example",
+          "description": "Exemple d'utilisation du générateur présent",
+          "type": "regex",
+          "value": "for .* in|next\\("
+        }
+      ]
     },
     {
       "id": 2,
       "prompt": "J'ai une fonction async JS qui fetch 200 URLs avec un `for...of` + `await fetch()`. C'est lent. Optimise en gardant une limite de 10 requêtes simultanées.",
       "expected_output": "Remplacement par Promise.allSettled ou Array.fromAsync avec batching, AbortController pour timeout, concurrence limitée à 10 (semaphore pattern ou p-limit), TypeScript complet.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "parallel-promise",
+          "description": "Promise.allSettled, Promise.all ou Array.fromAsync utilisé (pas await en boucle)",
+          "type": "regex",
+          "value": "Promise\\.all|Array\\.fromAsync"
+        },
+        {
+          "id": "concurrency-limit",
+          "description": "Concurrence limitée à 10 (batching ou semaphore)",
+          "type": "regex",
+          "value": "10|semaphore|p-limit|batch"
+        },
+        {
+          "id": "abort-controller",
+          "description": "AbortController mentionné ou implémenté",
+          "type": "contains",
+          "value": "AbortController"
+        }
+      ]
     },
     {
       "id": 3,
       "prompt": "On a du calcul matriciel CPU-intensif en Python 3.14. Faut-il utiliser asyncio, threading ou multiprocessing ? Explique et donne le code.",
       "expected_output": "Explication GIL-less Python 3.14 → threading recommandé pour CPU-bound, ThreadPoolExecutor avec max_workers, comparaison avec multiprocessing (overhead IPC), code complet.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "threading-recommended",
+          "description": "threading recommandé (pas asyncio) pour CPU-bound en Python 3.14+",
+          "type": "contains",
+          "value": "threading"
+        },
+        {
+          "id": "gil-explained",
+          "description": "Suppression du GIL en Python 3.14 expliquée",
+          "type": "regex",
+          "value": "GIL|free.?threaded|no.?GIL"
+        },
+        {
+          "id": "thread-pool-executor",
+          "description": "ThreadPoolExecutor utilisé",
+          "type": "contains",
+          "value": "ThreadPoolExecutor"
+        },
+        {
+          "id": "vs-multiprocessing",
+          "description": "Comparaison threading vs multiprocessing faite",
+          "type": "contains",
+          "value": "multiprocessing"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "J'ai une fonction Python async qui fait des appels HTTP. Je veux limiter à 5 requêtes simultanées et annuler automatiquement après 3 secondes si ça dépasse.",
+      "expected_output": "asyncio.Semaphore pour limiter la concurrence à 5, asyncio.timeout() pour le timeout 3s, gestion de TimeoutError, TaskGroup ou gather avec annulation propre.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "semaphore-5",
+          "description": "asyncio.Semaphore avec max=5 utilisé",
+          "type": "contains",
+          "value": "asyncio.Semaphore"
+        },
+        {
+          "id": "timeout-impl",
+          "description": "asyncio.timeout ou asyncio.wait_for pour le timeout",
+          "type": "regex",
+          "value": "asyncio\\.timeout|asyncio\\.wait_for"
+        },
+        {
+          "id": "error-handling",
+          "description": "TimeoutError ou CancelledError géré",
+          "type": "regex",
+          "value": "TimeoutError|CancelledError"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Je veux fetch une URL en JS avec un timeout de 3 secondes. Si ça dépasse, annuler proprement la requête.",
+      "expected_output": "AbortController avec setTimeout pour abort après 3s, fetch avec signal, gestion du AbortError dans le catch, pattern Promise.race optionnel.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "abort-controller",
+          "description": "AbortController et AbortSignal utilisés",
+          "type": "contains",
+          "value": "AbortController"
+        },
+        {
+          "id": "abort-on-timeout",
+          "description": "controller.abort() appelé sur timeout",
+          "type": "contains",
+          "value": "controller.abort"
+        },
+        {
+          "id": "abort-error-handled",
+          "description": "AbortError géré dans le catch",
+          "type": "regex",
+          "value": "AbortError|abort"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Ma fonction Python est lente mais je ne sais pas pourquoi. Comment profiler pour trouver le goulot d'étranglement avant d'optimiser ?",
+      "expected_output": "Présentation de cProfile (stdlib) en premier, py-spy pour les cas sans modifier le code, tracemalloc si le problème est mémoire, ordre d'investigation clair.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "cprofile-or-pyspy",
+          "description": "cProfile ou py-spy mentionné",
+          "type": "regex",
+          "value": "cProfile|py-spy"
+        },
+        {
+          "id": "measure-before-optimize",
+          "description": "Déconseille d'optimiser avant de mesurer",
+          "type": "regex",
+          "value": "(?i)mesur|profil|avant d'optim|d'abord"
+        },
+        {
+          "id": "memory-profiling",
+          "description": "Profiling mémoire distingué du profiling CPU (tracemalloc ou memray)",
+          "type": "regex",
+          "value": "tracemalloc|memray|mémoire"
+        }
+      ]
     }
   ]
 }

@@ -4,20 +4,156 @@
     {
       "id": 1,
       "prompt": "Conçois une classe `PaymentGateway` pour un projet Python qui doit supporter Stripe et PayPal. Utilise l'architecture hexagonale. Génère le Port, les deux Adapters, et l'entité domain.",
-      "expected_output": "Port défini comme Protocol dans application/, deux Adapters dans infrastructure/, entité domain pure, __all__ défini, typage strict sans Any, Google-style docstrings.",
-      "files": []
+      "expected_output": "Port défini comme Protocol dans application/, deux Adapters dans infrastructure/, entité domain pure, __all__ défini, typage strict sans Any, Value Objects si pertinent.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "port-uses-protocol",
+          "description": "Le Port est défini avec Protocol (pas abc.ABC)",
+          "type": "contains",
+          "value": "Protocol"
+        },
+        {
+          "id": "adapters-in-infrastructure",
+          "description": "Les Adapters sont dans infrastructure/",
+          "type": "contains",
+          "value": "infrastructure"
+        },
+        {
+          "id": "dunder-all-defined",
+          "description": "__all__ est défini dans le module qui exporte le Port",
+          "type": "contains",
+          "value": "__all__"
+        },
+        {
+          "id": "no-any-type",
+          "description": "Zéro Any dans les annotations de types",
+          "type": "not_contains",
+          "value": ": Any"
+        }
+      ]
     },
     {
       "id": 2,
       "prompt": "Refactorise ce module TypeScript — il a une classe `UserManager` avec 15 méthodes mélangées (CRUD, auth, email). Propose une architecture feature-based propre.",
-      "expected_output": "Décomposition en modules feature-based (user/, auth/, notification/), Repository pattern, interfaces TypeScript explicites, private class fields, zero any.",
-      "files": []
+      "expected_output": "Décomposition en modules feature-based (user/, auth/, notification/), Repository pattern fonctionnel ou avec interface, private class fields, branded types pour les IDs, zero any.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "feature-based-org",
+          "description": "La réponse propose une organisation feature-based",
+          "type": "regex",
+          "value": "(?i)feature"
+        },
+        {
+          "id": "repository-pattern",
+          "description": "Le Repository pattern est utilisé pour l'accès aux données",
+          "type": "regex",
+          "value": "(?i)repository"
+        },
+        {
+          "id": "branded-types",
+          "description": "Les IDs utilisent des branded types ou types opaques",
+          "type": "regex",
+          "value": "__brand|opaque|Branded"
+        },
+        {
+          "id": "no-any",
+          "description": "Zéro any dans le code TypeScript",
+          "type": "not_contains",
+          "value": ": any"
+        }
+      ]
     },
     {
       "id": 3,
       "prompt": "Notre petit script Python de 300 lignes qui lit un CSV et écrit en DB SQLite doit-il utiliser l'architecture hexagonale ? Justifie.",
-      "expected_output": "Application du Watchguard principle — score < 3 critères → Simple Layered recommandé. Proposition d'une structure models/services/repositories simple et justifiée.",
-      "files": []
+      "expected_output": "Application du Watchguard : 1 système externe (SQLite) → score faible → Simple Layered recommandé. Structure models/services/repositories à plat justifiée. Hexagonal déconseillé pour ce scope.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "decision-criterion-applied",
+          "description": "Un critère de décision (Watchguard ou équivalent) est appliqué",
+          "type": "regex",
+          "value": "(?i)watchguard|score|critère|décision"
+        },
+        {
+          "id": "simple-layered-recommended",
+          "description": "Simple Layered est recommandé pour ce cas",
+          "type": "regex",
+          "value": "(?i)simple layered|layered|couches"
+        },
+        {
+          "id": "hexagonal-discouraged",
+          "description": "Hexagonal est déconseillé (over-engineering)",
+          "type": "regex",
+          "value": "(?i)over.?engineer|pas.*hexagonal|hexagonal.*non|éviter"
+        },
+        {
+          "id": "concrete-structure-proposed",
+          "description": "Une structure concrète (models/, services/, repositories/) est proposée",
+          "type": "regex",
+          "value": "models/|services/|repositories/"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Crée un Value Object `Money` en Python pour représenter un montant en centimes avec une devise. Il doit être immuable et se valider à la construction.",
+      "expected_output": "@dataclass(frozen=True) avec amount (int, centimes), currency (str), __post_init__ pour validation, pas de float, comparable par valeur.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "frozen-dataclass",
+          "description": "@dataclass(frozen=True) utilisé",
+          "type": "contains",
+          "value": "@dataclass(frozen=True)"
+        },
+        {
+          "id": "int-not-float",
+          "description": "Le montant est en int (centimes), pas float",
+          "type": "not_contains",
+          "value": ": float"
+        },
+        {
+          "id": "post-init-validation",
+          "description": "La validation est dans __post_init__",
+          "type": "contains",
+          "value": "__post_init__"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "En TypeScript, j'ai des fonctions qui prennent un `userId: number` et un `orderId: number`. Comment éviter de les mélanger accidentellement ?",
+      "expected_output": "Branded types (UserId = number & { __brand: 'UserId' }), fonctions helper asUserId/asOrderId, exemple de comment le compilateur bloque le mélange.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "branded-types-used",
+          "description": "Branded types ou opaque types utilisés",
+          "type": "regex",
+          "value": "__brand|opaque|Branded"
+        },
+        {
+          "id": "compiler-detects-mixing",
+          "description": "Montre comment le compilateur détecte le mélange",
+          "type": "regex",
+          "value": "(?i)compilateur|type.?error|TypeScript.*error|error.*type"
+        },
+        {
+          "id": "helper-functions",
+          "description": "Fonctions helper pour créer les types brandés",
+          "type": "regex",
+          "value": "as\\w+Id|asUserId|asOrderId|function as"
+        },
+        {
+          "id": "no-any",
+          "description": "Zéro any dans l'implémentation",
+          "type": "not_contains",
+          "value": ": any"
+        }
+      ]
     }
   ]
 }

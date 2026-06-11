@@ -1,0 +1,104 @@
+{
+  "skill_name": "ezai-senior-dev-persona",
+  "evals": [
+    {
+      "id": 1,
+      "capability": "feature-implementation",
+      "prompt": "Implémente une feature de rate limiting pour notre API FastAPI. Les endpoints `/api/v1/` doivent être limités à 100 requêtes/minute par IP. Le projet utilise Redis. Suis les standards du projet.",
+      "expected_output": "Code Python production-ready avec Watchguard appliqué, sous-skills pertinents chargés (architect + quality), typage strict, docstrings Google-style, tests inclus ou mentionnés.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "thinking-block",
+          "description": "Bloc <thinking> présent avec language, capability, sub-skills",
+          "type": "contains",
+          "value": "<thinking>"
+        },
+        {
+          "id": "sub-skill-loaded",
+          "description": "Au moins un sous-skill chargé (architect ou quality)",
+          "type": "regex",
+          "value": "ezai-project-(architect|quality)"
+        },
+        {
+          "id": "redis-used",
+          "description": "Redis utilisé dans l'implémentation",
+          "type": "regex",
+          "value": "(?i)redis"
+        },
+        {
+          "id": "no-placeholder",
+          "description": "Pas de placeholder # TODO ou pass dans le code livré",
+          "type": "not_contains",
+          "value": "# TODO"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "capability": "code-review",
+      "prompt": "Code review de ce module auth.py — vérifie tout : architecture, typing, sécurité, testabilité. Le projet est en Python 3.12.",
+      "expected_output": "Review structurée par domaine (architecture/typing/sécurité/tests), problèmes identifiés avec justification, suggestions concrètes. Tous les sous-skills chargés pour une review complète.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "thinking-block",
+          "description": "Bloc <thinking> présent",
+          "type": "contains",
+          "value": "<thinking>"
+        },
+        {
+          "id": "all-four-sub-skills",
+          "description": "Les 4 sous-skills chargés pour une review complète",
+          "type": "regex",
+          "value": "ezai-project-architect"
+        },
+        {
+          "id": "architecture-section",
+          "description": "Section Architecture dans la review",
+          "type": "regex",
+          "value": "(?i)## Architecture"
+        },
+        {
+          "id": "security-section",
+          "description": "Section Security ou Sécurité dans la review",
+          "type": "regex",
+          "value": "(?i)## Securit|## Sécurit"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "capability": "debugging",
+      "prompt": "J'ai un script Node.js 22 qui fetch des données depuis 50 APIs en parallèle et les insère en base. Il timeout souvent. Comment l'optimiser ?",
+      "expected_output": "Analyse du problème (I/O-bound, concurrence), sous-skill project-performance chargé pour JS, solution avec AbortController + Promise.allSettled + backpressure, code TypeScript complet.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "thinking-block",
+          "description": "Bloc <thinking> présent",
+          "type": "contains",
+          "value": "<thinking>"
+        },
+        {
+          "id": "performance-sub-skill",
+          "description": "Sous-skill project-performance chargé",
+          "type": "contains",
+          "value": "ezai-project-performance"
+        },
+        {
+          "id": "abort-controller",
+          "description": "AbortController utilisé pour les timeouts",
+          "type": "contains",
+          "value": "AbortController"
+        },
+        {
+          "id": "promise-all-settled",
+          "description": "Promise.allSettled utilisé (résistant aux échecs partiels)",
+          "type": "contains",
+          "value": "Promise.allSettled"
+        }
+      ]
+    }
+  ]
+}

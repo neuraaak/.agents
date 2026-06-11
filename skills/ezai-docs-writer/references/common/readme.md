@@ -52,14 +52,14 @@ Use `style=flat` for all badges.
 
 Badge data lives in two registries — load the pair that matches the project:
 
-- **Python + GitHub** → `github/badge-registry.md` + `python/badge-registry.md`
-- **Python + GitLab** → `gitlab/badge-registry.md` + `python/badge-registry.md`
-- **JS/TS + GitHub** → `github/badge-registry.md` + `javascript/badge-registry.md`
-- **JS/TS + GitLab** → `gitlab/badge-registry.md` + `javascript/badge-registry.md`
+- **Python + GitHub** → `forge/github/badge-registry.md` + `languages/python/badge-registry.md`
+- **Python + GitLab** → `forge/gitlab/badge-registry.md` + `languages/python/badge-registry.md`
+- **JS/TS + GitHub** → `forge/github/badge-registry.md` + `languages/javascript/badge-registry.md`
+- **JS/TS + GitLab** → `forge/gitlab/badge-registry.md` + `languages/javascript/badge-registry.md`
 
-**Platform registry** (`github/` or `gitlab/`) — core badges: CI, Docs, License (platform-specific URLs), and internal-profile static variants.
+**Forge registry** (`forge/github/` or `forge/gitlab/`) — core badges: CI, Docs, License (forge-specific URLs), and internal-profile static variants.
 
-**Language registry** (`python/` or `javascript/`) — version badges (PyPI or npm) + tool badges (package manager, linter, formatter, type checker, test runner, etc.), with detection signals.
+**Language registry** (`languages/python/` or `languages/javascript/`) — version badges (PyPI or npm) + tool badges (package manager, linter, formatter, type checker, test runner, etc.), with detection signals.
 
 Emit only badges whose detection condition is met. Never hard-code a tool stack.
 

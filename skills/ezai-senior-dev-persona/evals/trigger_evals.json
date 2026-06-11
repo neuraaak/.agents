@@ -1,0 +1,53 @@
+{
+  "skill_name": "ezai-senior-dev-persona",
+  "triggers": [
+    {
+      "query": "implémente une feature de rate limiting pour notre API FastAPI. Les endpoints /api/v1/ doivent être limités à 100 req/min par IP.",
+      "should_trigger": true
+    },
+    {
+      "query": "code review de ce module auth.py — vérifie architecture, typing, sécurité, testabilité",
+      "should_trigger": true
+    },
+    {
+      "query": "j'ai un script Node.js qui fetch 50 APIs en parallèle et timeout souvent. Comment l'optimiser ?",
+      "should_trigger": true
+    },
+    {
+      "query": "make this production-ready — it works but I'd want a senior engineer to review it first",
+      "should_trigger": true
+    },
+    {
+      "query": "what's the best approach for handling distributed transactions in our microservices?",
+      "should_trigger": true
+    },
+    {
+      "query": "refactor this God class — it has 40 methods and does everything",
+      "should_trigger": true
+    },
+    {
+      "query": "my tests are passing but prod keeps crashing on this edge case. root cause analysis?",
+      "should_trigger": true
+    },
+    {
+      "query": "écris la docstring pour cette fonction Python",
+      "should_trigger": false
+    },
+    {
+      "query": "génère le badge block pour notre lib sur GitHub",
+      "should_trigger": false
+    },
+    {
+      "query": "formate ce fichier Python selon les conventions du projet — imports dans le désordre",
+      "should_trigger": false
+    },
+    {
+      "query": "audite et remets à niveau le site de docs de ce projet",
+      "should_trigger": false
+    },
+    {
+      "query": "set up ruff and pre-commit hooks for my Python project",
+      "should_trigger": false
+    }
+  ]
+}

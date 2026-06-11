@@ -1,6 +1,6 @@
 # Project Quality — References Index
 
-Route to the correct language subdirectory. Always load `common/quality.md` for cross-language principles.
+Two routing axes: **common** (always loaded) and **language**. See `languages/index.md` for the full routing table.
 
 ## Common (`common/`)
 
@@ -8,29 +8,11 @@ Route to the correct language subdirectory. Always load `common/quality.md` for 
 | :------------------ | :----------------- | :-------------------------------------------------------------------------------- |
 | `common/quality.md` | Every quality task | Boundary validation, secrets management, fakes vs mocks, coverage, property-based |
 
-## Supported languages
+## Languages (`languages/`)
 
-| Language              | Subdirectory  | Available files |
-| :-------------------- | :------------ | :-------------- |
-| Python                | `python/`     | `quality.md`    |
-| JavaScript/TypeScript | `javascript/` | `quality.md`    |
+| Language              | Sub-index               |
+| :-------------------- | :---------------------- |
+| Python                | `languages/python/`     |
+| JavaScript/TypeScript | `languages/javascript/` |
 
----
-
-## Python (`python/`)
-
-Stack: pytest, hypothesis, Pydantic, python-dotenv, bcrypt.
-
-| File                | Load when…                                | Contents                                                                                            |
-| :------------------ | :---------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `python/quality.md` | Any testing, security, or validation task | Test structure, parametrize, hypothesis, Pydantic validation, secret management, structured logging |
-
----
-
-## JavaScript/TypeScript (`javascript/`)
-
-Stack: node:test / Vitest, Zod, fast-check, dotenv.
-
-| File                    | Load when…                                | Contents                                                                           |
-| :---------------------- | :---------------------------------------- | :--------------------------------------------------------------------------------- |
-| `javascript/quality.md` | Any testing, security, or validation task | node:test, Zod validation, fast-check, secret management, Node.js permission model |
+Load `languages/index.md` for the full routing table. For mixed repos, load both language files.

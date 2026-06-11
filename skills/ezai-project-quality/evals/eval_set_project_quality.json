@@ -5,19 +5,79 @@
       "id": 1,
       "prompt": "Écris des tests pytest pour la fonction `calculate_discount(price: float, user_tier: str) -> float` qui applique 10% pour 'silver', 20% pour 'gold', 0% sinon. Inclus un test property-based sur l'invariant que la remise ne dépasse jamais le prix.",
       "expected_output": "Tests parametrize pour les 3 tiers + edge cases (prix nul, négatif), test hypothesis sur l'invariant discount <= price, conftest si fixtures partagées, pas d'Any.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "parametrize-used",
+          "description": "@pytest.mark.parametrize utilisé",
+          "type": "contains",
+          "value": "pytest.mark.parametrize"
+        },
+        {
+          "id": "hypothesis-used",
+          "description": "Test property-based hypothesis présent",
+          "type": "contains",
+          "value": "hypothesis"
+        },
+        {
+          "id": "no-any-type",
+          "description": "Pas d'annotation Any",
+          "type": "not_contains",
+          "value": ": Any"
+        }
+      ]
     },
     {
       "id": 2,
       "prompt": "Ce endpoint Express reçoit des données utilisateur depuis un form et les insère en base sans validation. Sécurise-le avec Zod et les bonnes pratiques 2026.",
       "expected_output": "Schema Zod avec validation email/string, validation au boundary avant tout traitement, gestion des erreurs structurée, pas de sql injection possible, structured logging avec correlation ID.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "zod-schema",
+          "description": "Schema Zod défini",
+          "type": "regex",
+          "value": "(?i)z\\.object"
+        },
+        {
+          "id": "validation-at-boundary",
+          "description": "Validation Zod appelée avant le traitement (parse ou safeParse)",
+          "type": "regex",
+          "value": "\\.parse\\(|\\.safeParse\\("
+        },
+        {
+          "id": "no-raw-sql-concat",
+          "description": "Pas de concaténation de chaîne SQL directe",
+          "type": "not_contains",
+          "value": "' + req.body"
+        }
+      ]
     },
     {
       "id": 3,
       "prompt": "Où stocker la clé API Stripe dans notre app Python (dev + prod) ? On a Docker en prod et des devs qui travaillent en local.",
       "expected_output": "python-dotenv + .env pour dev (git-ignoré), système de vault ou env vars plateforme pour prod, jamais dans le code, audit scan recommandé, exemple de code os.getenv().",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "dotenv-dev",
+          "description": ".env ou python-dotenv mentionné pour le dev local",
+          "type": "regex",
+          "value": "\\.env|python-dotenv"
+        },
+        {
+          "id": "os-getenv",
+          "description": "os.getenv() ou os.environ mentionné",
+          "type": "regex",
+          "value": "os\\.getenv|os\\.environ"
+        },
+        {
+          "id": "no-hardcoded-key",
+          "description": "Clé Stripe jamais hardcodée dans le code",
+          "type": "not_contains",
+          "value": "sk_live_"
+        }
+      ]
     }
   ]
 }

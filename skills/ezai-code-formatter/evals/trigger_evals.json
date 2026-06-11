@@ -1,0 +1,61 @@
+{
+  "skill_name": "ezai-code-formatter",
+  "triggers": [
+    {
+      "query": "hey j'ai ce fichier services/user_service.py et mon collègue m'a dit que ça ressemble pas au reste du projet, les imports sont dans le désordre et il manque les séparateurs de sections. tu peux le mettre aux standards ?",
+      "should_trigger": true
+    },
+    {
+      "query": "i need to add section markers to this ts file, it's missing the // /// separators that all the other files in the repo have. the imports are also mixed up, node modules before fs",
+      "should_trigger": true
+    },
+    {
+      "query": "formate ce module selon nos conventions. les imports stdlib sont après les imports locaux et on n'a pas de séparateur CONSTANTS",
+      "should_trigger": true
+    },
+    {
+      "query": "can you reorganize the imports in src/api/client.ts? we have express mixed in with fs and our local db module, should be node built-ins first then external then local",
+      "should_trigger": true
+    },
+    {
+      "query": "ce fichier python a des docstrings en numpy style mais notre projet utilise google style. peux-tu normaliser ?",
+      "should_trigger": true
+    },
+    {
+      "query": "applique les standards visuels du projet à components/auth/login.ts — il manque les séparateurs de sections et les méthodes de classe ne sont pas dans le bon ordre",
+      "should_trigger": true
+    },
+    {
+      "query": "il y a plein de commentaires inutiles dans ce fichier genre '# increment counter' au-dessus de i += 1. nettoie ça mais garde les commentaires qui expliquent pourquoi",
+      "should_trigger": true
+    },
+    {
+      "query": "fix the bug in my login function, it's returning 401 even when credentials are correct",
+      "should_trigger": false
+    },
+    {
+      "query": "run eslint --fix on all my TypeScript files and then run prettier too",
+      "should_trigger": false
+    },
+    {
+      "query": "rename the function processUserData to handle_user_data and update all the callers",
+      "should_trigger": false
+    },
+    {
+      "query": "j'ai besoin d'optimiser cette requête SQL, elle prend 3 secondes alors qu'elle devrait être instantanée",
+      "should_trigger": false
+    },
+    {
+      "query": "refactor this class to use dependency injection instead of hardcoding the database connection",
+      "should_trigger": false
+    },
+    {
+      "query": "set up ruff and black in my project, add pre-commit hooks so code gets formatted on every commit",
+      "should_trigger": false
+    },
+    {
+      "query": "my python file has some unused imports, can you remove them? also there are variables defined but never used",
+      "should_trigger": false
+    }
+  ]
+}

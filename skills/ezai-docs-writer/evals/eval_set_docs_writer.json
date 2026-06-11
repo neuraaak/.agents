@@ -3,21 +3,299 @@
   "evals": [
     {
       "id": 1,
+      "capability": "api-ref",
       "prompt": "Écris la docstring Google-style complète pour cette fonction Python :\n\ndef calculate_discount(price: float, user_tier: str) -> float:\n    if user_tier == 'gold':\n        return price * 0.8\n    elif user_tier == 'silver':\n        return price * 0.9\n    return price",
       "expected_output": "Docstring Google-style avec sections Args, Returns, Raises, exemple dans Examples. Types cohérents avec les annotations. Pas de redondance avec le nom de la fonction.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "google-args-section",
+          "description": "Section Args: présente",
+          "type": "contains",
+          "value": "Args:"
+        },
+        {
+          "id": "google-returns-section",
+          "description": "Section Returns: présente",
+          "type": "contains",
+          "value": "Returns:"
+        },
+        {
+          "id": "google-examples-section",
+          "description": "Section Examples: présente",
+          "type": "contains",
+          "value": "Examples:"
+        },
+        {
+          "id": "no-placeholder",
+          "description": "Pas de placeholder TODO ou FIXME",
+          "type": "not_contains",
+          "value": "TODO"
+        }
+      ]
     },
     {
       "id": 2,
+      "capability": "how-to",
       "prompt": "Génère une page MkDocs de type How-To (Diátaxis) pour expliquer comment configurer l'authentification JWT dans une API FastAPI. La lib s'appelle `authflow`.",
       "expected_output": "Page How-To Diátaxis : titre 'How to...', badge PyPI, étapes numérotées orientées tâche, blocs de code avec annotations, pas d'explication théorique (renvoi vers Explanation), admonitions tip/warning.",
-      "files": []
+      "files": [
+        {
+          "path": "pyproject.toml",
+          "content": "[project]\nname = \"authflow\"\nversion = \"0.4.1\"\n\n[tool.mkdocs]\nsite_name = \"authflow\""
+        },
+        {
+          "path": "mkdocs.yml",
+          "content": "site_name: authflow\ntheme:\n  name: material\nnav:\n  - Home: index.md\n  - How-To: how-to/jwt.md"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "how-to-title",
+          "description": "Titre H1 commence par 'How to'",
+          "type": "regex",
+          "value": "^# How to"
+        },
+        {
+          "id": "numbered-steps",
+          "description": "Étapes numérotées présentes",
+          "type": "regex",
+          "value": "^\\d+\\."
+        },
+        {
+          "id": "admonition-present",
+          "description": "Au moins une admonition MkDocs (!!!) présente",
+          "type": "contains",
+          "value": "!!!"
+        },
+        {
+          "id": "no-theory-section",
+          "description": "Pas de section 'Why' ou 'Understanding' (pas de théorie)",
+          "type": "not_contains",
+          "value": "## Why"
+        }
+      ]
     },
     {
       "id": 3,
+      "capability": "api-ref",
       "prompt": "Écris le JSDoc complet pour cette fonction TypeScript :\n\nasync function fetchUserOrders(userId: string, options?: { limit?: number; cursor?: string }): Promise<{ orders: Order[]; nextCursor: string | null }>",
       "expected_output": "JSDoc TypeScript avec @param typés (pas de redondance avec les types TS inline), @returns documenté, @throws si applicable, @example avec await, format aligné avec TypeDoc.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "jsdoc-param",
+          "description": "@param présent",
+          "type": "contains",
+          "value": "@param"
+        },
+        {
+          "id": "jsdoc-returns",
+          "description": "@returns présent",
+          "type": "contains",
+          "value": "@returns"
+        },
+        {
+          "id": "jsdoc-example-with-await",
+          "description": "@example avec await (fonction async)",
+          "type": "regex",
+          "value": "@example[\\s\\S]*?await"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "capability": "badges",
+      "prompt": "Génère le badge block pour le projet Python `authflow` hébergé sur GitHub (owner: acme, repo: authflow). Le projet est sur PyPI, utilise pytest avec coverage, et a une doc MkDocs déployée sur GitHub Pages.",
+      "expected_output": "Badge block Markdown avec badges PyPI version, Python versions, CI GitHub Actions (tests), coverage, licence, et lien docs. Couleurs hex issues du badge-registry Python + GitHub. Badges groupés par catégorie (install / build / docs). Pas de badge inventé hors registre.",
+      "files": [
+        {
+          "path": "pyproject.toml",
+          "content": "[project]\nname = \"authflow\"\nversion = \"0.4.1\"\nrequires-python = \">=3.10\"\nlicense = { text = \"MIT\" }"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "pypi-badge",
+          "description": "Badge PyPI version présent",
+          "type": "contains",
+          "value": "pypi.org"
+        },
+        {
+          "id": "ci-badge",
+          "description": "Badge CI GitHub Actions présent",
+          "type": "regex",
+          "value": "github\\.com/acme/authflow/actions"
+        },
+        {
+          "id": "coverage-badge",
+          "description": "Badge coverage présent",
+          "type": "regex",
+          "value": "(?i)coverage"
+        },
+        {
+          "id": "no-invented-badge",
+          "description": "Pas de badge Travis, Circle CI ou autre hors registre GitHub",
+          "type": "not_contains",
+          "value": "travis-ci"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "capability": "readme",
+      "prompt": "Génère le README.md complet pour le package npm `ezai-fmt`, un formatter de code JavaScript/TypeScript. Le repo est sur GitHub (owner: ezai, repo: ezai-fmt).",
+      "expected_output": "README structuré selon common/readme.md : badge block npm + CI en tête, description une ligne, installation (`npm install`), usage minimal avec snippet, lien vers docs complètes. Pas de section Features en liste à puces. Titre H1 = nom du package. Aucun contenu Diátaxis (pas de tutorial intégré).",
+      "files": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"ezai-fmt\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Opinionated code formatter for JavaScript and TypeScript\",\n  \"license\": \"MIT\"\n}"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "h1-package-name",
+          "description": "Titre H1 = nom du package",
+          "type": "regex",
+          "value": "^# ezai-fmt"
+        },
+        {
+          "id": "npm-install",
+          "description": "Commande d'installation npm présente",
+          "type": "contains",
+          "value": "npm install"
+        },
+        {
+          "id": "no-features-section",
+          "description": "Pas de section ## Features en liste à puces",
+          "type": "not_contains",
+          "value": "## Features"
+        },
+        {
+          "id": "npm-badge",
+          "description": "Badge npm présent",
+          "type": "contains",
+          "value": "npmjs.com"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "capability": "tutorial",
+      "prompt": "Écris une page Tutorial Diátaxis pour `authflow` : guider un développeur Python débutant depuis l'installation jusqu'à son premier token JWT émis et vérifié.",
+      "expected_output": "Page Tutorial Diátaxis : titre orienté apprentissage ('Getting started with...'), séquence linéaire install → config → premier appel → vérification résultat, chaque étape produit un output observable, admonition note sur les prérequis. Aucune digression How-To. Renvoi vers Reference pour les paramètres avancés.",
+      "files": [
+        {
+          "path": "pyproject.toml",
+          "content": "[project]\nname = \"authflow\"\nversion = \"0.4.1\"\n\n[tool.mkdocs]\nsite_name = \"authflow\""
+        },
+        {
+          "path": "mkdocs.yml",
+          "content": "site_name: authflow\ntheme:\n  name: material\nnav:\n  - Home: index.md\n  - Tutorial: tutorial/getting-started.md"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "tutorial-title",
+          "description": "Titre H1 orienté apprentissage ('Getting started')",
+          "type": "regex",
+          "value": "^# Getting started"
+        },
+        {
+          "id": "pip-install-step",
+          "description": "Étape d'installation pip présente",
+          "type": "contains",
+          "value": "pip install"
+        },
+        {
+          "id": "no-how-to-digression",
+          "description": "Pas de titre 'How to' (pas de digression How-To dans un Tutorial)",
+          "type": "not_contains",
+          "value": "## How to"
+        },
+        {
+          "id": "prerequisites-note",
+          "description": "Admonition note sur les prérequis présente",
+          "type": "regex",
+          "value": "!!! note"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "capability": "explanation",
+      "prompt": "Écris une page Explanation Diátaxis pour `authflow` sur le sujet : pourquoi les tokens JWT sont signés asymétriquement et quelles sont les implications pour la rotation de clés.",
+      "expected_output": "Page Explanation Diátaxis : titre orienté concept ('Understanding...'), prose discursive sans étapes, explique le WHY et les trade-offs (RS256 vs HS256, rotation de clés, révocation), renvois vers How-To pour les tâches concrètes. Aucun bloc de code d'installation. Pas de liste d'étapes numérotées.",
+      "files": [
+        {
+          "path": "mkdocs.yml",
+          "content": "site_name: authflow\ntheme:\n  name: material\nnav:\n  - Home: index.md\n  - Explanation: explanation/jwt-signing.md"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "explanation-title",
+          "description": "Titre H1 orienté concept ('Understanding...' ou 'Why...')",
+          "type": "regex",
+          "value": "^# (Understanding|Why)"
+        },
+        {
+          "id": "no-install-command",
+          "description": "Pas de commande pip install (pas de contenu tutorial)",
+          "type": "not_contains",
+          "value": "pip install"
+        },
+        {
+          "id": "rs256-mentioned",
+          "description": "RS256 ou HS256 mentionné (trade-offs couverts)",
+          "type": "regex",
+          "value": "RS256|HS256"
+        },
+        {
+          "id": "no-numbered-steps",
+          "description": "Pas de liste d'étapes numérotées",
+          "type": "not_contains",
+          "value": "\n1. "
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "capability": "examples",
+      "prompt": "Génère une page Examples pour `ezai-fmt` (npm, TypeScript) montrant comment formatter un fichier, un répertoire, et utiliser l'API programmatique.",
+      "expected_output": "Page Examples : trois snippets autonomes et exécutables (CLI fichier, CLI répertoire, API Node.js), chaque snippet précédé d'un titre H2 court, aucune prose pédagogique, aucune explication de concept. Chaque exemple copié-collé doit fonctionner sans contexte additionnel.",
+      "files": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"ezai-fmt\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Opinionated code formatter for JavaScript and TypeScript\",\n  \"license\": \"MIT\"\n}"
+        }
+      ],
+      "assertions": [
+        {
+          "id": "three-h2-sections",
+          "description": "Au moins 3 sections H2 (un snippet par cas)",
+          "type": "regex",
+          "value": "(^## .+\\n){3}"
+        },
+        {
+          "id": "code-block-present",
+          "description": "Blocs de code présents",
+          "type": "contains",
+          "value": "```"
+        },
+        {
+          "id": "no-pedagogical-prose",
+          "description": "Pas d'introduction 'In this example' ou 'This section explains'",
+          "type": "not_contains",
+          "value": "In this example"
+        },
+        {
+          "id": "programmatic-api",
+          "description": "Usage programmatique Node.js présent (import ou require)",
+          "type": "regex",
+          "value": "import|require"
+        }
+      ]
     }
   ]
 }

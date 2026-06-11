@@ -4,20 +4,218 @@
     {
       "id": 1,
       "prompt": "Génère un `pyproject.toml` complet pour une librairie Python 3.12 open-source appelée `dataflow`. Elle utilise ruff, ty, pytest, et mkdocs. Le build backend doit être hatchling.",
-      "expected_output": "pyproject.toml avec [build-system] hatchling, [project] complet, [tool.ruff.lint] avec règles commentées, [tool.ty], [tool.pytest.ini_options], emojis de section, ligne length cohérente.",
-      "files": []
+      "expected_output": "pyproject.toml avec [build-system] hatchling, [project] complet, [tool.ruff.lint] avec règles commentées, [tool.ruff.format], [tool.ty], [tool.pytest.ini_options], emojis de section.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "hatchling-backend",
+          "description": "[build-system] avec hatchling présent",
+          "type": "contains",
+          "value": "hatchling"
+        },
+        {
+          "id": "ruff-lint-section",
+          "description": "[tool.ruff.lint] présent",
+          "type": "contains",
+          "value": "[tool.ruff.lint]"
+        },
+        {
+          "id": "ruff-format-section",
+          "description": "[tool.ruff.format] présent",
+          "type": "contains",
+          "value": "[tool.ruff.format]"
+        },
+        {
+          "id": "ty-strict",
+          "description": "[tool.ty] avec strict = true",
+          "type": "contains",
+          "value": "strict = true"
+        },
+        {
+          "id": "pytest-ini-options",
+          "description": "[tool.pytest.ini_options] présent",
+          "type": "contains",
+          "value": "[tool.pytest.ini_options]"
+        },
+        {
+          "id": "requires-python-312",
+          "description": "requires-python est >= 3.11 ou >= 3.12",
+          "type": "regex",
+          "value": "requires-python.*3\\.1[12]"
+        }
+      ]
     },
     {
       "id": 2,
       "prompt": "Écris un Dockerfile multi-stage pour notre app Node.js 24 TypeScript. Elle doit être minimale en prod, non-root, et utiliser pnpm.",
       "expected_output": "Stage builder (pnpm install --frozen-lockfile + tsc), stage runtime (node:24-alpine, user non-root, COPY dist + node_modules), HEALTHCHECK, tag exact pas latest.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "multi-stage",
+          "description": "Deux stages présents (AS builder + stage runtime)",
+          "type": "regex",
+          "value": "AS builder|FROM .* AS"
+        },
+        {
+          "id": "pnpm-frozen",
+          "description": "pnpm install --frozen-lockfile utilisé",
+          "type": "contains",
+          "value": "pnpm install --frozen-lockfile"
+        },
+        {
+          "id": "non-root-user",
+          "description": "Image runtime avec utilisateur non-root",
+          "type": "regex",
+          "value": "USER |adduser|addgroup|non.?root"
+        },
+        {
+          "id": "healthcheck",
+          "description": "HEALTHCHECK présent",
+          "type": "contains",
+          "value": "HEALTHCHECK"
+        },
+        {
+          "id": "no-latest-tag",
+          "description": "Pas de tag :latest — tag exact épinglé",
+          "type": "not_contains",
+          "value": ":latest"
+        }
+      ]
     },
     {
       "id": 3,
       "prompt": "Crée un tsconfig.json pour un projet Node.js 24 ESM TypeScript strict. On veut les meilleures perf de compilation possible.",
       "expected_output": "target ES2026, module NodeNext, moduleResolution NodeNext, strict: true, noUncheckedIndexedAccess, exactOptionalPropertyTypes, types: [] pour perf, outDir/rootDir configurés.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "strict-true",
+          "description": "strict est true",
+          "type": "regex",
+          "value": "\"strict\":\\s*true"
+        },
+        {
+          "id": "module-nodenext",
+          "description": "module est NodeNext",
+          "type": "contains",
+          "value": "NodeNext"
+        },
+        {
+          "id": "module-resolution",
+          "description": "moduleResolution présent",
+          "type": "contains",
+          "value": "moduleResolution"
+        },
+        {
+          "id": "no-unchecked-indexed",
+          "description": "noUncheckedIndexedAccess présent",
+          "type": "contains",
+          "value": "noUncheckedIndexedAccess"
+        },
+        {
+          "id": "empty-types-array",
+          "description": "types est [] (tableau vide pour perf)",
+          "type": "regex",
+          "value": "\"types\":\\s*\\[\\]"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Configure pre-commit pour un projet Python avec ruff (lint + format) et ty. Donne aussi la commande pour installer les hooks.",
+      "expected_output": ".pre-commit-config.yaml avec hooks ruff et ruff-format, commande uv run pre-commit install, commande pour lancer manuellement.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "pre-commit-config-file",
+          "description": ".pre-commit-config.yaml présent",
+          "type": "contains",
+          "value": ".pre-commit-config.yaml"
+        },
+        {
+          "id": "ruff-hook",
+          "description": "Hook ruff présent",
+          "type": "contains",
+          "value": "ruff"
+        },
+        {
+          "id": "ruff-format-hook",
+          "description": "Hook ruff-format présent",
+          "type": "contains",
+          "value": "ruff-format"
+        },
+        {
+          "id": "install-command",
+          "description": "Commande pre-commit install donnée",
+          "type": "contains",
+          "value": "pre-commit install"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Comment gérer les variables d'environnement dans un projet Node.js TypeScript ? On a DATABASE_URL et API_KEY qui sont obligatoires.",
+      "expected_output": "Fonction getEnv avec validation au démarrage + RuntimeError si absent, .env dans .gitignore, injecter via secrets CI, mention de @t3-oss/env-nextjs pour Next.js.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "fail-fast-validation",
+          "description": "Validation au démarrage (fail fast) proposée",
+          "type": "regex",
+          "value": "(?i)throw|Error|startup|start|démarr|fail.?fast"
+        },
+        {
+          "id": "gitignore-env",
+          "description": ".env dans .gitignore mentionné",
+          "type": "contains",
+          "value": ".gitignore"
+        },
+        {
+          "id": "no-hardcoded-secrets",
+          "description": "Secrets jamais en dur dans le code",
+          "type": "not_contains",
+          "value": "DATABASE_URL = \""
+        },
+        {
+          "id": "ci-secrets-injection",
+          "description": "Injection via secrets CI mentionnée",
+          "type": "regex",
+          "value": "(?i)CI|secret|GitHub|GitLab|inject"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Configure ESLint pour un projet TypeScript avec flat config (ESLint 9+). On veut typescript-eslint en mode strict.",
+      "expected_output": "eslint.config.js avec import flat config, typescript-eslint strict, règles no-unused-vars et explicit-function-return-type, ESM syntax.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "flat-config-file",
+          "description": "eslint.config.js utilisé (pas .eslintrc)",
+          "type": "contains",
+          "value": "eslint.config.js"
+        },
+        {
+          "id": "typescript-eslint",
+          "description": "typescript-eslint importé",
+          "type": "contains",
+          "value": "typescript-eslint"
+        },
+        {
+          "id": "strict-mode",
+          "description": "Mode strict activé",
+          "type": "regex",
+          "value": "strict"
+        },
+        {
+          "id": "esm-syntax",
+          "description": "Syntaxe ESM (import/export)",
+          "type": "contains",
+          "value": "import "
+        }
+      ]
     }
   ]
 }

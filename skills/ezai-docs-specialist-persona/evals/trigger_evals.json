@@ -1,0 +1,45 @@
+{
+  "skill_name": "ezai-docs-specialist-persona",
+  "triggers": [
+    {
+      "query": "audite et remets à niveau le site de docs de ce projet Python avec MkDocs",
+      "should_trigger": true
+    },
+    {
+      "query": "mon site VitePress a l'air incomplet. Y a-t-il des sections manquantes ? Corrige ce qui ne va pas.",
+      "should_trigger": true
+    },
+    {
+      "query": "fais un checkup complet de ma doc — elle est sûrement out of date et il manque des trucs",
+      "should_trigger": true
+    },
+    {
+      "query": "review my docs site, I think a lot of it is stale and doesn't match the current API",
+      "should_trigger": true
+    },
+    {
+      "query": "bring our docs up to standard — we haven't updated them in 6 months",
+      "should_trigger": true
+    },
+    {
+      "query": "écris-moi une page Getting Started pour ma lib Python",
+      "should_trigger": false
+    },
+    {
+      "query": "ajoute un badge npm et un badge CI à mon README",
+      "should_trigger": false
+    },
+    {
+      "query": "écris le JSDoc pour cette fonction TypeScript",
+      "should_trigger": false
+    },
+    {
+      "query": "fix the bug in my auth service, tokens are expiring too early",
+      "should_trigger": false
+    },
+    {
+      "query": "configure GitHub Actions to deploy my MkDocs site on push to main",
+      "should_trigger": false
+    }
+  ]
+}

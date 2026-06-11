@@ -5,19 +5,121 @@
       "id": 1,
       "prompt": "Écris un workflow GitHub Actions complet pour notre librairie Python. On utilise uv, ruff, ty et pytest. Le pipeline doit lint, type-check, tester sur Python 3.11/3.12/3.13, et publier sur PyPI quand on pousse un tag `v*`. On veut publier sans token stocké.",
       "expected_output": "Workflow .github/workflows avec permissions vides par défaut, job quality (uv sync --frozen + ruff check + ruff format --check + ty check), job test en matrice 3.11/3.12/3.13 dépendant de quality via needs, job publish gardé par if tag v* + environment protégé + id-token: write (OIDC trusted publishing, pas de PYPI_API_TOKEN), actions et runner épinglés, cache uv activé.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "permissions-empty-root",
+          "description": "permissions: {} défini au niveau racine du workflow (least-privilege)",
+          "type": "contains",
+          "value": "permissions: {}"
+        },
+        {
+          "id": "oidc-id-token-write",
+          "description": "id-token: write présent dans le job publish pour OIDC trusted publishing",
+          "type": "contains",
+          "value": "id-token: write"
+        },
+        {
+          "id": "frozen-lockfile",
+          "description": "uv sync --frozen utilisé (installation reproductible)",
+          "type": "contains",
+          "value": "uv sync --frozen"
+        },
+        {
+          "id": "matrix-python-versions",
+          "description": "Matrice couvrant Python 3.11, 3.12 et 3.13",
+          "type": "regex",
+          "value": "3\\.1[123]"
+        },
+        {
+          "id": "needs-quality-gate",
+          "description": "Job test dépend du job quality via needs:",
+          "type": "contains",
+          "value": "needs:"
+        },
+        {
+          "id": "no-stored-token",
+          "description": "Pas de PYPI_API_TOKEN — publishing via OIDC uniquement",
+          "type": "not_contains",
+          "value": "PYPI_API_TOKEN"
+        }
+      ]
     },
     {
       "id": 2,
       "prompt": "Audite ce .gitlab-ci.yml et dis-moi ce qui cloche :\n\nstages: [test, deploy]\n\ntest:\n  image: node:latest\n  script:\n    - npm install\n    - npm test\n\ndeploy:\n  image: node:latest\n  script:\n    - npm run build\n    - npm run deploy\n  only:\n    - main",
       "expected_output": "Rapport ordonné par sévérité signalant : image node:latest non épinglée (sécurité/repro), npm install sans lockfile gelé (devrait être npm ci ou pnpm --frozen-lockfile), aucun cache des dépendances, deploy sur chaque push main sans gate manuel ni environment protégé, only: déprécié au profit de rules, deploy rebuild au lieu de consommer un artifact, pas de resource_group pour sérialiser les deploys. Propose une version corrigée.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "flags-unpinned-image",
+          "description": "Signale node:latest comme problème de sécurité ou reproductibilité",
+          "type": "regex",
+          "value": "latest|non[- ]épinglé|unpinned|pin"
+        },
+        {
+          "id": "flags-npm-install",
+          "description": "Signale npm install sans lockfile gelé (npm ci ou --frozen-lockfile)",
+          "type": "regex",
+          "value": "npm ci|frozen|lockfile|gelé"
+        },
+        {
+          "id": "flags-no-cache",
+          "description": "Signale l'absence de cache des dépendances",
+          "type": "regex",
+          "value": "cache"
+        },
+        {
+          "id": "flags-no-deploy-gate",
+          "description": "Signale l'absence de gate manuel ou d'environment protégé pour le deploy",
+          "type": "regex",
+          "value": "gate|environment|manuel|when: manual|protégé"
+        },
+        {
+          "id": "flags-only-deprecated",
+          "description": "Signale only: comme déprécié au profit de rules:",
+          "type": "regex",
+          "value": "only.*déprécié|rules:|deprecated"
+        },
+        {
+          "id": "provides-corrected-yaml",
+          "description": "Propose une version corrigée du YAML",
+          "type": "regex",
+          "value": "stages:|image:|script:"
+        }
+      ]
     },
     {
       "id": 3,
       "prompt": "Mon job GitHub Actions échoue avec `error: failed to install: pnpm-lock.yaml is not up to date with package.json`. Le build passait hier. Qu'est-ce qui se passe et comment je corrige ?",
       "expected_output": "Diagnostic en une phrase : package.json a été modifié (dépendance ajoutée/bumpée) sans régénérer pnpm-lock.yaml, et --frozen-lockfile refuse à juste titre d'installer un lockfile désynchronisé. Fix : lancer pnpm install en local pour mettre à jour le lockfile, le committer ; ne PAS retirer --frozen-lockfile (ce garde-fou protège la reproductibilité). Mention que c'est le comportement attendu, pas un bug du CI.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "id": "correct-diagnosis",
+          "description": "Identifie que package.json a été modifié sans régénérer pnpm-lock.yaml",
+          "type": "regex",
+          "value": "package\\.json|lockfile|désynchronisé|out of date|modifié"
+        },
+        {
+          "id": "correct-fix",
+          "description": "Recommande de lancer pnpm install en local et de committer le lockfile",
+          "type": "regex",
+          "value": "pnpm install|commit|local"
+        },
+        {
+          "id": "preserve-frozen-lockfile",
+          "description": "Déconseille de retirer --frozen-lockfile",
+          "type": "regex",
+          "value": "frozen|ne pas retirer|keep|conserver|reproductibilité"
+        },
+        {
+          "id": "expected-behavior",
+          "description": "Explique que c'est le comportement attendu, pas un bug",
+          "type": "regex",
+          "value": "attendu|expected|normal|comportement|voulu"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,53 @@
+{
+  "skill_name": "ezai-docs-writer",
+  "triggers": [
+    {
+      "query": "écris la docstring Google-style pour cette fonction Python",
+      "should_trigger": true
+    },
+    {
+      "query": "génère une page How-To pour expliquer comment configurer l'auth JWT dans notre API",
+      "should_trigger": true
+    },
+    {
+      "query": "écris le JSDoc pour cette fonction TypeScript async",
+      "should_trigger": true
+    },
+    {
+      "query": "génère le badge block complet pour notre lib Python hébergée sur GitHub",
+      "should_trigger": true
+    },
+    {
+      "query": "écris le README.md pour notre package npm ezai-fmt",
+      "should_trigger": true
+    },
+    {
+      "query": "ajoute des docstrings manquantes à toutes les méthodes publiques de ce module",
+      "should_trigger": true
+    },
+    {
+      "query": "crée la page Getting Started pour notre lib Python avec MkDocs",
+      "should_trigger": true
+    },
+    {
+      "query": "mon site de docs a l'air complet mais il manque des sections. fais un audit complet et corrige tout",
+      "should_trigger": false
+    },
+    {
+      "query": "audite toute la doc du projet et dis-moi ce qui manque par rapport à Diátaxis",
+      "should_trigger": false
+    },
+    {
+      "query": "fix the bug in my auth middleware, users are getting 403 even with valid tokens",
+      "should_trigger": false
+    },
+    {
+      "query": "refactor this service to use async/await instead of callbacks",
+      "should_trigger": false
+    },
+    {
+      "query": "configure ruff and pytest for my Python project",
+      "should_trigger": false
+    }
+  ]
+}
