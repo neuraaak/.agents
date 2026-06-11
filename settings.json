@@ -17,10 +17,23 @@
       "Skill(superpowers:brainstorming)",
       "Skill(superpowers:brainstorming:*)",
       "Skill(superpowers:writing-plans)",
-      "Skill(superpowers:writing-plans:*)"
+      "Skill(superpowers:writing-plans:*)",
+      "Skill(remember)",
+      "Skill(remember:*)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/forge/gitlab/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/forge/gitlab/**)"
     ],
     "additionalDirectories": []
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",

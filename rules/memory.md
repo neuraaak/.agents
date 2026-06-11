@@ -1,7 +1,24 @@
-## Memory — règle de mise à jour
+## Memory — Update Rules
 
-Lorsque tu mets à jour la mémoire d'un projet (auto-memory), tu dois :
+### Two systems, two roles
 
-1. Écrire dans le dossier mémoire habituel du projet (`~/.claude/projects/<projet>/memory/` via les outils Write/Edit).
+**Project MEMORY** (`~/.claude/projects/<project>/memory/` + `MEMORY.md`)
 
-2. **En plus**, invoquer le skill `remember` (via `Skill tool` avec `skill: "remember"`) pour synchroniser la même information dans le scope projet.
+- Purpose: durable structural information — architecture, conventions, technical decisions, what has been implemented, next steps / way-to-go.
+- When to write: whenever structural info is worth keeping for future sessions.
+- How: Write/Edit individual `memory/<file>.md` files, then add a pointer in `MEMORY.md`.
+
+**`remember` skill** (`.remember/` via the skill)
+
+- Purpose: session logs, events, activity traces, less structural notes.
+- When to use: only if the `remember` skill is installed (visible in the available skills list). Do not invoke it systematically.
+- Scope: current project only.
+
+### Decision table
+
+| Info to retain                       | System                    |
+| ------------------------------------ | ------------------------- |
+| Architecture, conventions, decisions | Project MEMORY            |
+| What was implemented, next step      | Project MEMORY            |
+| Session log, one-off event           | `remember` (if installed) |
+| Cross-project user preference        | Global auto-memory        |

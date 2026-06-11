@@ -2,3 +2,4 @@
 
 @rules/memory.md
 @rules/knowledge-graph.md
+@rules/cicd-pipeline.md
