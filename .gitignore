@@ -13,25 +13,35 @@
 # 3. FICHIERS ET DOSSIERS UTILISATEUR À TRACKER
 # ------------------------------------------------------------------------------
 # Fichiers de configuration et documentation à la racine
-!.gitignore
-!CLAUDE.md
-!README.md
-!package.json
-!claude_desktop_config.json
-!config.json
-!settings.json
+!/.gitignore
+!/CLAUDE.md
+!/README.md
+!/package.json
+!/claude_desktop_config.json
+!/config.json
+!/settings.json
 
 # Dossiers gérés à la main par l'utilisateur (et tout leur contenu)
 !rules/**
 !skills/**
-!plugins/**
 !mcp-servers/**
 !tools/**
 !src/**
 
+# NOTE plugins/ : état managé par Claude Code (chemins absolus machine-
+# spécifiques, timestamps, caches, clones git de marketplaces distantes).
+# Volontairement NON tracké car trompeur entre postes. La réinstallation se
+# fait via un manifeste déclaratif + bootstrap (à venir).
+# On garde uniquement le manifeste s'il existe :
+!plugins.manifest
+
 # 4. EXCLUSIONS - FICHIERS CORE CLAUDE / SYSTÈME À IGNORER
 # (Ces règles de blocage prévalent sur les autorisations ci-dessus)
 # ------------------------------------------------------------------------------
+# État managé par Claude Code (cf. note section 3). Ancré pour neutraliser
+# le `!**/` de traversée, y compris les clones git de marketplaces.
+/plugins/
+
 # Fichiers de fonctionnement interne de l'agent
 **/tasks/
 **/daemon/
