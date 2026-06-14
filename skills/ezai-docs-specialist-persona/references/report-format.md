@@ -14,11 +14,11 @@ Artifact produced: .docs-audit/NN-stage-name.md
 
 Used in `01-audit.md` and carried through `04-validation.md`.
 
-| Level | When to use |
-| :--- | :--- |
-| **bloquant** | Breaks the docs contract: a Diátaxis quadrant entirely absent, `api/index.md` merged with auto-dump, placeholder text shipped in prose, wrong docs tooling detected. |
-| **majeur** | Significant scope or coherence break that degrades quality without breaking the contract: a page mixing two Diátaxis quadrants, a stray corporate badge on a personal project, broken internal cross-references. |
-| **mineur** | Polish: minor wording issues, a missing optional badge, a heading that could be clearer. |
+| Level        | When to use                                                                                                                                                                                                |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **bloquant** | Breaks the docs contract: a Diátaxis quadrant entirely absent, `api/index.md` merged with auto-dump, placeholder text shipped in prose, wrong docs tooling detected.                                       |
+| **majeur**   | Significant scope or coherence break that degrades quality without breaking the contract: a page mixing two Diátaxis quadrants, a stray badge left over from a template, broken internal cross-references. |
+| **mineur**   | Polish: minor wording issues, a missing optional badge, a heading that could be clearer.                                                                                                                   |
 
 ## Findings section
 

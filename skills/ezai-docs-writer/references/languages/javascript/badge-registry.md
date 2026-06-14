@@ -14,16 +14,14 @@ Replace `{pkg}` with the package name from `package.json`.
 
 ---
 
-## Registry version badges (public-oss only)
+## Registry version badges
 
-Always emit both for public npm packages:
+Always emit both for npm packages published to the public registry:
 
 ```markdown
 [![npm version](https://img.shields.io/npm/v/{pkg}?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/package/{pkg})
 [![node versions](https://img.shields.io/node/v/{pkg}?style=flat&logo=nodedotjs&logoColor=white)](https://www.npmjs.com/package/{pkg})
 ```
-
-Omit for `internal` profile.
 
 ---
 

@@ -14,7 +14,7 @@ This file is **data, not a rule**. Emit only the badges whose conditions are met
 
 ---
 
-## Core badges (always emit for public-oss GitHub projects)
+## Core badges (always emit for GitHub projects)
 
 ```markdown
 [![CI](https://img.shields.io/github/actions/workflow/status/{owner}/{repo}/{workflow}.yml?style=flat&label=ci&logo=githubactions&logoColor=white)](https://github.com/{owner}/{repo}/actions/workflows/{workflow}.yml)
@@ -23,17 +23,3 @@ This file is **data, not a rule**. Emit only the badges whose conditions are met
 ```
 
 **CI badge condition:** only emit when a CI workflow file exists at `.github/workflows/{workflow}.yml`. If no workflow exists, omit the badge rather than render it broken.
-
----
-
-## Internal profile — static badges only
-
-Replace core badges with static variants that don't query any live endpoint:
-
-```markdown
-[![version](https://img.shields.io/badge/version-{version}-blue?style=flat)](#)
-[![license](https://img.shields.io/badge/license-Proprietary-red?style=flat)](#)
-[![status](https://img.shields.io/badge/status-internal-lightgrey?style=flat)](#)
-```
-
-Tool badges (linter, type checker, etc.) remain dynamic — they link to public tool homepages, not the private registry.

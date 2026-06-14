@@ -18,24 +18,7 @@ Every `{placeholder}` in this file resolves from the project's manifest and remo
 
 `{docs_url}` resolves to `https://{owner}.github.io/{repo}` (GitHub Pages) or `https://{owner}.gitlab.io/{repo}` (GitLab Pages).
 
-Internal profile adds: `{version}` (hard-coded release string), `{repo_url}` (clone URL), `{owning_team}`, `{team_channel_or_email}`, `{tracker_url}`.
-
 Resolve all variables before emitting the README — never leave a literal `{...}` in output.
-
----
-
-## Project profile
-
-Pick a profile before generating — it changes the badge policy, the install section, and which sections apply. Detect it from project signals; do not ask the user if the signals are conclusive.
-
-| Profile      | Detect when…                               |
-| :----------- | :----------------------------------------- |
-| `public-oss` | Public repo, public registry, OSI license. |
-| `internal`   | Private repo, no public registry/license.  |
-
-Default to `public-oss` when signals are mixed or absent. The rest of this file describes `public-oss`; the **Internal profile** subsections below state the deltas.
-
-> This profile is about distribution context, not platform. GitHub vs GitLab is an orthogonal axis handled per-badge above — an `internal` project can be on either.
 
 ---
 
@@ -57,7 +40,7 @@ Badge data lives in two registries — load the pair that matches the project:
 - **JS/TS + GitHub** → `forge/github/badge-registry.md` + `languages/javascript/badge-registry.md`
 - **JS/TS + GitLab** → `forge/gitlab/badge-registry.md` + `languages/javascript/badge-registry.md`
 
-**Forge registry** (`forge/github/` or `forge/gitlab/`) — core badges: CI, Docs, License (forge-specific URLs), and internal-profile static variants.
+**Forge registry** (`forge/github/` or `forge/gitlab/`) — core badges: CI, Docs, License (forge-specific URLs).
 
 **Language registry** (`languages/python/` or `languages/javascript/`) — version badges (PyPI or npm) + tool badges (package manager, linter, formatter, type checker, test runner, etc.), with detection signals.
 
@@ -112,27 +95,6 @@ Use this order. All H2 headings carry an emoji prefix.
 | 13  | `📝 License`             | Always                       | One line + link to LICENSE file.                                                                                  |
 | 14  | `🔗 Links`               | Always                       | Repository, PyPI/npm, Docs, Issues.                                                                               |
 
-### Internal profile — section deltas
-
-Apply these changes on top of the table above when the profile is `internal`:
-
-- **`📦 Installation`** — install from source/git only (`pip install git+{repo_url}` or `pip install -e .`). No public registry command.
-- **`👥 Ownership`** — **add** after `📝 License`: owning team, contacts, and a link to `CODEOWNERS`. See template below.
-- **`📝 License`** — `Proprietary` / `Internal use only` unless an OSI license is explicitly present.
-- **`🤝 Contributing`** — internal contribution flow (branch policy, mandatory review via CODEOWNERS). No "fork the project".
-- **`🔗 Links`** — replace PyPI/npm and public Issues with the internal repo, docs, and tracker URLs.
-
-```markdown
-## 👥 Ownership
-
-Maintained by **{owning_team}**.
-
-- **Code owners**: see [CODEOWNERS](.github/CODEOWNERS)
-- **Contact**: {team_channel_or_email}
-```
-
----
-
 ## Documentation navigation table (GitHub Pages)
 
 ```markdown
@@ -168,9 +130,7 @@ For GitLab Pages, replace `{owner}.github.io/{repo}` with `{owner}.gitlab.io/{re
 
 When auditing an existing `README.md`, verify:
 
-- [ ] Profile (`public-oss` / `internal`) correctly identified, and badge policy + sections match it.
 - [ ] Badge block present and left-aligned, immediately after H1.
-- [ ] Internal profile only: no dynamic registry/version badges; `👥 Ownership` present; no public registry install command.
 - [ ] Badge block matches the one in `docs/index.md` (same badges, same order). Flag any drift.
 - [ ] Every tool badge maps to a tool actually configured in the project (cross-check against `badge-registry.md`); no tool badge for an absent tool.
 - [ ] CI/Docs badges use the platform-correct variant (GitHub vs GitLab).

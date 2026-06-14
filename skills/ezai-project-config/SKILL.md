@@ -6,15 +6,23 @@ description: >
   linters, type checkers, Docker multi-stage builds, lockfiles, env vars, and
   observability setup.
 
-  Charge depuis ezai-senior-dev-persona ou en direct pour toute tâche de config.
+  Load from ezai-senior-dev-persona or directly for any config task.
 
-  Déclenche sur : "set up the project", "configure ruff/ty/uv", "write a Dockerfile",
+  Triggers on: "set up the project", "configure ruff/ty/uv", "write a Dockerfile",
   "set up pre-commit", "configure tsconfig", "add OpenTelemetry", "lockfile issue",
-  "configurer eslint", "monorepo setup", "env vars", "variable d'environnement",
-  "pyproject.toml", "package.json", "configurer le projet".
+  "configure eslint", "monorepo setup", "env vars", "environment variable",
+  "pyproject.toml", "package.json", "configure the project".
 ---
 
-Toolchain, configuration et infrastructure projet. Suit le workflow en 3 étapes : identifier la langue et le type de tâche, charger le fichier langue adapté, puis appliquer les standards avec config complète.
+Toolchain, configuration, and project infrastructure. Follows a 3-step workflow: identify the language and task type, load the matching language file, then apply the standards with complete config.
+
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain, apply it
+**in addition and in priority** over the defaults described here. This skill
+ships only the general default; context-specific overrides live in the user's
+rules.
 
 ## Capabilities
 
@@ -32,22 +40,22 @@ Toolchain, configuration et infrastructure projet. Suit le workflow en 3 étapes
 
 ## Workflow
 
-1. **Identifier** — langue(s) détectées (`pyproject.toml` → Python, `package.json` → JS/TS) + type de tâche (init / audit / Docker / CI)
-2. **Charger** — fichier langue ci-dessous + `references/common/config.md` (principes transversaux)
-3. **Appliquer** — config complète avec critères de succès vérifiables
+1. **Identify** — detected language(s) (`pyproject.toml` → Python, `package.json` → JS/TS) + task type (init / audit / Docker / CI)
+2. **Load** — the language file below + `references/common/config.md` (cross-cutting principles)
+3. **Apply** — complete config with verifiable success criteria
 
 ## Language routing
 
-| Langue                  | Fichier                                     |
+| Language                | File                                        |
 | :---------------------- | :------------------------------------------ |
 | Python                  | `references/languages/python/config.md`     |
 | JavaScript / TypeScript | `references/languages/javascript/config.md` |
 
-Pour les monorepos couvrant les deux langues, charger les deux fichiers et appliquer chacun à son sous-répertoire respectif. Si un fichier est inaccessible, notifier l'utilisateur et se rabattre sur `references/common/config.md`.
+For monorepos spanning both languages, load both files and apply each to its respective subdirectory. If a file is inaccessible, notify the user and fall back to `references/common/config.md`.
 
 ## Output format
 
-- **Config files** : blocs complets prêts à copier-coller, avec sections commentées
-- **Choix d'outil** : tableau comparatif si plusieurs options sont valides
-- **Critères de succès** : liste vérifiable en fin de réponse
-- **Secrets** : toujours signaler si une config expose des valeurs sensibles
+- **Config files**: complete copy-paste-ready blocks, with commented sections
+- **Tool choice**: comparison table when several options are valid
+- **Success criteria**: verifiable checklist at the end of the response
+- **Secrets**: always flag if a config exposes sensitive values

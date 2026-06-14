@@ -1,11 +1,11 @@
 # Config & Toolchain — JavaScript / TypeScript
 
-## Règles
+## Rules
 
-- **VERSION** : ES2026 / Node.js 24+ minimum.
-- **ESM** : toujours `"type": "module"` dans `package.json`. Jamais CommonJS pour les nouveaux projets.
-- **MANAGER** : `pnpm` comme gestionnaire de packages ; committer `pnpm-lock.yaml`.
-- **DETERMINISM** : `pnpm install --frozen-lockfile` en CI.
+- **VERSION**: ES2026 / Node.js 24+ minimum.
+- **ESM**: always `"type": "module"` in `package.json`. Never CommonJS for new projects.
+- **MANAGER**: `pnpm` as the package manager; commit `pnpm-lock.yaml`.
+- **DETERMINISM**: `pnpm install --frozen-lockfile` in CI.
 
 ## Version pinning
 
@@ -14,7 +14,7 @@
 24
 ```
 
-Ou via Volta pour épingler sans fichier de config supplémentaire :
+Or via Volta to pin without an extra config file:
 
 ```json
 {
@@ -59,9 +59,9 @@ Ou via Volta pour épingler sans fichier de config supplémentaire :
 }
 ```
 
-- `strict: true` non négociable
-- `types: []` accélère la compilation en désactivant l'inclusion automatique de types
-- `noUncheckedIndexedAccess` détecte les bugs d'index de tableau
+- `strict: true` non-negotiable
+- `types: []` speeds up compilation by disabling automatic type inclusion
+- `noUncheckedIndexedAccess` catches array-index bugs
 
 ## ESLint — config (flat config, ESLint 9+)
 
@@ -82,28 +82,28 @@ export default tseslint.config(
 );
 ```
 
-## Syntaxe moderne (ES2026 / Node 24+)
+## Modern syntax (ES2026 / Node 24+)
 
 ```typescript
-// Temporal API — remplace tout usage de Date
+// Temporal API — replaces any use of Date
 const now = Temporal.Now.plainDateTimeISO();
 
-// Explicit Resource Management — cleanup automatique à la fin du scope
-await using conn = await getConnection();  // [Symbol.asyncDispose]() appelé automatiquement
+// Explicit Resource Management — automatic cleanup at end of scope
+await using conn = await getConnection();  // [Symbol.asyncDispose]() called automatically
 
-// Array by Copy — pas de mutation
+// Array by Copy — no mutation
 const sorted = original.toSorted();
 const reversed = original.toReversed();
 
-// AbortController — standard pour les ops async annulables
+// AbortController — standard for cancellable async ops
 const controller = new AbortController();
 const result = await fetch(url, { signal: controller.signal });
 ```
 
-## Variables d'environnement
+## Environment variables
 
 ```typescript
-// Validation au démarrage — fail fast si une var requise est absente
+// Startup validation — fail fast if a required var is missing
 function getEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Required environment variable '${key}' is not set`);
@@ -114,9 +114,9 @@ const DATABASE_URL = getEnv("DATABASE_URL");
 const API_KEY = getEnv("API_KEY");
 ```
 
-- `.env` en local uniquement — toujours dans `.gitignore`.
-- En CI : injecter via les secrets de la plateforme.
-- Pour les projets Next.js : `@t3-oss/env-nextjs` pour la validation typée des env vars.
+- `.env` local only — always in `.gitignore`.
+- In CI: inject via the platform's secrets.
+- For Next.js projects: `@t3-oss/env-nextjs` for typed env-var validation.
 
 ## Docker multi-stage (Node.js)
 
@@ -146,13 +146,13 @@ CMD ["node", "dist/index.js"]
 node --permission --allow-fs-read="./data" --allow-fs-write="./output" app.js
 ```
 
-## Critères de succès
+## Success criteria
 
-- `"type": "module"` dans `package.json`.
-- `strict: true` dans `tsconfig.json`.
-- `pnpm-lock.yaml` commité ; `--frozen-lockfile` en CI.
-- ESLint flat config avec typescript-eslint strict.
-- Pas de `Date` — utiliser l'API `Temporal`.
-- `using` / `await using` pour la gestion des ressources.
-- Secrets via variables d'environnement — validation au démarrage.
-- Images Docker multi-stage, non-root, tags épinglés.
+- `"type": "module"` in `package.json`.
+- `strict: true` in `tsconfig.json`.
+- `pnpm-lock.yaml` committed; `--frozen-lockfile` in CI.
+- ESLint flat config with typescript-eslint strict.
+- No `Date` — use the `Temporal` API.
+- `using` / `await using` for resource management.
+- Secrets via environment variables — validated at startup.
+- Multi-stage Docker images, non-root, pinned tags.

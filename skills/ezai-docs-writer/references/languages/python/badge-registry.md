@@ -14,17 +14,15 @@ Replace `{pkg}` with the distribution name from `pyproject.toml` / `setup.cfg`.
 
 ---
 
-## Registry version badges (public-oss only)
+## Registry version badges
 
-Always emit both for public Python packages:
+Always emit all three for Python packages published to PyPI:
 
 ```markdown
 [![PyPI version](https://img.shields.io/pypi/v/{pkg}?style=flat&logo=pypi&logoColor=white)](https://pypi.org/project/{pkg}/)
 [![Python versions](https://img.shields.io/pypi/pyversions/{pkg}?style=flat&logo=python&logoColor=white)](https://pypi.org/project/{pkg}/)
 [![PyPI status](https://img.shields.io/pypi/status/{pkg}?style=flat&logo=pypi&logoColor=white)](https://pypi.org/project/{pkg}/)
 ```
-
-Omit for `internal` profile — shields.io cannot reach private registries.
 
 ---
 

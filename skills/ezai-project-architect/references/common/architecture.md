@@ -1,37 +1,37 @@
-# Architecture & Design — Principes transversaux
+# Architecture & Design — Cross-cutting principles
 
-Ces principes s'appliquent quelle que soit la langue. Charger avec le fichier langue correspondant.
+These principles apply regardless of language. Load alongside the matching language file.
 
-## Règles fondamentales
+## Core rules
 
-- **Composition over inheritance** — préférer des unités petites et composables aux hiérarchies de classes profondes.
-- **Surface publique explicite** — toujours définir ce qui est public et ce qui est interne.
-- **Ports & Adapters** — appliquer quand une frontière de module croise un système externe (DB, API, message queue, filesystem) ; définir les contrats comme interfaces structurelles, pas des classes de base.
-- **Repository pattern** — abstraire tout accès aux données derrière une interface repository ; la business logic n'importe jamais directement un driver DB.
-- **Modules feature-based** — organiser par domaine métier (`user/`), pas par type technique (`models/` + `controllers/`).
+- **Composition over inheritance** — prefer small, composable units to deep class hierarchies.
+- **Explicit public surface** — always define what is public and what is internal.
+- **Ports & Adapters** — apply when a module boundary crosses an external system (DB, API, message queue, filesystem); define contracts as structural interfaces, not base classes.
+- **Repository pattern** — abstract all data access behind a repository interface; business logic never imports a DB driver directly.
+- **Feature-based modules** — organize by business domain (`user/`), not by technical type (`models/` + `controllers/`).
 
 ## Watchguard — Hexagonal vs Simple Layered
 
-Avant de proposer une architecture hexagonale, évaluer ces 4 critères. Si le score est ≤ 2, recommander **Simple Layered** à la place.
+Before proposing a hexagonal architecture, evaluate these 4 criteria. If the score is ≤ 2, recommend **Simple Layered** instead.
 
-| Critère                                                                       | Score |
-| :---------------------------------------------------------------------------- | :---: |
-| Le projet a ≥ 2 systèmes externes distincts (DB + API + queue…)               |  +1   |
-| La business logic doit être testable sans infrastructure                      |  +1   |
-| Des adaptateurs alternatifs sont prévus (ex: SQLite en dev, Postgres en prod) |  +1   |
-| Le projet dépasse ~1 000 lignes ou 3 développeurs                             |  +1   |
+| Criterion                                                               | Score |
+| :---------------------------------------------------------------------- | :---: |
+| The project has ≥ 2 distinct external systems (DB + API + queue…)       |  +1   |
+| Business logic must be testable without infrastructure                  |  +1   |
+| Alternative adapters are planned (e.g. SQLite in dev, Postgres in prod) |  +1   |
+| The project exceeds ~1,000 lines or 3 developers                        |  +1   |
 
 - **Score ≥ 3** → Hexagonal (Ports & Adapters)
-- **Score ≤ 2** → Simple Layered (`models/` + `services/` + `repositories/` à plat)
+- **Score ≤ 2** → Simple Layered (`models/` + `services/` + `repositories/`, flat)
 
-Ne jamais sur-architecturer un script ou un prototype — l'overhead d'Hexagonal nuit à la lisibilité sur les petits projets.
+Never over-architect a script or a prototype — the overhead of Hexagonal hurts readability on small projects.
 
 ## Simple Layered — structure
 
 ```text
 src/
-├── models/       ← Entités & Value Objects
-├── repositories/ ← Accès données (une interface + une implémentation)
+├── models/       ← Entities & Value Objects
+├── repositories/ ← Data access (one interface + one implementation)
 └── services/     ← Business logic
 ```
 
@@ -39,19 +39,19 @@ src/
 
 ```text
 src/
-├── domain/          ← Entités, Value Objects (zéro imports externes)
+├── domain/          ← Entities, Value Objects (zero external imports)
 ├── application/     ← Use Cases + Ports (interfaces)
 └── infrastructure/  ← Adapters (DB, APIs) + Composition Root
 ```
 
-Règle de dépendance : **toujours vers l'intérieur** — Infrastructure → Application → Domain.
+Dependency rule: **always inward** — Infrastructure → Application → Domain.
 
-## Anti-patterns à éviter
+## Anti-patterns to avoid
 
-| Anti-pattern                | Symptôme                                                                  | Correction                                                 |
-| :-------------------------- | :------------------------------------------------------------------------ | :--------------------------------------------------------- |
-| **Anemic Domain Model**     | Les entités n'ont que des getters/setters, la logic est dans les services | Déplacer la logic métier dans les entités                  |
-| **God Object**              | Une classe fait tout (15+ méthodes, responsabilités mixtes)               | Décomposer par Single Responsibility                       |
-| **Dépendances circulaires** | Module A importe B qui importe A                                          | Extraire une interface partagée, ou inverser la dépendance |
-| **Primitive Obsession**     | `user_id: int`, `order_id: int` — sémantique perdue                       | Branded/opaque types ou Value Objects                      |
-| **Fuite d'infrastructure**  | Un driver SQL importé dans un Use Case                                    | Repository pattern — le Use Case ne connaît que le Port    |
+| Anti-pattern              | Symptom                                                         | Fix                                                   |
+| :------------------------ | :-------------------------------------------------------------- | :---------------------------------------------------- |
+| **Anemic Domain Model**   | Entities have only getters/setters, the logic lives in services | Move business logic into the entities                 |
+| **God Object**            | One class does everything (15+ methods, mixed responsibilities) | Decompose by Single Responsibility                    |
+| **Circular dependencies** | Module A imports B which imports A                              | Extract a shared interface, or invert the dependency  |
+| **Primitive Obsession**   | `user_id: int`, `order_id: int` — semantics lost                | Branded/opaque types or Value Objects                 |
+| **Infrastructure leak**   | A SQL driver imported into a Use Case                           | Repository pattern — the Use Case only knows the Port |

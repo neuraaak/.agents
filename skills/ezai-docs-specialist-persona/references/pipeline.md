@@ -28,8 +28,7 @@ All artifacts live in `.docs-audit/` at the root of the audited project. Names a
 1. **Language** — Python or JavaScript/TypeScript? Detected from `pyproject.toml` / `package.json`.
 2. **Docs tooling** — MkDocs / VitePress / Sphinx / none? Detected from config file presence.
 3. **Versioning platform** — GitHub or GitLab? Detected from `.github/` or `.gitlab-ci.yml`.
-4. **Profile** — `public-oss` or `internal`? Inferred from repo signals: public OSS license (`LICENSE` with MIT/Apache/etc.), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` → `public-oss`; private repo, no public registry, proprietary/absent license, corporate badge patterns → `internal`. Default to `public-oss` if ambiguous.
-5. **ezai-docs-writer reference files to load** — the exact list of files from `ezai-docs-writer/references/` that AUDIT and GENERATION must load for this project. Start at `ezai-docs-writer/references/index.md`, then follow it into `languages/index.md` (per-language files) and `forge/index.md` (badge registries).
+4. **ezai-docs-writer reference files to load** — the exact list of files from `ezai-docs-writer/references/` that AUDIT and GENERATION must load for this project. Start at `ezai-docs-writer/references/index.md`, then follow it into `languages/index.md` (per-language files) and `forge/index.md` (badge registries).
 
 ### 00-context.md schema
 
@@ -41,7 +40,6 @@ Artifact produced: .docs-audit/00-context.md
 - language: python | javascript
 - docs-tooling: mkdocs | vitepress | sphinx | none
 - platform: github | gitlab
-- profile: public-oss | internal
 - docs-writer-refs:
     - references/common/standards.md
     - references/languages/<lang>/standards.md
@@ -71,11 +69,10 @@ Load `ezai-docs-writer/references/common/quadrants-templates.md`.
 
 ### Section B — Contextual coherence
 
-Use `00-context.md` (language, platform, profile) as the control.
+Use `00-context.md` (language, platform) as the control.
 
 - Load the platform + language `badge-registry.md` pair.
-- Check: badges present and correct for this platform/language/environment, no placeholder text (`<your-project>`, `TODO`, `FIXME`, `TBD`), no stray mentions from a different project or template.
-- For `public-oss` profile: corporate-only badges (org logo, enterprise shields) are **bloquant**; their absence is not a finding.
+- Check: badges present and correct for this platform/language, no placeholder text (`<your-project>`, `TODO`, `FIXME`, `TBD`), no stray mentions from a different project or template.
 - Classify each finding with a severity level.
 
 ---

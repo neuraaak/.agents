@@ -1,24 +1,24 @@
-# Performance & Concurrence — Principes transversaux
+# Performance & Concurrency — Cross-cutting principles
 
-Ces principes s'appliquent quelle que soit la langue. Charger avec le fichier langue correspondant.
+These principles apply regardless of language. Load alongside the matching language file.
 
-## Règles fondamentales
+## Core rules
 
-- **Profiler d'abord** : ne jamais optimiser sans données de profiling. Mesurer, puis agir.
-- **Adapter le modèle à la charge** :
-    - I/O-bound → event loop async (asyncio, async/await JS)
-    - CPU-bound → threads (Python 3.14+ GIL-less, Worker Threads JS) ou multiprocessing (Python <3.14 ou isolation requise)
-    - Mixte → async + executor/worker
-- **Streamer, ne pas bufferiser** : traiter les grands datasets comme des générateurs/async iterables — ne jamais tout charger en mémoire.
-- **Annulation** : toujours fournir un mécanisme d'annulation pour les opérations async longues.
-- **Concurrence limitée** : ne pas spawner des tâches illimitées — utiliser un semaphore ou un pool pour borner la concurrence.
+- **Profile first**: never optimize without profiling data. Measure, then act.
+- **Match the model to the workload**:
+    - I/O-bound → async event loop (asyncio, JS async/await)
+    - CPU-bound → threads (Python 3.14+ GIL-less, JS Worker Threads) or multiprocessing (Python <3.14 or isolation required)
+    - Mixed → async + executor/worker
+- **Stream, don't buffer**: process large datasets as generators/async iterables — never load everything into memory.
+- **Cancellation**: always provide a cancellation mechanism for long-running async operations.
+- **Bounded concurrency**: do not spawn unbounded tasks — use a semaphore or a pool to bound concurrency.
 
-## Anti-patterns à éviter
+## Anti-patterns to avoid
 
-| Anti-pattern                                     | Problème                   | Correction                      |
-| :----------------------------------------------- | :------------------------- | :------------------------------ |
-| `await` en boucle sur tâches indépendantes       | Séquentiel, pas concurrent | `gather` / `Promise.allSettled` |
-| Charger un fichier multi-Go en mémoire           | OOM                        | Générateurs / streaming         |
-| Optimiser sans profiler                          | Effort mal dirigé          | `cProfile`, `py-spy`, DevTools  |
-| Spawner N tâches sans limite                     | Saturation ressources      | Semaphore / pool                |
-| Ignorer les erreurs dans les tâches concurrentes | Silencing failures         | `TaskGroup` / `allSettled`      |
+| Anti-pattern                             | Problem                    | Fix                             |
+| :--------------------------------------- | :------------------------- | :------------------------------ |
+| `await` in a loop over independent tasks | Sequential, not concurrent | `gather` / `Promise.allSettled` |
+| Loading a multi-GB file into memory      | OOM                        | Generators / streaming          |
+| Optimizing without profiling             | Misdirected effort         | `cProfile`, `py-spy`, DevTools  |
+| Spawning N tasks without a limit         | Resource saturation        | Semaphore / pool                |
+| Ignoring errors in concurrent tasks      | Silenced failures          | `TaskGroup` / `allSettled`      |

@@ -1,19 +1,27 @@
 ---
 name: ezai-project-performance
 description: >
-  Optimisation des performances et modèles de concurrence pour Python et JS/TS.
-  Couvre : sélection async/await vs threading vs multiprocessing, Web Workers,
-  generators/async iterables pour grands datasets, profiling, caching, annulation.
+  Performance optimization and concurrency models for Python and JS/TS.
+  Covers: async/await vs threading vs multiprocessing selection, Web Workers,
+  generators/async iterables for large datasets, profiling, caching, cancellation.
 
-  Charge depuis ezai-senior-dev-persona ou en direct pour toute tâche perf.
+  Load from ezai-senior-dev-persona or directly for any performance task.
 
-  Déclenche sur : "c'est lent", "problème mémoire", "requêtes concurrentes",
-  "modèle async", "threading vs asyncio", "streamer de grandes données",
-  "optimiser cette boucle", "Web Workers", "AbortSignal", "profiler", "GIL",
-  "concurrent requests", "memory issue", "async model", "stream large data".
+  Triggers on: "it's slow", "memory issue", "concurrent requests",
+  "async model", "threading vs asyncio", "stream large data",
+  "optimize this loop", "Web Workers", "AbortSignal", "profile", "GIL",
+  "performance bottleneck", "out of memory", "speed this up".
 ---
 
-Concurrence et optimisation des performances. Suit le workflow en 3 étapes : identifier le type de charge, charger le fichier langue adapté, puis appliquer le modèle avec code complet.
+Concurrency and performance optimization. Follows a 3-step workflow: identify the workload type, load the matching language file, then apply the model with complete code.
+
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain, apply it
+**in addition and in priority** over the defaults described here. This skill
+ships only the general default; context-specific overrides live in the user's
+rules.
 
 ## Capabilities
 
@@ -29,22 +37,22 @@ Concurrence et optimisation des performances. Suit le workflow en 3 étapes : id
 
 ## Workflow
 
-1. **Identifier** — type de charge (I/O / CPU / mixte) + langue(s) détectées dans le projet
-2. **Charger** — fichier langue ci-dessous + `references/common/performance.md` (principes transversaux)
-3. **Appliquer** — proposer le modèle adapté avec code complet + critères de succès
+1. **Identify** — workload type (I/O / CPU / mixed) + detected language(s) in the project
+2. **Load** — the language file below + `references/common/performance.md` (cross-cutting principles)
+3. **Apply** — propose the matching model with complete code + success criteria
 
 ## Language routing
 
-| Langue                  | Fichier                                          |
+| Language                | File                                             |
 | :---------------------- | :----------------------------------------------- |
 | Python                  | `references/languages/python/performance.md`     |
 | JavaScript / TypeScript | `references/languages/javascript/performance.md` |
 
-Pour des tâches couvrant les deux langues, charger les deux fichiers et appliquer chacun à sa couche respective. Si un fichier est inaccessible, notifier l'utilisateur et se rabattre sur `references/common/performance.md`.
+For tasks spanning both languages, load both files and apply each to its respective layer. If a file is inaccessible, notify the user and fall back to `references/common/performance.md`.
 
 ## Output format
 
-- **Choix de modèle** : tableau comparatif si plusieurs options sont valides
-- **Code** : exemple complet, annoté sur les points non-évidents uniquement
-- **Critères de succès** : liste vérifiable en fin de réponse
-- **Profiling** : toujours indiquer l'outil à utiliser avant d'optimiser
+- **Model choice**: comparison table when several options are valid
+- **Code**: complete example, annotated only on non-obvious points
+- **Success criteria**: verifiable checklist at the end of the response
+- **Profiling**: always indicate the tool to use before optimizing

@@ -13,7 +13,7 @@ This file is **data, not a rule**. Emit only the badges whose conditions are met
 
 ---
 
-## Core badges (always emit for public-oss GitLab projects)
+## Core badges (always emit for GitLab projects)
 
 ```markdown
 [![CI](https://img.shields.io/gitlab/pipeline-status/{owner}/{repo}?branch=main&style=flat&logo=gitlab&logoColor=white)](https://gitlab.com/{owner}/{repo}/-/pipelines)
@@ -22,17 +22,3 @@ This file is **data, not a rule**. Emit only the badges whose conditions are met
 ```
 
 **CI badge condition:** only emit when a `.gitlab-ci.yml` exists. If absent, omit.
-
----
-
-## Internal profile — static badges only
-
-Replace core badges with static variants:
-
-```markdown
-[![version](https://img.shields.io/badge/version-{version}-blue?style=flat)](#)
-[![license](https://img.shields.io/badge/license-Proprietary-red?style=flat)](#)
-[![status](https://img.shields.io/badge/status-internal-lightgrey?style=flat)](#)
-```
-
-Tool badges remain dynamic — they link to public tool homepages.

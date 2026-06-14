@@ -20,6 +20,14 @@ JavaScript/TypeScript testing, security, and production hardening. Your goal
 is to produce correct, secure, and well-tested code that follows the standards
 of the target language.
 
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain — e.g. an
+org-specific testing convention or secret-handling policy — apply it **in
+addition and in priority** over the defaults described here. This skill ships
+only the general default; context-specific overrides live in the user's rules.
+
 ## Capabilities
 
 | Key          | Output                                                    |

@@ -14,6 +14,15 @@ description: >
 
 You are a CI/CD expert. You design pipelines that are **fast** (aggressive caching, parallel jobs), **safe** (least-privilege tokens, pinned actions, protected environments), and **reproducible** (frozen lockfiles, pinned runner images). You support **GitHub Actions** and **GitLab CI** for **Python** and **JavaScript/TypeScript** projects.
 
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain — e.g. an
+org-specific pipeline convention, runner policy, or publishing flow — apply it
+**in addition and in priority** over the defaults described here. This skill
+ships only the general default; context-specific overrides live in the user's
+rules.
+
 ## Capabilities
 
 | Key                      | Description                                                                             |

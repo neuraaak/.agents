@@ -1,36 +1,36 @@
-# Performance & Concurrence — JavaScript / TypeScript
+# Performance & Concurrency — JavaScript / TypeScript
 
-JavaScript est mono-thread. La concurrence vient de l'event loop (async I/O) et des Worker Threads / Web Workers (parallélisme CPU).
+JavaScript is single-threaded. Concurrency comes from the event loop (async I/O) and from Worker Threads / Web Workers (CPU parallelism).
 
-## Sélection du modèle de concurrence
+## Concurrency model selection
 
-| Charge                            | Outil                                                |
-| :-------------------------------- | :--------------------------------------------------- |
-| I/O intensif (HTTP, DB, fichiers) | `async/await` + `Promise.allSettled`                 |
-| CPU-bound                         | `Worker Threads` (Node.js) / `Web Workers` (browser) |
-| Stream processing                 | `for await...of` sur async iterables                 |
-| Opérations longues annulables     | `AbortController` + `AbortSignal`                    |
-| Premier résultat disponible       | `Promise.any`                                        |
-| Timeout / course                  | `Promise.race`                                       |
+| Workload                        | Tool                                                 |
+| :------------------------------ | :--------------------------------------------------- |
+| I/O intensive (HTTP, DB, files) | `async/await` + `Promise.allSettled`                 |
+| CPU-bound                       | `Worker Threads` (Node.js) / `Web Workers` (browser) |
+| Stream processing               | `for await...of` over async iterables                |
+| Cancellable long operations     | `AbortController` + `AbortSignal`                    |
+| First available result          | `Promise.any`                                        |
+| Timeout / race                  | `Promise.race`                                       |
 
-## I/O concurrent
+## Concurrent I/O
 
 ```typescript
-// Concurrent — Promise.allSettled pour opérations indépendantes
+// Concurrent — Promise.allSettled for independent operations
 const results = await Promise.allSettled(
   urls.map((url) => fetch(url, { signal: controller.signal })),
 );
 
-// Array.fromAsync — tableau depuis un async iterable
+// Array.fromAsync — array from an async iterable
 const data = await Array.fromAsync(urls, async (url) => {
   const res = await fetch(url, { signal: controller.signal });
   return res.json();
 });
 ```
 
-Ne jamais `await` en boucle `for` pour des opérations indépendantes — c'est séquentiel, pas concurrent.
+Never `await` in a `for` loop for independent operations — it's sequential, not concurrent.
 
-## Concurrence limitée
+## Bounded concurrency
 
 ```typescript
 async function fetchLimited<T>(
@@ -48,22 +48,22 @@ async function fetchLimited<T>(
 }
 ```
 
-## AbortController — annulation
+## AbortController — cancellation
 
 ```typescript
 const controller = new AbortController();
-setTimeout(() => controller.abort(), 5000); // timeout 5s
+setTimeout(() => controller.abort(), 5000); // 5s timeout
 
 try {
   const result = await fetch(url, { signal: controller.signal });
 } catch (err) {
   if (err instanceof DOMException && err.name === "AbortError") {
-    // annulation propre
+    // clean cancellation
   }
 }
 ```
 
-Toujours implémenter `AbortSignal` pour les tâches async longues ou annulables par l'utilisateur.
+Always implement `AbortSignal` for long-running or user-cancellable async tasks.
 
 ## Promise.race / Promise.any
 
@@ -77,7 +77,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
     ),
   ]);
 
-// Premier succès (ignore les échecs)
+// First success (ignores failures)
 const fastest = await Promise.any(mirrors.map((url) => fetch(url)));
 ```
 
@@ -119,66 +119,66 @@ for await (const line of streamLines("large.csv")) {
 }
 ```
 
-`createReadStream` + `readline` pour ne jamais charger le fichier entier en mémoire.
+`createReadStream` + `readline` to never load the entire file into memory.
 
 ## Profiling
 
 ```typescript
-// Mesure précise dans le code
+// Precise in-code measurement
 performance.mark("start");
 await heavyOperation();
 performance.mark("end");
 performance.measure("heavy", "start", "end");
 console.log(performance.getEntriesByName("heavy")[0].duration);
 
-// Rapide pour debugging
+// Quick for debugging
 console.time("operation");
 await heavyOperation();
 console.timeEnd("operation");
 ```
 
-**Browser** : Chrome DevTools → Performance tab pour flamegraph CPU, Memory tab pour heap snapshots.
-**Node.js** : `node --prof script.js` puis `node --prof-process isolate-*.log`.
+**Browser**: Chrome DevTools → Performance tab for a CPU flamegraph, Memory tab for heap snapshots.
+**Node.js**: `node --prof script.js` then `node --prof-process isolate-*.log`.
 
-## APIs browser — performance UI
+## Browser APIs — UI performance
 
 ```typescript
-// Différer le travail non-critique
+// Defer non-critical work
 requestIdleCallback((deadline) => {
   while (deadline.timeRemaining() > 0 && tasks.length > 0) {
     processTask(tasks.shift()!);
   }
 });
 
-// Lazy loading à l'entrée dans le viewport
+// Lazy loading on viewport entry
 const observer = new IntersectionObserver((entries) => {
   entries.filter((e) => e.isIntersecting).forEach(loadComponent);
 });
 observer.observe(target);
 ```
 
-## Deep copy — performances
+## Deep copy — performance
 
 ```typescript
-// structuredClone — natif, supporte plus de types
+// structuredClone — native, supports more types
 const copy = structuredClone(obj); // ✅ Maps, Sets, Date, ArrayBuffer
 
-// JSON.parse/stringify — limité mais plus rapide sur petits objets plats
-const copy = JSON.parse(JSON.stringify(obj)); // ⚠️ perd undefined, Date→string
+// JSON.parse/stringify — limited but faster on small flat objects
+const copy = JSON.parse(JSON.stringify(obj)); // ⚠️ loses undefined, Date→string
 ```
 
 ## Build performance
 
-- **Tree-shaking** : ESM + modules sans effets de bord (`"sideEffects": false` dans `package.json`).
-- **Lazy loading** : `import()` pour les dépendances optionnelles volumineuses.
-- **Bundler** : Vite ou esbuild pour des builds rapides ; éviter webpack pour les nouveaux projets.
-- **Memoization** : cacher les résultats de fonctions pures coûteuses avec une `Map`.
+- **Tree-shaking**: ESM + side-effect-free modules (`"sideEffects": false` in `package.json`).
+- **Lazy loading**: `import()` for large optional dependencies.
+- **Bundler**: Vite or esbuild for fast builds; avoid webpack for new projects.
+- **Memoization**: cache the results of expensive pure functions with a `Map`.
 
-## Critères de succès
+## Success criteria
 
-- `Promise.allSettled` / `Array.fromAsync` pour l'I/O concurrent (pas de `await` séquentiel).
-- `AbortController` implémenté pour toutes les tâches async longues.
-- Concurrence bornée via batching ou semaphore.
-- Worker Threads utilisés pour le CPU-bound.
-- `createReadStream` + `readline` pour le streaming de fichiers (jamais `readFile` sur un gros fichier).
-- Sorties ESM pour le tree-shaking correct.
+- `Promise.allSettled` / `Array.fromAsync` for concurrent I/O (no sequential `await`).
+- `AbortController` implemented for all long-running async tasks.
+- Concurrency bounded via batching or semaphore.
+- Worker Threads used for CPU-bound work.
+- `createReadStream` + `readline` for file streaming (never `readFile` on a large file).
+- ESM outputs for correct tree-shaking.

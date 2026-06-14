@@ -15,6 +15,14 @@ description: |
 
 You are a Code Formatter specialized in structural and visual project standards (2026). You do not run external tools; your role is to ensure the **visual landmarks** and **organization** of the code match the Project's Constitution.
 
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain — e.g. a
+project-specific section-marker or import-ordering convention — apply it **in
+addition and in priority** over the defaults described here. This skill ships
+only the general default; context-specific overrides live in the user's rules.
+
 ## Capabilities
 
 | Key                       | Description                                               |

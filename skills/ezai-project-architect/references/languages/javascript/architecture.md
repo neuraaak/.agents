@@ -1,17 +1,17 @@
 # Architecture & Design — JavaScript / TypeScript
 
-## Organisation des modules
+## Module organization
 
-- **ESM-first** : `"type": "module"` dans `package.json`. Toujours.
-- **Feature-based** : organiser par domaine métier (`user/`, `order/`), pas par type technique (`models/`, `controllers/`).
-- **Index files** : utiliser `index.ts` uniquement pour les frontières d'API publique — jamais comme dump de tous les exports.
-- **Barrel exports** : utiliser avec parcimonie ; préférer les imports de sous-chemin explicites pour un meilleur tree-shaking.
+- **ESM-first**: `"type": "module"` in `package.json`. Always.
+- **Feature-based**: organize by business domain (`user/`, `order/`), not by technical type (`models/`, `controllers/`).
+- **Index files**: use `index.ts` only for public API boundaries — never as a dump of every export.
+- **Barrel exports**: use sparingly; prefer explicit sub-path imports for better tree-shaking.
 
 ## Encapsulation
 
 ```typescript
 class UserService {
-  #database: Database;  // champ vraiment privé (ES2022+), pas le keyword TypeScript private
+  #database: Database;  // truly private field (ES2022+), not the TypeScript `private` keyword
 
   constructor(db: Database) {
     this.#database = db;
@@ -19,20 +19,20 @@ class UserService {
 }
 ```
 
-Utiliser `#field` (private class fields) plutôt que `private` — appliqué au runtime, pas seulement à la compilation.
+Use `#field` (private class fields) rather than `private` — enforced at runtime, not just at compile time.
 
-## Class vs style fonctionnel — guide de choix
+## Class vs functional style — choosing
 
-| Critère                                | Classe           | Fonctionnel |
-| :------------------------------------- | :--------------- | :---------- |
-| État mutable interne (`#field`)        | ✅                | ❌           |
-| Héritage ou implémentation d'interface | ✅                | ❌           |
-| Injection de dépendances simple        | Selon préférence | ✅ (closure) |
-| Testabilité et composition             | Complexe         | ✅           |
-| Repository / Service sans état         | ❌                | ✅           |
+| Criterion                               | Class      | Functional  |
+| :-------------------------------------- | :--------- | :---------- |
+| Internal mutable state (`#field`)       | ✅          | ❌           |
+| Inheritance or interface implementation | ✅          | ❌           |
+| Simple dependency injection             | Preference | ✅ (closure) |
+| Testability and composition             | Complex    | ✅           |
+| Stateless Repository / Service          | ❌          | ✅           |
 
 ```typescript
-// Style fonctionnel — préféré pour les repositories sans état
+// Functional style — preferred for stateless repositories
 export function createUserRepository(db: Database) {
   return {
     async findById(id: UserId): Promise<User | null> {
@@ -44,7 +44,7 @@ export function createUserRepository(db: Database) {
   };
 }
 
-// Style classe — justifié quand il y a de l'état interne ou un contrat d'interface
+// Class style — justified when there is internal state or an interface contract
 export class CachingUserRepository implements UserRepository {
   #cache = new Map<UserId, User>();
 
@@ -58,10 +58,10 @@ export class CachingUserRepository implements UserRepository {
 
 ## Value Objects — branded types
 
-Encapsuler les primitives à sémantique forte pour éviter la Primitive Obsession.
+Encapsulate primitives with strong semantics to avoid Primitive Obsession.
 
 ```typescript
-// Branded types — empêchent le mélange sémantique à la compilation
+// Branded types — prevent semantic mixing at compile time
 type UserId = number & { readonly __brand: "UserId" };
 type OrderId = number & { readonly __brand: "OrderId" };
 
@@ -69,10 +69,10 @@ function asUserId(id: number): UserId {
   return id as UserId;
 }
 
-// Impossible de passer un OrderId là où un UserId est attendu
+// Impossible to pass an OrderId where a UserId is expected
 function getUser(id: UserId): Promise<User> { /* ... */ }
 
-// Value Object avec validation
+// Value Object with validation
 class Money {
   readonly #amount: number;
   readonly #currency: string;
@@ -89,11 +89,11 @@ class Money {
 }
 ```
 
-## Système de types TypeScript (TS 5.x)
+## TypeScript type system (TS 5.x)
 
 ```typescript
-// strict: true dans tsconfig.json — non négociable
-// Préférer interface pour les shapes, type pour les unions/intersections
+// strict: true in tsconfig.json — non-negotiable
+// Prefer interface for shapes, type for unions/intersections
 
 interface User {
   id: UserId;
@@ -102,28 +102,28 @@ interface User {
 
 type Status = "pending" | "active" | "closed";
 
-// satisfies — valide le type sans perdre l'inférence littérale
+// satisfies — validates the type without losing literal inference
 const config = {
   host: "localhost",
   port: 8080,
 } satisfies Record<string, string | number>;
-// config.port est encore 8080 (littéral), pas juste number
+// config.port is still 8080 (literal), not just number
 
-// unknown + narrowing — jamais any
+// unknown + narrowing — never any
 function parseInput(raw: unknown): string {
   if (typeof raw !== "string") throw new Error("Expected string");
   return raw;
 }
 ```
 
-Zéro `any`. Utiliser `unknown` quand le type est vraiment incertain, puis narrower explicitement.
+Zero `any`. Use `unknown` when the type is genuinely uncertain, then narrow explicitly.
 
 ## Hexagonal — Ports & Adapters
 
-Les interfaces (ou object shapes) jouent le rôle de Ports. Les implémentations sont les Adapters.
+Interfaces (or object shapes) act as Ports. Implementations are the Adapters.
 
 ```typescript
-// application/ports.ts — Port comme interface
+// application/ports.ts — Port as an interface
 export interface OrderRepository {
   save(order: Order): Promise<void>;
   findById(id: OrderId): Promise<Order | null>;
@@ -131,11 +131,11 @@ export interface OrderRepository {
 
 // infrastructure/sql-order-repo.ts — Adapter
 export class SQLOrderRepository implements OrderRepository {
-  async save(order: Order): Promise<void> { /* SQL ici */ }
-  async findById(id: OrderId): Promise<Order | null> { /* SQL ici */ }
+  async save(order: Order): Promise<void> { /* SQL here */ }
+  async findById(id: OrderId): Promise<Order | null> { /* SQL here */ }
 }
 
-// tests/fakes.ts — Fake pour les tests
+// tests/fakes.ts — Fake for tests
 export function createInMemoryOrderRepository(): OrderRepository {
   const store = new Map<OrderId, Order>();
   return {
@@ -145,13 +145,13 @@ export function createInMemoryOrderRepository(): OrderRepository {
 }
 ```
 
-## Critères de succès
+## Success criteria
 
-- `strict: true` dans `tsconfig.json`.
-- Zéro `any` — utiliser `unknown` + type narrowing.
-- `#private` fields pour la vraie encapsulation.
-- Organisation feature-based des modules.
-- Repository pattern abstrait tout accès aux données.
-- `satisfies` pour la validation des object literals.
-- Branded types ou Value Objects pour les primitives à sémantique forte.
-- Fakes (pas de mocks) pour tester les Ports.
+- `strict: true` in `tsconfig.json`.
+- Zero `any` — use `unknown` + type narrowing.
+- `#private` fields for true encapsulation.
+- Feature-based module organization.
+- Repository pattern abstracts all data access.
+- `satisfies` for object-literal validation.
+- Branded types or Value Objects for primitives with strong semantics.
+- Fakes (not mocks) for testing Ports.

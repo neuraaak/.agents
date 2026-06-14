@@ -1,20 +1,28 @@
 ---
 name: ezai-project-architect
 description: >
-  Architecture et design standards pour les projets Python et JS/TS.
-  Couvre : structure modulaire, surface d'API publique, patterns de design
-  (Repository, Factory, Composition), architecture Hexagonale (Ports & Adapters),
-  Value Objects, et contrats du système de types.
+  Architecture and design standards for Python and JS/TS projects.
+  Covers: modular structure, public API surface, design patterns
+  (Repository, Factory, Composition), Hexagonal architecture (Ports & Adapters),
+  Value Objects, and type-system contracts.
 
-  Charge depuis ezai-senior-dev-persona ou en direct pour toute tâche de design.
+  Load from ezai-senior-dev-persona or directly for any design task.
 
-  Déclenche sur : "how should I structure this", "design a repository for",
+  Triggers on: "how should I structure this", "design a repository for",
   "what pattern fits here", "create an interface for", "define the public API of",
-  "hexagonal architecture", "ports and adapters", "faut-il utiliser hexagonal",
-  "structurer ce module", "quel pattern", "concevoir une classe", "architecture".
+  "hexagonal architecture", "ports and adapters", "should I use hexagonal",
+  "structure this module", "which pattern", "design a class", "architecture".
 ---
 
-Architecture et design standards. Suit le workflow en 3 étapes : identifier la langue et la complexité du projet, charger le fichier langue adapté, puis appliquer les patterns avec code complet.
+Architecture and design standards. Follows a 3-step workflow: identify the project language and complexity, load the matching language file, then apply the patterns with complete code.
+
+## Local rules precedence
+
+Any rule declared in the user's `.claude/` (rules files, CLAUDE.md) takes
+precedence over this skill. When a local rule covers the same domain, apply it
+**in addition and in priority** over the defaults described here. This skill
+ships only the general default; context-specific overrides live in the user's
+rules.
 
 ## Capabilities
 
@@ -31,22 +39,22 @@ Architecture et design standards. Suit le workflow en 3 étapes : identifier la 
 
 ## Workflow
 
-1. **Identifier** — langue(s) + complexité du projet (appliquer le Watchguard — voir `references/common/architecture.md`)
-2. **Charger** — fichier langue ci-dessous + `references/common/architecture.md` (principes transversaux)
-3. **Appliquer** — proposer le design avec code complet + critères de succès
+1. **Identify** — language(s) + project complexity (apply the Watchguard — see `references/common/architecture.md`)
+2. **Load** — the language file below + `references/common/architecture.md` (cross-cutting principles)
+3. **Apply** — propose the design with complete code + success criteria
 
 ## Language routing
 
-| Langue                  | Fichier                                           |
+| Language                | File                                              |
 | :---------------------- | :------------------------------------------------ |
 | Python                  | `references/languages/python/architecture.md`     |
 | JavaScript / TypeScript | `references/languages/javascript/architecture.md` |
 
-Pour les repos polyglot, charger les deux fichiers. Si la langue n'est pas listée, charger `references/common/architecture.md` uniquement et l'indiquer à l'utilisateur.
+For polyglot repos, load both files. If the language is not listed, load `references/common/architecture.md` only and tell the user.
 
 ## Output format
 
-- **Choix d'architecture** : appliquer le Watchguard avant de proposer Hexagonal
-- **Code** : exemple complet par couche (Domain / Application / Infrastructure)
-- **Structure de fichiers** : arborescence `src/` annotée
-- **Critères de succès** : liste vérifiable en fin de réponse
+- **Architecture choice**: apply the Watchguard before proposing Hexagonal
+- **Code**: complete example per layer (Domain / Application / Infrastructure)
+- **File structure**: annotated `src/` tree
+- **Success criteria**: verifiable checklist at the end of the response

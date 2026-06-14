@@ -1,34 +1,34 @@
-# Performance & Concurrence — Python
+# Performance & Concurrency — Python
 
-## Sélection du modèle de concurrence
+## Concurrency model selection
 
-| Charge                            | Python 3.11–3.13       | Python 3.14+ (GIL-less) |
-| :-------------------------------- | :--------------------- | :---------------------- |
-| I/O intensif (HTTP, DB, fichiers) | `asyncio` + `uvloop`   | `asyncio` + `uvloop`    |
-| CPU-bound                         | `multiprocessing.Pool` | `threading.Thread` ✅    |
-| Mixte I/O + CPU                   | `asyncio` + executor   | `asyncio` + `threading` |
+| Workload                        | Python 3.11–3.13       | Python 3.14+ (GIL-less) |
+| :------------------------------ | :--------------------- | :---------------------- |
+| I/O intensive (HTTP, DB, files) | `asyncio` + `uvloop`   | `asyncio` + `uvloop`    |
+| CPU-bound                       | `multiprocessing.Pool` | `threading.Thread` ✅    |
+| Mixed I/O + CPU                 | `asyncio` + executor   | `asyncio` + `threading` |
 
-Python 3.14+ supprime le GIL — `threading` devient le bon outil pour le travail CPU-bound.
+Python 3.14+ removes the GIL — `threading` becomes the right tool for CPU-bound work.
 
-## Asyncio — I/O concurrent
+## Asyncio — concurrent I/O
 
 ```python
 import asyncio
 
 async def fetch(url: str) -> dict[str, str]:
-    await asyncio.sleep(0.1)  # I/O simulé
+    await asyncio.sleep(0.1)  # simulated I/O
     return {"url": url}
 
 async def fetch_all(urls: list[str]) -> list[dict[str, str]]:
     return await asyncio.gather(*[fetch(u) for u in urls])
-    # ← concurrent, pas un await séquentiel en boucle
+    # ← concurrent, not a sequential await in a loop
 ```
 
-`asyncio.gather` pour la concurrence. Un `await` séquentiel en boucle n'est pas concurrent.
+`asyncio.gather` for concurrency. A sequential `await` in a loop is not concurrent.
 
-## TaskGroup — Python 3.11+ (remplace gather)
+## TaskGroup — Python 3.11+ (replaces gather)
 
-`TaskGroup` propage les erreurs proprement : si une tâche échoue, les autres sont annulées.
+`TaskGroup` propagates errors cleanly: if one task fails, the others are cancelled.
 
 ```python
 async def fetch_all(urls: list[str]) -> list[dict]:
@@ -38,9 +38,9 @@ async def fetch_all(urls: list[str]) -> list[dict]:
     return [t.result() for t in tasks]
 ```
 
-## Concurrence limitée — Semaphore
+## Bounded concurrency — Semaphore
 
-Éviter de spawner N tâches sans limite pour ne pas saturer les ressources (connexions DB, rate limits).
+Avoid spawning N tasks without a limit so you don't saturate resources (DB connections, rate limits).
 
 ```python
 async def fetch_limited(urls: list[str], max_concurrent: int = 10) -> list[dict]:
@@ -53,7 +53,7 @@ async def fetch_limited(urls: list[str], max_concurrent: int = 10) -> list[dict]
     return await asyncio.gather(*[bounded_fetch(u) for u in urls])
 ```
 
-## Annulation et timeout — Python 3.11+
+## Cancellation and timeout — Python 3.11+
 
 ```python
 async def fetch_with_timeout(url: str, timeout: float = 5.0) -> dict | None:
@@ -63,13 +63,13 @@ async def fetch_with_timeout(url: str, timeout: float = 5.0) -> dict | None:
     except TimeoutError:
         return None
 
-# Annulation manuelle d'une tâche
+# Manual cancellation of a task
 task = asyncio.create_task(long_operation())
 task.cancel()
 try:
     await task
 except asyncio.CancelledError:
-    pass  # cleanup si nécessaire
+    pass  # cleanup if needed
 ```
 
 ## Threading — CPU-bound (3.14+)
@@ -84,7 +84,7 @@ with ThreadPoolExecutor(max_workers=4) as pool:
     results = list(pool.map(cpu_task, chunks))
 ```
 
-## Générateurs — grands datasets
+## Generators — large datasets
 
 ```python
 from pathlib import Path
@@ -99,44 +99,44 @@ for line in stream_lines(Path("large.csv")):
     process(line)
 ```
 
-Ne jamais `pd.read_csv()` sur un fichier multi-Go — utiliser le chunked reading ou des générateurs.
+Never `pd.read_csv()` on a multi-GB file — use chunked reading or generators.
 
 ## Profiling
 
-| Outil         | Usage                                                               |
+| Tool          | Usage                                                               |
 | :------------ | :------------------------------------------------------------------ |
-| `cProfile`    | Profiling CPU (stdlib) — `python -m cProfile -s cumtime script.py`  |
-| `py-spy`      | Profiling sampling sans modifier le code — `py-spy top --pid <PID>` |
-| `tracemalloc` | Profiling mémoire (stdlib) — snapshots avant/après                  |
-| `memray`      | Profiling mémoire avancé avec flamegraph — `memray run script.py`   |
+| `cProfile`    | CPU profiling (stdlib) — `python -m cProfile -s cumtime script.py`  |
+| `py-spy`      | Sampling profiler without modifying code — `py-spy top --pid <PID>` |
+| `tracemalloc` | Memory profiling (stdlib) — before/after snapshots                  |
+| `memray`      | Advanced memory profiling with flamegraph — `memray run script.py`  |
 
 ```python
 import tracemalloc
 
 tracemalloc.start()
-# ... code à profiler ...
+# ... code to profile ...
 snapshot = tracemalloc.take_snapshot()
 top = snapshot.statistics("lineno")
 for stat in top[:5]:
     print(stat)
 ```
 
-## Techniques d'optimisation
+## Optimization techniques
 
-| Technique             | Quand l'utiliser                                       |
+| Technique             | When to use                                            |
 | :-------------------- | :----------------------------------------------------- |
-| `__slots__`           | Classe avec des millions d'instances                   |
-| `functools.lru_cache` | Fonction pure coûteuse avec entrées répétées           |
-| NumPy vectorisation   | Calcul numérique — remplace les boucles Python         |
-| `uvloop`              | Drop-in pour l'event loop asyncio — 2–4× de throughput |
-| `memoryview`          | Manipulation de données binaires sans copie            |
-| `array` module        | Collections homogènes typées (plus compact que list)   |
+| `__slots__`           | Class with millions of instances                       |
+| `functools.lru_cache` | Expensive pure function with repeated inputs           |
+| NumPy vectorization   | Numeric computation — replaces Python loops            |
+| `uvloop`              | Drop-in for the asyncio event loop — 2–4× throughput   |
+| `memoryview`          | Binary data manipulation without copying               |
+| `array` module        | Typed homogeneous collections (more compact than list) |
 
-## Critères de succès
+## Success criteria
 
-- Modèle de concurrence adapté au type de charge.
-- `asyncio.gather` / `TaskGroup` pour l'I/O concurrent (pas de `await` séquentiel).
-- `asyncio.Semaphore` pour borner la concurrence.
-- Générateurs pour le traitement de fichiers/streams volumineux.
-- Pas d'optimisation prématurée — profiler d'abord.
-- Python 3.14+ : `threading` préféré à `multiprocessing` pour le CPU-bound.
+- Concurrency model matched to the workload type.
+- `asyncio.gather` / `TaskGroup` for concurrent I/O (no sequential `await`).
+- `asyncio.Semaphore` to bound concurrency.
+- Generators for processing large files/streams.
+- No premature optimization — profile first.
+- Python 3.14+: `threading` preferred over `multiprocessing` for CPU-bound work.

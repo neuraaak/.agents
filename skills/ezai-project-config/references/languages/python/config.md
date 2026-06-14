@@ -1,19 +1,19 @@
 # Config & Toolchain — Python
 
-## Règles
+## Rules
 
-- **VENV** : toujours `.venv`. Ne jamais installer globalement.
-- **TOOLS** : `uv` (packages), `ruff` (lint/format), `ty` (types), `pre-commit` (gates), `mkdocs` (docs).
-- **BACKEND** : `hatchling` comme build backend — pas de `setuptools`, pas de `flit`.
-- **CENTRAL** : toute config outil dans `pyproject.toml` — pas de `setup.cfg`, pas de `tox.ini`.
-- **VERSION** : Python 3.11+ minimum. Épingler dans `.python-version`.
+- **VENV**: always `.venv`. Never install globally.
+- **TOOLS**: `uv` (packages), `ruff` (lint/format), `ty` (types), `pre-commit` (gates), `mkdocs` (docs).
+- **BACKEND**: `hatchling` as the build backend — no `setuptools`, no `flit`.
+- **CENTRAL**: all tool config in `pyproject.toml` — no `setup.cfg`, no `tox.ini`.
+- **VERSION**: Python 3.11+ minimum. Pin in `.python-version`.
 
-## Environnement
+## Environment
 
 ```bash
-uv venv                          # créer .venv
-uv sync                          # installer les deps depuis uv.lock
-uv run pytest                    # exécuter dans le venv sans l'activer
+uv venv                          # create .venv
+uv sync                          # install deps from uv.lock
+uv run pytest                    # run inside the venv without activating it
 uv run ruff check .
 uv run ruff format .
 uv run ty check
@@ -25,11 +25,11 @@ uv run ty check
 3.12
 ```
 
-Committer ce fichier pour épingler la version Python utilisée par `uv` et `pyenv`.
+Commit this file to pin the Python version used by `uv` and `pyenv`.
 
-## `pyproject.toml` — structure complète
+## `pyproject.toml` — full structure
 
-L'ordre des sections (les emojis aident à la navigation visuelle) :
+Section order (the emojis aid visual navigation):
 
 ```toml
 # 🔨 Build system
@@ -74,7 +74,7 @@ testpaths = ["tests"]
 addopts = "-v --tb=short"
 ```
 
-Toujours documenter les sélections de règles ruff avec des commentaires inline.
+Always document ruff rule selections with inline comments.
 
 ## `pre-commit` — config
 
@@ -94,11 +94,11 @@ repos:
 ```
 
 ```bash
-uv run pre-commit install   # activer les hooks Git
-uv run pre-commit run --all-files  # lancer manuellement
+uv run pre-commit install   # enable Git hooks
+uv run pre-commit run --all-files  # run manually
 ```
 
-## `mkdocs` — config minimale
+## `mkdocs` — minimal config
 
 ```yaml
 # mkdocs.yml
@@ -117,23 +117,23 @@ plugins:
             docstring_style: google
 ```
 
-## Syntaxe fondamentale (3.11+)
+## Core syntax (3.11+)
 
 ```python
-from __future__ import annotations  # annotations différées — toujours
+from __future__ import annotations  # deferred annotations — always
 
-from pathlib import Path             # pathlib uniquement, pas os.path
+from pathlib import Path             # pathlib only, not os.path
 
-def read_file(path: str | Path) -> bytes:   # union avec |, pas Union[]
+def read_file(path: str | Path) -> bytes:   # union with |, not Union[]
     with Path(path).open("rb") as f:
         return f.read()
 ```
 
-- `from __future__ import annotations` dans chaque fichier
-- `pathlib.Path` exclusivement pour les opérations filesystem
-- Syntaxe union `int | str` (pas `Union`)
-- `with` statements pour tout cleanup de ressource
-- `t-strings` (PEP 750) pour les templates sécurisés en 3.14+
+- `from __future__ import annotations` in every file
+- `pathlib.Path` exclusively for filesystem operations
+- Union syntax `int | str` (not `Union`)
+- `with` statements for any resource cleanup
+- `t-strings` (PEP 750) for safe templating in 3.14+
 
 ## Docker multi-stage (Python)
 
@@ -155,11 +155,11 @@ HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request; ur
 CMD [".venv/bin/python", "-m", "my_project"]
 ```
 
-- Tags exacts — jamais `python:latest`
-- `--frozen` en CI pour respecter le lockfile
-- Utilisateur non-root en stage runtime
+- Exact tags — never `python:latest`
+- `--frozen` in CI to honor the lockfile
+- Non-root user in the runtime stage
 
-## Variables d'environnement
+## Environment variables
 
 ```python
 import os
@@ -174,13 +174,13 @@ DATABASE_URL = get_env("DATABASE_URL")
 API_KEY = get_env("API_KEY")
 ```
 
-## Critères de succès
+## Success criteria
 
-- `uv` exclusivement pour la gestion des packages ; `uv.lock` commité.
-- `pyproject.toml` est la source de vérité unique.
-- `from __future__ import annotations` dans chaque fichier Python.
-- `hatchling` comme build backend.
-- `ruff lint` + `ruff format` configurés avec règles commentées.
-- `pre-commit` installé avec hooks ruff + ty.
-- Images Docker multi-stage, non-root, tags épinglés.
-- Secrets via variables d'environnement — jamais en dur.
+- `uv` exclusively for package management; `uv.lock` committed.
+- `pyproject.toml` is the single source of truth.
+- `from __future__ import annotations` in every Python file.
+- `hatchling` as the build backend.
+- `ruff lint` + `ruff format` configured with commented rules.
+- `pre-commit` installed with ruff + ty hooks.
+- Multi-stage Docker images, non-root, pinned tags.
+- Secrets via environment variables — never hard-coded.
