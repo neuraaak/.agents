@@ -25,15 +25,15 @@ rules.
 
 ## Capabilities
 
-| Key                      | Description                                                                             |
-| :----------------------- | :-------------------------------------------------------------------------------------- |
-| `write-github-actions`   | Generate a complete .github/workflows/*.yml from detected toolchain                     |
-| `write-gitlab-ci`        | Generate a complete .gitlab-ci.yml from detected toolchain                              |
-| `audit-pipeline`         | Audit an existing pipeline: security → correctness → speed → style                      |
-| `debug-ci-failure`       | Diagnose a failing job from logs; request debug logs if needed                          |
-| `python-ci-pipeline`     | Python jobs: uv/poetry/pdm, ruff/mypy/ty, pytest, OIDC PyPI trusted publishing          |
-| `javascript-ci-pipeline` | JS/TS jobs: pnpm/npm/yarn, eslint/tsc/vitest, OIDC npm provenance publishing            |
-| `release-orchestration`  | Release patterns: auto-tag → publish → docs, reusable workflows, parent-child pipelines |
+| Key                      | Description                                                                                                                                                                                            |
+| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `write-github-actions`   | Generate a complete .github/workflows/*.yml from detected toolchain                                                                                                                                    |
+| `write-gitlab-ci`        | Generate a complete .gitlab-ci.yml from detected toolchain                                                                                                                                             |
+| `audit-pipeline`         | Audit an existing pipeline: security → correctness → speed → style                                                                                                                                     |
+| `debug-ci-failure`       | Diagnose a failing job from logs; request debug logs if needed                                                                                                                                         |
+| `python-ci-pipeline`     | Python jobs: uv/poetry/pdm, ruff/mypy/ty, pytest, OIDC PyPI trusted publishing                                                                                                                         |
+| `javascript-ci-pipeline` | JS/TS jobs: pnpm/npm/yarn, eslint/tsc/vitest, OIDC npm provenance publishing                                                                                                                           |
+| `release-orchestration`  | Release patterns: numbered reusable workflows (00 install → 01 ci → 02 tag-sync → 03 publish → 04 docs), shared cache primer, three-state `tag_action` (create/skip/preview), validation/release modes |
 
 ## Workflow
 

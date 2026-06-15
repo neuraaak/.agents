@@ -12,7 +12,9 @@ default:
 
 workflow:                          # control when the whole pipeline runs
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"   # MR pipeline
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never                                        # branch has an open MR -> skip the branch pipeline
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG
 
@@ -21,6 +23,8 @@ lint:
   script:
     - echo "..."
 ```
+
+**Avoid double-pipelines.** Without the `$CI_OPEN_MERGE_REQUESTS … when: never` rule, a branch with an open MR runs both a branch pipeline and an MR pipeline. The guard keeps a single pipeline — the GitLab equivalent of scoping GitHub's `push` to `main`. Merge blocking is an MR approval / "pipelines must succeed" setting, not a property of the pipeline itself.
 
 ## `rules` (replaces the legacy `only`/`except`)
 

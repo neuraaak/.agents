@@ -1,6 +1,6 @@
 # GitHub Actions — Core Syntax
 
-The building blocks of a GitHub Actions workflow. For multi-workflow release automation (auto-tag, `workflow_call` cascades, Pages deploy), see `github/orchestration.md`. For the actual job steps, see the language file.
+The building blocks of a GitHub Actions workflow. For multi-workflow release automation (tag-sync, `workflow_call` cascades, Pages deploy), see `github/orchestration.md`. For the actual job steps, see the language file.
 
 ## Skeleton
 
@@ -9,8 +9,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
+    branches: [main]               # push only on main…
+  pull_request:                    # …PRs cover every other branch — no double run
   workflow_dispatch:
 
 # Least privilege: start empty, grant per job.
@@ -18,7 +18,8 @@ permissions: {}
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancel superseded PR runs; never cancel a run on main (it may be releasing).
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint:
@@ -26,6 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 ```
+
+**Avoid double-runs.** Limiting `push` to `main` while keeping `pull_request` open means a branch with an open PR triggers one pipeline (the PR), not two. The PR run is the gate; a *required status check* in branch protection — not the workflow itself — is what blocks the merge.
 
 ## Triggers (`on`)
 

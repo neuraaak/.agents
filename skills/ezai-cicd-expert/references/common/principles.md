@@ -17,6 +17,30 @@ lint → type-check → test → build → publish/deploy
 
 Independent jobs should declare their dependencies explicitly (`needs`) so the scheduler parallelizes the rest instead of running a single serial chain.
 
+## Validation vs release — two modes, one set of jobs
+
+A pipeline reasons by **lifecycle moment**, not by tool. Everything reduces to two modes driven by a single question: **does the version in the file (`pyproject.toml` / `package.json`) differ from the last tag?**
+
+- **Validation mode** — PRs and feature branches. Everything is dry-run: execute, build, verify — **nothing mutates the world** (no real tag, no upload, no deploy).
+- **Release mode** — push to the default branch **with** a version change. Strictly sequential and mutating: tag → publish → docs.
+
+Two operating principles fall out of this:
+
+- **Always build, conditionally deliver.** Build the package *and* the docs on **every** path (validation included — that's how you catch a broken build before merge); only `publish`/`deploy` on a real release. A PR that can't build is a failed PR, not a skipped step.
+- **Sync the tag to the file version; never bump it in CI.** The human writes the version in the file. CI compares file-version vs the last tag: **changed → create the release**, **unchanged → skip** (no tag, no publish). CI never edits the version itself.
+
+## Idempotence & replay
+
+A release is a sequence of irreversible-then-reversible steps; design every step so a partial failure can be **re-run safely**.
+
+- **Publish must be re-run safe.** Treat "version already present" as success: `twine upload --skip-existing` (Python), an existence check before `npm publish` (JS). A replayed publish that 409s and fails the job is a bug.
+- **Docs deploys must be idempotent.** Re-deploying a version overwrites its subfolder — freely replayable.
+- **Order matters: publish → docs.** Publish is irreversible; docs are not. Never deploy a `vX.Y.Z` doc before the matching package exists (a doc without a package is a broken promise).
+
+## Maintainability — logic in scripts, not YAML
+
+Keep the real logic (tag sync, version extraction, build, publish step) in **scripts or a task runner** (`nox`, `tox`, `just`, `make`, `package.json` scripts) called by the pipeline. YAML stays a thin orchestration layer. This is what prevents drift when the same project ships both a GitHub and a GitLab pipeline — both call the same script instead of re-encoding the logic twice.
+
 ## Caching
 
 The goal is to skip re-downloading dependencies, **not** to skip producing a correct build. A cache is a performance optimization that must be invisible to correctness.
@@ -58,6 +82,10 @@ These hold on both platforms.
 - **Fail fast on quality gates, then build.** Lint and type-check are cheap — run them before the expensive test matrix.
 - **Reproducible installs.** `--frozen-lockfile` / `uv sync --frozen`. A pipeline that mutates the lockfile is a bug.
 - **Guard deploys.** Production deploys go through a protected environment with required reviewers; never deploy on every push to a feature branch.
+- **Release tag is immutable.** Create `vX.Y.Z` once and never move it. The moving pointer (e.g. a `vX-latest` major alias, a `latest` docs alias) lives in a **separate ref** — force-pushing is only ever for the alias, never for the release tag itself.
+- **Always build, conditionally deliver.** Build package and docs on every path (validation); only publish/deploy on a real release. See "Validation vs release" above.
+- **Replay-safe delivery.** Publish is re-run safe (`--skip-existing` / existence check); docs deploys are idempotent — so a partial release failure can be replayed without manual cleanup.
+- **A required status check is a branch-protection setting, not a workflow property.** A CI workflow running alone doesn't block a merge — the "required check" rule in GitHub branch protection / GitLab MR settings does.
 
 ## Output format
 
@@ -91,6 +119,10 @@ When reviewing an existing pipeline, report findings in this severity order:
 - Cache keyed on the lockfile (no stale-cache correctness bug)?
 - Deploy uses the artifact built upstream, not a rebuild?
 - Triggers fire on the intended refs only?
+- Release gated on a real version change (tag synced to file version, not bumped/tagged on every push)?
+- Release tag created immutable — only the moving alias (`vX-latest`/`latest`) is force-pushed, never `vX.Y.Z`?
+- Publish re-run safe (`--skip-existing` / existence check) and docs deploy idempotent?
+- Order is publish → docs (the irreversible step first)?
 
 ### ⚡ Speed
 
