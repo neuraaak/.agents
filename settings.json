@@ -67,6 +67,7 @@
       "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/**)"
     ],
     "additionalDirectories": [
+      "c:\\Users\\Utilisateur\\.claude",
       "c:\\Users\\g29285\\.claude"
     ]
   },
