@@ -5,8 +5,6 @@
     "OTEL_TRACES_EXPORTER": "none",
     "OTEL_LOGS_EXPORTER": "none",
     "OTEL_METRICS_EXPORTER": "none"
-    // "REQUESTS_CA_BUNDLE": "C:\\Users\\g29285\\.claude\\enedis-ca-bundle.pem",
-    // "SSL_CERT_FILE": "C:\\Users\\g29285\\.claude\\enedis-ca-bundle.pem"
   },
   "permissions": {
     "allow": [
@@ -29,16 +27,7 @@
       "Skill(superpowers:writing-plans:*)",
       "Skill(remember)",
       "Skill(remember:*)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/python/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/gitlab/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/python/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-docs-writer/references/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-project-quality/references/python/**)",
-      "Read(//c/Users/g29285/.agents/skills/ezai-project-quality/references/python/**)",
-      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/forge/gitlab/**)",
-      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/forge/gitlab/**)",
+      "Bash(graphify query *)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/Utilisateur/.claude/rules/**)",
@@ -56,7 +45,16 @@
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/languages/javascript/**)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/**)",
-      "Bash(graphify query *)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/forge/gitlab/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/forge/gitlab/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/common/**)",
       "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/common/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/languages/python/**)",
@@ -72,7 +70,7 @@
       "c:\\Users\\g29285\\.claude"
     ]
   },
-  "model": "sonnet",
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",

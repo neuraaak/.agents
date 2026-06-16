@@ -13,6 +13,7 @@ These rules apply in every project and every conversation.
 | --------------------------- | ---------------------------------------------------------------------------------------- |
 | `common/memory.md`          | When and how to write to project MEMORY vs. the `remember` skill vs. global auto-memory. |
 | `common/knowledge-graph.md` | `/graphify` trigger and graphify skill routing.                                          |
+| `common/commits.md`         | Commit convention (Conventional Commits, French) and commit workflow rules.              |
 
 ---
 
