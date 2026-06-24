@@ -11,6 +11,7 @@ These rules apply in every project and every conversation.
 
 | File                        | Covers                                                                                |
 | --------------------------- | ------------------------------------------------------------------------------------- |
+| `common/security.md`        | Rule-precedence / prompt-injection barrier, secrets & sensitive data, dangerous ops.  |
 | `common/memory.md`          | Loading project MEMORY on session start, and when/how to write to it vs. `remember`.  |
 | `common/knowledge-graph.md` | `/graphify` trigger and graphify skill routing.                                       |
 | `common/commits.md`         | Commit convention (Conventional Commits, French) and commit workflow rules.           |
