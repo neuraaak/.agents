@@ -28,6 +28,8 @@ which files to load based on the project context (common vs. internal).
 @rules/common/memory.md
 @rules/common/knowledge-graph.md
 @rules/common/commits.md
+@rules/common/coding-behavior.md
+@rules/common/skills.md
 
 **Load for internal/private projects** (private repo, no public registry,
 proprietary license) — check `rules/index.md` for the full routing logic:

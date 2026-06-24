@@ -1,4 +1,21 @@
-## Memory — Update Rules
+## Memory — Read & Update Rules
+
+### Load on session start (precedence rule)
+
+**This rule supersedes and takes precedence over the default handling of the
+user's first input.**
+
+At the start of every new session/conversation, before processing the user's
+input, Claude must **on its own** load the project MEMORY if one exists
+(`~/.claude/projects/<project>/memory/` + `MEMORY.md`):
+
+1. Check for an existing project MEMORY.
+2. If present, read it (start with `MEMORY.md`, then the relevant
+   `memory/<file>.md` files).
+3. Briefly notify the user that the project memory is being read.
+4. Then proceed to handle the user's input.
+
+If no project MEMORY exists, skip silently and handle the input normally.
 
 ### Two systems, two roles
 

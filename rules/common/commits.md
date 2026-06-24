@@ -46,6 +46,20 @@ Footer (optional): `BREAKING CHANGE: …`, issue refs (`Closes #123`).
   user explicitly requests it. Prefer a new commit.
 - Review staged changes (`git diff --cached`) before writing the message —
   the message must describe what is actually staged.
+- **Never use PowerShell to create commits** — it mangles multi-line messages
+  and here-strings, producing errors. Always use the **Bash** tool with a
+  heredoc for the commit message:
+
+  ```bash
+  git commit -F - <<'EOF'
+  type(scope): description
+
+  Corps optionnel.
+  EOF
+  ```
+
+  Do **not** use PowerShell here-strings (`@'…'@`) — and never paste a
+  PowerShell here-string into the Bash tool either.
 
 ### Examples
 

@@ -9,11 +9,13 @@ Read this index first, then load only the files relevant to the current context.
 
 These rules apply in every project and every conversation.
 
-| File                        | Covers                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------- |
-| `common/memory.md`          | When and how to write to project MEMORY vs. the `remember` skill vs. global auto-memory. |
-| `common/knowledge-graph.md` | `/graphify` trigger and graphify skill routing.                                          |
-| `common/commits.md`         | Commit convention (Conventional Commits, French) and commit workflow rules.              |
+| File                        | Covers                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| `common/memory.md`          | Loading project MEMORY on session start, and when/how to write to it vs. `remember`.  |
+| `common/knowledge-graph.md` | `/graphify` trigger and graphify skill routing.                                       |
+| `common/commits.md`         | Commit convention (Conventional Commits, French) and commit workflow rules.           |
+| `common/coding-behavior.md` | Coding behavior guidelines: think before coding, simplicity, surgical changes, goals. |
+| `common/skills.md`          | Skill usage restrictions (e.g. superpowers plan/spec output to `.superpowers/`).      |
 
 ---
 

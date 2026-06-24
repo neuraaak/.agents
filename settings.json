@@ -27,6 +27,7 @@
       "Skill(superpowers:writing-plans:*)",
       "Skill(remember)",
       "Skill(remember:*)",
+      "Bash(git log *)",
       "Bash(graphify query *)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-docs-specialist-persona/references/**)",
@@ -45,6 +46,7 @@
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/languages/javascript/**)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/g29285/.claude/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/python/**)",
@@ -62,9 +64,12 @@
       "Read(//c/Users/g29285/.claude/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/g29285/.agents/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/g29285/.agents/skills/ezai-docs-writer/references/**)",
-      "Read(//c/Users/g29285/.claude/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/**)",
-      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/**)"
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-code-formatter/references/languages/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-code-formatter/references/languages/**)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Utilisateur\\.claude",
