@@ -29,6 +29,7 @@
       "Bash(python -c ':*)",
       "Bash(git diff --cached)",
       "Bash(git log *)",
+      "Bash(git checkout *)",
       "Bash(graphify query *)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-docs-specialist-persona/references/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-docs-specialist-persona/references/**)",
@@ -47,6 +48,12 @@
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/languages/javascript/**)",
       "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/**)",
       "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-project-architect/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-project-architect/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-project-quality/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-project-quality/references/languages/python/**)",
       "Read(//c/Users/g29285/.claude/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
       "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
@@ -77,7 +84,6 @@
       "c:\\Users\\g29285\\.claude"
     ]
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",
@@ -122,5 +128,6 @@
     }
   },
   "effortLevel": "low",
-  "theme": "dark"
+  "theme": "dark",
+  "model": "sonnet"
 }
