@@ -44,9 +44,36 @@ Before starting, identify which capability applies to the user's request. If the
 
 ## Execution
 
-Load both reference files before doing any work:
+Two modes, branching on the capability identified at the scope gate.
 
-1. `references/pipeline.md` — cognitive conduct, architecture decision rules, and the 5-step workflow.
-2. `references/report-format.md` — the `<thinking>` block schema and per-capability output format.
+### Mode A — orchestrated review (capability = `code-review`)
 
-Then execute the workflow defined in `pipeline.md` for the identified capability.
+`code-review` runs as an orchestrated multi-subagent pipeline. You are the
+orchestrator: you own no domain knowledge — you dispatch one read-only subagent
+per selected domain **in series**, consolidate their findings, gate on user
+approval, apply fixes through a single write subagent, then validate and loop
+once.
+
+Load both reference files before dispatching any stage:
+
+1. `references/report-format.md` — the `code-review` finding format the domain
+   subagents reuse, and the `01-<DOMAIN>-NNN` ID convention.
+2. `references/review-pipeline.md` — the artifact contract in `.senior-review/`
+   and each stage's role, inputs, and outputs.
+
+Then run the 6 stages defined in `review-pipeline.md`: DETECTION → REVIEW →
+PLANNING (human gate) → APPLY → VALIDATION → bounded re-loop.
+
+### Mode B — inline workflow (every other capability)
+
+For `feature-implementation`, `refactoring`, `debugging`, and
+`architecture-decision`, work inline (no subagents). Load both reference files
+before doing any work:
+
+1. `references/pipeline.md` — cognitive conduct, architecture decision rules,
+   and the 5-step workflow.
+2. `references/report-format.md` — the `<thinking>` block schema and
+   per-capability output format.
+
+Then execute the workflow defined in `pipeline.md` for the identified
+capability.

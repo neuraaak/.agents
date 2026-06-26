@@ -31,13 +31,17 @@ Structured by domain, one section each:
 - **Tests** — coverage gaps, missing edge cases, test quality.
 
 Each finding uses:
+
 ```text
-[SEVERITY] <short title>
+[01-<DOMAIN>-NNN] [SEVERITY] <short title>
   What: <one sentence>
   Where: <file:line or section>
   Fix: <one sentence>
 ```
+
 Severity: `bloquant` (breaks contract) · `majeur` (degrades quality) · `mineur` (polish).
+
+When `code-review` runs as the orchestrated pipeline (see `review-pipeline.md`), each finding carries a stable ID `01-<DOMAIN>-NNN` (DOMAIN ∈ ARCH | QUAL | PERF | CONF) so PLANNING and VALIDATION can cross-reference it. In the inline path the ID prefix may be omitted.
 
 Close with a **Summary** — N bloquant / N majeur / N mineur, overall verdict (1–2 sentences).
 
