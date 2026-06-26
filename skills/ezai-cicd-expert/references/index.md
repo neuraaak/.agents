@@ -27,5 +27,6 @@ Language-specific pipeline blueprints and tool catalogs. See `languages/index.md
 | :---------------------- | :--------------- | :---------------------- |
 | Python                  | `pyproject.toml` | `languages/python/`     |
 | JavaScript / TypeScript | `package.json`   | `languages/javascript/` |
+| PHP                     | `composer.json`  | `languages/php/`        |
 
 Always load both `pipelines.md` and `tool-registry.md` for the detected language. Polyglot repo → load both language pairs.

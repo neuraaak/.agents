@@ -9,18 +9,30 @@
 
 ## Version pinning
 
+Pin the package manager via corepack (the standard) — committed in `package.json`,
+enabled with `corepack enable`:
+
+```json
+{
+  "packageManager": "pnpm@9.12.0",
+  "engines": { "node": ">=24" }
+}
+```
+
+Pin the Node version separately via `.nvmrc`:
+
 ```text
 # .nvmrc
 24
 ```
 
-Or via Volta to pin without an extra config file:
+Volta remains an alternative that pins both Node and pnpm in one place:
 
 ```json
 {
   "volta": {
     "node": "24.1.0",
-    "pnpm": "9.0.0"
+    "pnpm": "9.12.0"
   }
 }
 ```
@@ -63,7 +75,39 @@ Or via Volta to pin without an extra config file:
 - `types: []` speeds up compilation by disabling automatic type inclusion
 - `noUncheckedIndexedAccess` catches array-index bugs
 
-## ESLint — config (flat config, ESLint 9+)
+## Linting & formatting — pick one toolchain
+
+| Toolchain         | When                                                                 |
+| :---------------- | :------------------------------------------------------------------- |
+| **Biome**         | New projects — one fast (Rust) tool for lint + format, single config |
+| ESLint + Prettier | Existing setups, or when you need a plugin only ESLint provides      |
+
+Don't run both as blocking gates — choose one.
+
+### Biome (recommended for new projects)
+
+```jsonc
+// biome.json
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "formatter": { "enabled": true, "indentStyle": "space" }
+}
+```
+
+```json
+// package.json scripts
+{
+  "scripts": {
+    "lint": "biome check src/",
+    "format": "biome format --write src/"
+  }
+}
+```
+
+`biome check` runs lint + format checks in one pass; `biome check --write` applies fixes.
+
+### ESLint — config (flat config, ESLint 9+)
 
 ```javascript
 // eslint.config.js
@@ -85,7 +129,8 @@ export default tseslint.config(
 ## Modern syntax (ES2026 / Node 24+)
 
 ```typescript
-// Temporal API — replaces any use of Date
+// Temporal API — prefer over Date for new date/time code where the runtime
+// ships it (Node 24+ / modern browsers); fall back to Date or a polyfill otherwise
 const now = Temporal.Now.plainDateTimeISO();
 
 // Explicit Resource Management — automatic cleanup at end of scope
@@ -125,7 +170,7 @@ const API_KEY = getEnv("API_KEY");
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN corepack enable && pnpm install --frozen-lockfile
 COPY src/ src/ tsconfig.json ./
 RUN pnpm run build
 
@@ -151,8 +196,8 @@ node --permission --allow-fs-read="./data" --allow-fs-write="./output" app.js
 - `"type": "module"` in `package.json`.
 - `strict: true` in `tsconfig.json`.
 - `pnpm-lock.yaml` committed; `--frozen-lockfile` in CI.
-- ESLint flat config with typescript-eslint strict.
-- No `Date` — use the `Temporal` API.
+- One lint/format toolchain: Biome (recommended) or ESLint flat config + Prettier.
+- Prefer the `Temporal` API over `Date` for new code where the runtime ships it.
 - `using` / `await using` for resource management.
 - Secrets via environment variables — validated at startup.
 - Multi-stage Docker images, non-root, pinned tags.

@@ -47,6 +47,7 @@ rules.
 | :---------------------- | :----------------------------------------------- |
 | Python                  | `references/languages/python/performance.md`     |
 | JavaScript / TypeScript | `references/languages/javascript/performance.md` |
+| PHP                     | `references/languages/php/performance.md`        |
 
 For tasks spanning both languages, load both files and apply each to its respective layer. If a file is inaccessible, notify the user and fall back to `references/common/performance.md`.
 

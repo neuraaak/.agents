@@ -14,5 +14,6 @@ Two routing axes: **common** (always loaded) and **language**. See `languages/in
 | :-------------------- | :---------------------- |
 | Python                | `languages/python/`     |
 | JavaScript/TypeScript | `languages/javascript/` |
+| PHP                   | `languages/php/`        |
 
 Load `languages/index.md` for the full routing table. For monorepos using both, load both language files.

@@ -44,7 +44,7 @@ only the general default; context-specific overrides live in the user's rules.
 ### 1. Orient
 
 - Detect the project language (`pyproject.toml` → Python, `package.json` →
-  JS/TS). For mixed repos, both languages apply.
+  JS/TS, `composer.json` → PHP). For mixed repos, both languages apply.
 - Identify the task type from the table above. If ambiguous, ask before
   generating.
 
@@ -55,10 +55,29 @@ Read `references/index.md` — it is the root router. Quick cheat sheet:
 - **Any task** → `references/common/quality.md` (cross-language principles)
 - **Python task** → `references/languages/python/quality.md`
 - **JS/TS task** → `references/languages/javascript/quality.md`
+- **PHP task** → `references/languages/php/quality.md`
+- **Framework detected** → the matching delta file (see Framework routing), **in addition to** the language file
 - **Mixed repo** → load both language files
 
 If a reference file cannot be read, notify the user and apply the principles
 from `references/common/quality.md` only.
+
+#### Framework routing
+
+Framework files are **deltas**: load them *in addition to* the language file,
+never instead of it. Cascade is `common → language → framework`.
+
+| Framework | Detection signal                                                        | File                                                  |
+| :-------- | :---------------------------------------------------------------------- | :---------------------------------------------------- |
+| React     | `react` dep, or `vite` + `@vitejs/plugin-react`                         | `references/languages/javascript/frameworks/react.md` |
+| Vue       | `vue` dep, or `vite` + `@vitejs/plugin-vue`                             | `references/languages/javascript/frameworks/vue.md`   |
+| FastAPI   | `fastapi` dep, or a uvicorn/ASGI entrypoint                             | `references/languages/python/frameworks/fastapi.md`   |
+| Django    | `django` dep, or `manage.py` / `DJANGO_SETTINGS_MODULE`                 | `references/languages/python/frameworks/django.md`    |
+| Symfony   | `symfony/framework-bundle` dep, or `bin/console` + `config/bundles.php` | `references/languages/php/frameworks/symfony.md`      |
+| Laravel   | `laravel/framework` dep, or `artisan` + `bootstrap/app.php`             | `references/languages/php/frameworks/laravel.md`      |
+
+If no framework is detected, or the detected one has no delta file, stop at the
+language file — do not invent framework-specific tests or config.
 
 ### 3. Apply
 

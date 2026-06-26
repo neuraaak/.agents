@@ -3,10 +3,11 @@
 ## Rules
 
 - **VENV**: always `.venv`. Never install globally.
-- **TOOLS**: `uv` (packages), `ruff` (lint/format), `ty` (types), `pre-commit` (gates), `mkdocs` (docs).
+- **TOOLS**: `uv` (packages), `ruff` (lint/format), `ty` (types — see note), `pre-commit` (gates), `mkdocs` (docs).
+- **TYPES**: `ty` (Astral) is the forward default but still **in preview** — recommend it for new projects, and keep `mypy` as the stable fallback for teams that need maturity today. Pick one; don't run both as blocking gates.
 - **BACKEND**: `hatchling` as the build backend — no `setuptools`, no `flit`.
 - **CENTRAL**: all tool config in `pyproject.toml` — no `setup.cfg`, no `tox.ini`.
-- **VERSION**: Python 3.11+ minimum. Pin in `.python-version`.
+- **VERSION**: Python 3.12+ minimum. Pin in `.python-version`.
 
 ## Environment
 
@@ -22,7 +23,7 @@ uv run ty check
 ## `.python-version`
 
 ```text
-3.12
+3.14
 ```
 
 Commit this file to pin the Python version used by `uv` and `pyenv`.
@@ -41,10 +42,11 @@ build-backend = "hatchling.build"
 [project]
 name = "my-project"
 version = "0.1.0"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = []
 
-[project.optional-dependencies]
+# 🧰 Dev tooling (PEP 735 — installed by `uv sync` by default)
+[dependency-groups]
 dev = ["pytest", "ruff", "ty", "mkdocs"]
 
 # 🎨 Linting
@@ -64,9 +66,13 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
 
-# 🔍 Type checking
+# 🔍 Type checking — ty (preview default)
 [tool.ty]
 strict = true
+
+# Stable fallback — use instead of [tool.ty] if you need maturity today
+# [tool.mypy]
+# strict = true
 
 # 🧪 Tests
 [tool.pytest.ini_options]
@@ -82,15 +88,28 @@ Always document ruff rule selections with inline comments.
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.0
+    rev: v0.9.0          # pin to the latest ruff release
     hooks:
-      - id: ruff
+      - id: ruff-check   # the `ruff` hook was renamed `ruff-check`
         args: [--fix]
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+  # Type-check with the same checker declared in pyproject.toml (ty)
+  - repo: local
     hooks:
-      - id: mypy
+      - id: ty
+        name: ty
+        entry: uv run ty check
+        language: system
+        types: [python]
+        pass_filenames: false
+# Stable fallback — swap the local `ty` hook for mypy if you chose it instead:
+#   - repo: local
+#     hooks:
+#       - id: mypy
+#         name: mypy
+#         entry: uv run mypy
+#         language: system
+#         types: [python]
 ```
 
 ```bash
@@ -117,7 +136,7 @@ plugins:
             docstring_style: google
 ```
 
-## Core syntax (3.11+)
+## Core syntax (3.12+)
 
 ```python
 from __future__ import annotations  # deferred annotations — always
@@ -140,9 +159,10 @@ def read_file(path: str | Path) -> bytes:   # union with |, not Union[]
 ```dockerfile
 # Build stage
 FROM python:3.14-slim AS builder
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
-RUN pip install uv && uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev
 
 # Runtime stage
 FROM python:3.14-slim
@@ -181,6 +201,6 @@ API_KEY = get_env("API_KEY")
 - `from __future__ import annotations` in every Python file.
 - `hatchling` as the build backend.
 - `ruff lint` + `ruff format` configured with commented rules.
-- `pre-commit` installed with ruff + ty hooks.
+- `pre-commit` installed with ruff + a type-check hook (`ty` by default, `mypy` as the stable fallback).
 - Multi-stage Docker images, non-root, pinned tags.
 - Secrets via environment variables — never hard-coded.

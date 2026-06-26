@@ -8,11 +8,13 @@ Route to the correct language subdirectory. For tasks spanning both languages, l
 | :-------------------- | :--------------- | :------------------------------------ |
 | Python                | `pyproject.toml` | `languages/python/performance.md`     |
 | JavaScript/TypeScript | `package.json`   | `languages/javascript/performance.md` |
+| PHP                   | `composer.json`  | `languages/php/performance.md`        |
 
 ## What each file owns
 
 - **`python/performance.md`** — asyncio, uvloop, threading (3.14+ GIL-less), multiprocessing, generators, model selection table.
 - **`javascript/performance.md`** — async/await, AbortController, Worker Threads, Promise.allSettled, async iterables, build perf (Vite/esbuild).
+- **`php/performance.md`** — PHP-FPM vs ReactPHP/Fibers, generators, OPcache + JIT, APCu/Redis, preloading, profiling (Blackfire/Xdebug).
 
 ## Adding a new language
 
