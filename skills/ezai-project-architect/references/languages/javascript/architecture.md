@@ -145,6 +145,13 @@ export function createInMemoryOrderRepository(): OrderRepository {
 }
 ```
 
+## Enforcing module boundaries
+
+The layering rules above must be machine-checked, not just documented:
+
+- **dependency-cruiser** — declare architectural rules as code (no cycles, `infrastructure/` may not be imported by `domain/`) and gate them in CI. Supports ESM, CommonJS, and TS paths; exports a graph for visualization. `madge` is a lighter alternative for quick cycle detection / graph exploration, but doesn't enforce custom rules.
+- **knip** — detects dead code: unused exports, unreferenced files, orphaned types, and unused dependencies that neither ESLint nor `tsc` flag. Run in CI on growing projects to stop dead-code accumulation.
+
 ## Success criteria
 
 - `strict: true` in `tsconfig.json`.
@@ -152,6 +159,7 @@ export function createInMemoryOrderRepository(): OrderRepository {
 - `#private` fields for true encapsulation.
 - Feature-based module organization.
 - Repository pattern abstracts all data access.
+- Module boundaries enforced by `dependency-cruiser` rules in CI (no cycles, no inward violations).
 - `satisfies` for object-literal validation.
 - Branded types or Value Objects for primitives with strong semantics.
 - Fakes (not mocks) for testing Ports.

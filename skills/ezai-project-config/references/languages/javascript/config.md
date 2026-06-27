@@ -75,6 +75,11 @@ Volta remains an alternative that pins both Node and pnpm in one place:
 - `types: []` speeds up compilation by disabling automatic type inclusion
 - `noUncheckedIndexedAccess` catches array-index bugs
 
+> **Forward note — TypeScript 7 (`tsgo`):** the compiler is being rewritten in Go
+> (~10× faster, semantically identical). Available today as a preview
+> (`@typescript/native-preview`); becomes the stable `tsc` in TS 7 GA (~mid-2026).
+> The swap is drop-in — keep using `tsc --noEmit`, adopt on GA.
+
 ## Linting & formatting — pick one toolchain
 
 | Toolchain         | When                                                                 |

@@ -3,7 +3,8 @@
 ## Rules
 
 - **PACKAGE MANAGER**: `composer` 2.x exclusively. Never install packages globally.
-- **TOOLS**: `composer` (deps), `PHP-CS-Fixer` (format), `PHPStan` (static analysis), `captainhook` or composer scripts (git hooks).
+- **TOOLS**: `composer` (deps), `PHP-CS-Fixer` (format — or `Laravel Pint`, a zero-config wrapper, on Laravel projects), `PHPStan` (static analysis), `captainhook` or composer scripts (git hooks).
+- **MIGRATION**: `Rector` (`rector/rector`) for automated AST migrations (PHP version or framework upgrades). Run `--dry-run` in CI to catch missed migrations; apply only in dedicated MRs, never auto-applied in the pipeline.
 - **TYPES**: `declare(strict_types=1)` at the top of **every** PHP file — no exceptions.
 - **CENTRAL**: all project metadata in `composer.json`. Tool config in dedicated files (`phpstan.neon`, `.php-cs-fixer.php`).
 - **VERSION**: PHP 8.3+ minimum. Pin in `.php-version` and in `composer.json` → `require.php`.

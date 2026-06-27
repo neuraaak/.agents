@@ -138,6 +138,13 @@ class SQLOrderRepository:
 
 Domain entities hold the business logic — not plain data bags (avoid the Anemic Domain Model).
 
+### Enforcing the dependency rule
+
+The inward rule must be machine-checked, not just documented:
+
+- **import-linter** — declare import contracts (`layers`, `forbidden`, `independence`) in `pyproject.toml` and gate them in CI (e.g. `domain/` may never import `infrastructure/`). Introduce early — hard to retrofit on a layered legacy.
+- **deptry** — catches missing, unused, or transitively-imported dependencies declared in `pyproject.toml`. Complements import-linter (declared vs. actually-used packages).
+
 ## Fakes for Port tests
 
 Prefer fakes (lightweight in-memory implementations) over complex mocks for testing Ports.
@@ -166,7 +173,7 @@ def test_process_order() -> None:
 
 - `__all__` defines the explicit public surface.
 - `Protocol` used for all structural contracts, not `abc.ABC`.
-- No infrastructure imports in Domain or Application.
+- No infrastructure imports in Domain or Application — enforced by `import-linter` contracts in CI.
 - Fakes (not complex mocks) used to test Ports.
 - `@dataclass(frozen=True)` for immutable Value Objects.
 - `TypedDict` for external data without logic.

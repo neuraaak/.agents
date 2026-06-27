@@ -4,7 +4,8 @@
 
 - **VENV**: always `.venv`. Never install globally.
 - **TOOLS**: `uv` (packages), `ruff` (lint/format), `ty` (types — see note), `pre-commit` (gates), `mkdocs` (docs).
-- **TYPES**: `ty` (Astral) is the forward default but still **in preview** — recommend it for new projects, and keep `mypy` as the stable fallback for teams that need maturity today. Pick one; don't run both as blocking gates.
+- **TYPES**: `ty` (Astral) is the forward default but still **in preview** — recommend it for new projects, and keep `mypy` as the stable fallback for teams that need maturity today. Pick one; don't run both as blocking gates. `basedpyright` is a solid alternative for VS Code/Cursor teams (open-source Pylance features).
+- **LINT (deep)**: `ruff` covers PEP8 + a dozen tools, but `pylint` adds inter-file semantic analysis Ruff doesn't yet do — add it as a **CI-only second pass** if the project needs it, never as a pre-commit gate (too slow/noisy).
 - **BACKEND**: `hatchling` as the build backend — no `setuptools`, no `flit`.
 - **CENTRAL**: all tool config in `pyproject.toml` — no `setup.cfg`, no `tox.ini`.
 - **VERSION**: Python 3.12+ minimum. Pin in `.python-version`.

@@ -285,6 +285,14 @@ final class PlaceOrderHandlerTest extends \PHPUnit\Framework\TestCase
 }
 ```
 
+## Enforcing the dependency rule
+
+The inward rule must be machine-checked, not just documented:
+
+- **Deptrac** — declare layers (Domain, Application, Infrastructure) and allowed dependencies in YAML; gate in CI that `Domain` never depends on `Infrastructure`. Exports Graphviz/Mermaid for violation visualization.
+- **PHPArkitect** — same intent, rules written in native PHP (fluent API) instead of YAML — versionable, testable, "architecture-as-tests". Prefer it on DDD/hexagonal projects for long-term expressiveness.
+- **composer-unused** — flags packages declared in `composer.json` but never referenced in code. Complements `composer audit` (declared vs. actually-used dependencies).
+
 ## Success criteria
 
 - `declare(strict_types=1)` at the top of every PHP file.
@@ -292,7 +300,7 @@ final class PlaceOrderHandlerTest extends \PHPUnit\Framework\TestCase
 - `interface` for all structural contracts (never `abstract class` as the primary abstraction).
 - `readonly class` (8.2+) for immutable Value Objects with constructor validation.
 - `enum` (8.1+) for all finite state — no bare string/int constants.
-- No infrastructure imports in Domain or Application layers.
+- No infrastructure imports in Domain or Application layers — enforced by Deptrac/PHPArkitect rules in CI.
 - Fakes (not mocks) used to test Port implementations.
 - All properties declared `private`; behavior exposed via methods.
 - Zero `mixed`, zero undeclared return types.

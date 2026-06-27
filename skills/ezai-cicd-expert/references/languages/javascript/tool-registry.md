@@ -44,6 +44,14 @@ Never hard-code a fixed stack. An npm + biome + jest project must yield a differ
 - jest — `jest.config.*` or `jest` key in `package.json` · `jest --ci`
 - mocha — `.mocharc*` · `mocha`
 
+## Security scan (SAST + dependencies)
+
+- eslint-plugin-security (SAST) — plugin in `eslint.config.*` · covered by the `eslint .` lint step (no separate command)
+- semgrep (SAST, custom rules) — `.semgrep.yml` or `semgrep` in deps · `semgrep --config=p/javascript --error`
+- codeql (SAST, GitHub-native) — GitHub repo · `github/codeql-action/analyze` with `languages: javascript`
+- pnpm/npm audit (dependencies) — lockfile present · `pnpm audit --omit=dev` (npm: `npm audit --omit=dev`)
+- socket (supply chain, pre-install) — `@socketsecurity/cli` · `socket scan create` (behavioral, complements audit)
+
 ## Build (package artifact)
 
 - build script (preferred) — `"build"` in `package.json` scripts · call via package manager (e.g. `pnpm build`)

@@ -7,6 +7,7 @@ Routing for language-specific references. All paths are written from the
 | :-------------------- | :---------------------- | :----------------------------- |
 | Python                | `languages/python/`     | `pyproject.toml`, `*.py`       |
 | JavaScript/TypeScript | `languages/javascript/` | `package.json`, `*.ts`, `*.js` |
+| PHP                   | `languages/php/`        | `composer.json`, `*.php`       |
 
 Each language pairs with `common/` for the language-agnostic layer. Load only
 what the task needs.
@@ -34,6 +35,19 @@ Stack: VitePress or Docusaurus + TypeDoc + JSDoc/TSDoc + Diátaxis framework.
 - `languages/javascript/badge-registry.md` — emitting a badge block (npm version + tool badges); pair with the forge registry in `forge/`
 
 For page templates, use `common/quadrants-templates.md` — replace Python snippets with TypeScript/JavaScript equivalents.
+
+---
+
+## PHP (`languages/php/`)
+
+Stack: phpDocumentor or Doctum (API reference) + VitePress for prose + Diátaxis framework.
+
+- `languages/php/standards.md` — PHP specifics: PHPDoc tag syntax, the PHP 8 attribute rule, `@api`/`@internal` scoping (**pair with** `common/standards.md`)
+- `languages/php/toolchain.md` — choosing the docs tool stack, scaffolding `phpdoc.dist.xml` / `doctum.php` from scratch (canonical configs + best practices)
+- `languages/php/plugins-deploy.md` — running phpDocumentor/Doctum, multi-version, deploying the API + prose site to GitHub Pages
+- `languages/php/badge-registry.md` — emitting a badge block (Packagist version + tool badges); pair with the forge registry in `forge/`
+
+PHP API generators render the reference only — prose pages reuse the VitePress prose layer from `common/quadrants-templates.md` (replace snippets with PHP equivalents).
 
 ---
 

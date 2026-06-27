@@ -5,10 +5,10 @@ The role sequence and PHP-specific concerns for a CI pipeline. **Do not hard-cod
 ## Role sequence
 
 ```text
-install → lint → format-check → type-check → test → build → publish → docs
+install → lint → format-check → type-check → security-scan → test → build → publish → docs
 ```
 
-Lint / format-check / type-check are independent and gate the rest. `test` fans out across a PHP version matrix. `build`, `publish`, `docs` run only on a release ref.
+Lint / format-check / type-check / security-scan are independent and gate the rest. `security-scan` covers dependency CVEs (`composer audit`) plus taint SAST (`psalm --taint-analysis`) — resolve via the registry. `test` fans out across a PHP version matrix. `build`, `publish`, `docs` run only on a release ref.
 
 ## PHP-specific concerns
 

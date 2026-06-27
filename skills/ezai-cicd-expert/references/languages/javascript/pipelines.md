@@ -5,10 +5,10 @@ The role sequence and JS/TS-specific concerns for a CI pipeline. **Do not hard-c
 ## Role sequence
 
 ```text
-install → lint → format-check → type-check → test → build → publish → docs
+install → lint → format-check → type-check → security-scan → test → build → publish → docs
 ```
 
-Lint / format-check / type-check are independent and gate the rest. `test` fans out across a Node version matrix. `build`, `publish`, `docs` run only on a release ref.
+Lint / format-check / type-check / security-scan are independent and gate the rest. `security-scan` covers SAST (`eslint-plugin-security`, or CodeQL/Semgrep on higher-risk repos) plus dependency CVEs (`pnpm audit`) — resolve via the registry. `test` fans out across a Node version matrix. `build`, `publish`, `docs` run only on a release ref.
 
 ## JS/TS-specific concerns
 

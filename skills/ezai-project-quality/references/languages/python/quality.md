@@ -97,6 +97,25 @@ API_KEY = os.getenv("API_KEY") or ""
 - `subprocess` with list args, never `shell=True`.
 - Sanitize all LLM-generated content before execution or storage.
 
+## Security & dependency scanning
+
+```bash
+bandit -r src/ -ll        # SAST: -ll = medium severity minimum, fails CI on findings
+pip-audit                 # dependency CVEs against the PyPA Advisory DB (OSV)
+```
+
+- **SAST:** `bandit` (PyCQA, zero-config) as the default gate. `semgrep --config=p/python` when custom, versionable rules are needed (data-flow, polyglot).
+- **Dependencies:** `pip-audit` (official PyPA) as the default. `safety` only if its broader CVE DB catches something `pip-audit` misses.
+- Ruff already enforces the `S` (bandit) rule subset at lint time — `bandit`/`semgrep` add deeper, inter-file analysis in CI.
+
+## Mutation testing (bonus)
+
+```bash
+mutmut run && mutmut results   # introduces mutations, checks tests catch them
+```
+
+Use on critical business logic to validate test *quality*, not just coverage. `cosmic-ray` for large projects needing custom mutation operators.
+
 ## Structured logging
 
 ```python
@@ -123,4 +142,5 @@ Always include correlation IDs for distributed tracing.
 - Fakes preferred over mocks for Port implementations.
 - All I/O boundaries schema-validated with Pydantic.
 - No secrets in source code or logs.
+- `bandit` (SAST) and `pip-audit` (dependencies) run as CI gates.
 - Coverage 80–90% on business logic.

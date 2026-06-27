@@ -75,6 +75,24 @@ const API_KEY = process.env.API_KEY ?? "";
 - `helmet` (Express) or equivalent for HTTP security headers (CSP, HSTS, etc.).
 - `pnpm audit` in CI for dependency vulnerability scanning.
 
+## Security & dependency scanning
+
+```bash
+pnpm audit --omit=dev     # known CVEs in dependencies (npm advisory DB)
+```
+
+- **SAST:** `eslint-plugin-security` as the zero-config baseline when ESLint is present (catches `eval`, ReDoS, unsafe `child_process`). Add `semgrep --config=p/javascript` or GitHub-native **CodeQL** in CI for inter-file data-flow on higher-risk projects.
+- **Dependencies (known CVEs):** `pnpm audit` (or `npm audit`) as the default gate.
+- **Supply chain (pre-install):** `npm audit` only catches CVEs *after* publication — it missed the Sept. 2025 Shai-Hulud worm. **Socket** (`@socketsecurity/cli`) adds behavioral analysis (malware, typosquats, suspicious `postinstall`) before install. Worth it on any high-risk-profile project.
+
+## Mutation testing (bonus)
+
+```bash
+npx stryker run   # introduces mutations, checks tests catch them (Jest/Vitest/Mocha)
+```
+
+StrykerJS is the only serious mutation-testing tool on JS/TS — target critical modules when coverage is high but test assertions may be too loose.
+
 ## Structured logging
 
 ```typescript
@@ -95,4 +113,5 @@ Propagate correlation IDs across service boundaries for distributed tracing.
 - Zod validation at every I/O boundary.
 - Property-based tests for complex invariants via `fast-check`.
 - No secrets in source, logs, or client bundles.
+- `eslint-plugin-security` (SAST) and `pnpm audit` (dependencies) run as CI gates.
 - Coverage 80–90% on business logic.

@@ -46,6 +46,12 @@ Never hard-code a fixed stack. A Laravel + Pest + Psalm project must yield a Lar
 - PHPUnit — `phpunit.xml` or `phpunit.xml.dist` · `vendor/bin/phpunit` (coverage: `vendor/bin/phpunit --coverage-clover coverage.xml`)
 - Pest — `pest.config.php` or Pest in `composer.json` require-dev · `vendor/bin/pest` (coverage: `vendor/bin/pest --coverage --coverage-clover coverage.xml`)
 
+## Security scan (SAST + dependencies)
+
+- composer audit (dependencies) — `composer.lock` present · `composer audit --locked --no-dev`
+- psalm taint (SAST) — `psalm.xml` + Psalm in deps · `vendor/bin/psalm --taint-analysis`
+- roave/security-advisories (resolution guard) — `roave/security-advisories` in `require-dev` · enforced at install, no separate command
+
 ## Build (package artifact)
 
 PHP packages are not compiled. No build step in CI — skip this role.

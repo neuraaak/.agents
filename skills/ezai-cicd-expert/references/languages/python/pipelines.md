@@ -5,10 +5,10 @@ The role sequence and Python-specific concerns for a CI pipeline. **Do not hard-
 ## Role sequence
 
 ```text
-install → lint → format-check → type-check → test → build → publish → docs
+install → lint → format-check → type-check → security-scan → test → build → publish → docs
 ```
 
-Lint / format-check / type-check are independent and gate the rest. `test` fans out across a Python version matrix. `build`, `publish`, `docs` run only on a release ref.
+Lint / format-check / type-check / security-scan are independent and gate the rest. `security-scan` covers SAST (`bandit`) plus dependency CVEs (`pip-audit`) — resolve both via the registry. `test` fans out across a Python version matrix. `build`, `publish`, `docs` run only on a release ref.
 
 ## Python-specific concerns
 

@@ -221,6 +221,25 @@ $escaped = escapeshellarg($userInput);
 - Validate and whitelist file extensions before saving uploads
 - Never use `eval()`, `exec()`, `shell_exec()`, `system()` with user input
 
+## Security & dependency scanning
+
+```bash
+composer audit --locked --no-dev   # known CVEs in installed deps (Packagist advisories)
+vendor/bin/psalm --taint-analysis  # data-flow SAST: SQL injection, XSS, command injection
+```
+
+- **Dependencies (known CVEs):** `composer audit` (native since Composer 2.4) as the default gate. Add `roave/security-advisories:dev-latest` in `require-dev` to block installing vulnerable versions at resolution time.
+- **SAST (taint):** Psalm's `--taint-analysis` traces untrusted input (`$_GET/$_POST`) to dangerous sinks — run it on exposed endpoints. Complements PHPStan (which is type-focused, not taint-focused); run both in CI.
+- **Higher-risk profiles:** Snyk / Vulert add a broader CVE DB and PR integration on top of `composer audit`.
+
+## Mutation testing (bonus)
+
+```bash
+vendor/bin/infection --min-msi=80   # introduces mutations, checks tests catch them (MSI)
+```
+
+Infection is the reference (and only serious) PHP mutation tester — PHPUnit/Pest. Introduce only once coverage is already ≥60%; it reveals weak assertions that pass on broken code.
+
 ## Structured logging
 
 ```php
@@ -269,4 +288,5 @@ $logger->error('Payment failed', [
 - `htmlspecialchars(ENT_QUOTES | ENT_SUBSTITUTE)` on every untrusted HTML output.
 - Monolog with `JsonFormatter` + correlation ID processor.
 - No secrets in source code, logs, or committed `.env` files.
+- `composer audit` (dependencies) and Psalm taint analysis (SAST) run as CI gates.
 - Coverage 80–90% on domain/application logic.

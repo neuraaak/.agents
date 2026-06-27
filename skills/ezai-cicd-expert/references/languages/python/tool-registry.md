@@ -45,6 +45,13 @@ Never hard-code a fixed stack. A poetry + mypy + sphinx project must yield a poe
 
 - pytest — `pytest.ini` or `[tool.pytest.ini_options]` · `pytest` (coverage: `pytest --cov --cov-report=xml`)
 
+## Security scan (SAST + dependencies)
+
+- bandit (SAST) — `[tool.bandit]` or `.bandit` · `bandit -r src/ -ll` (`-ll` = medium severity minimum)
+- semgrep (SAST, custom rules) — `.semgrep.yml` or `semgrep` in deps · `semgrep --config=p/python --error`
+- pip-audit (dependencies) — uv/pip project · `pip-audit` (uv: `uv run pip-audit`)
+- safety (dependencies, alt) — `safety` in deps · `safety check`
+
 ## Build (package artifact)
 
 - uv — `[tool.uv]` · `uv build`
