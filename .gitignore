@@ -20,6 +20,7 @@
 !/claude_desktop_config.json
 !/config.json
 !/settings.json
+!/sync-config.cmd
 
 # Dossiers gérés à la main par l'utilisateur (et tout leur contenu)
 !rules/**
