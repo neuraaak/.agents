@@ -1,0 +1,133 @@
+{
+  "env": {
+    "SEMGREP_SEND_METRICS": "off",
+    "SEMGREP_NOSEND_METRICS": "1",
+    "OTEL_TRACES_EXPORTER": "none",
+    "OTEL_LOGS_EXPORTER": "none",
+    "OTEL_METRICS_EXPORTER": "none"
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:diataxis.fr)",
+      "WebFetch(domain:idratherbewriting.com)",
+      "WebFetch(domain:ubuntu.com)",
+      "WebFetch(domain:documentation.ai)",
+      "WebFetch(domain:ekline.io)",
+      "WebFetch(domain:squidfunk.github.io)",
+      "WebFetch(domain:diataxis-template.readthedocs.io)",
+      "WebFetch(domain:pypi.org)",
+      "Skill(ui-ux-pro-max)",
+      "Skill(ui-ux-pro-max:*)",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:writing-plans:*)",
+      "Skill(remember)",
+      "Skill(remember:*)",
+      "Bash(xargs grep:*)",
+      "Bash(uv run:*)",
+      "Bash(python -c ':*)",
+      "Bash(git diff --cached)",
+      "Bash(git log *)",
+      "Bash(git checkout *)",
+      "Bash(graphify query *)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-docs-specialist-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-docs-specialist-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.claude/rules/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/references/common/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/references/common/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/references/forge/github/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/references/forge/github/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/references/languages/javascript/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/references/languages/javascript/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/forge/github/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/forge/github/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/languages/javascript/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/languages/javascript/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-project-architect/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-project-architect/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.claude/skills/ezai-project-quality/references/languages/python/**)",
+      "Read(//c/Users/Utilisateur/.agents/skills/ezai-project-quality/references/languages/python/**)",
+      "Read(//c/Users/g29285/.claude/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/common/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-project-quality/references/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/forge/gitlab/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/forge/gitlab/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/common/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/common/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/languages/python/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/languages/python/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-docs-specialist-persona/references/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-docs-specialist-persona/references/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-docs-writer/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-cicd-expert/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-senior-dev-persona/references/**)",
+      "Read(//c/Users/g29285/.claude/skills/ezai-code-formatter/references/languages/**)",
+      "Read(//c/Users/g29285/.agents/skills/ezai-code-formatter/references/languages/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Utilisateur\\.claude",
+      "c:\\Users\\g29285\\.claude"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "greptile@claude-plugins-official": true,
+    "gitlab@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": true,
+    "remember@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "sourcegraph@claude-plugins-official": true,
+    "pydantic-ai@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-dev": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/obra/superpowers.git"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    },
+    "ezai-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/neuraaak/ezai-marketplace.git"
+      }
+    }
+  },
+  "effortLevel": "low",
+  "theme": "dark",
+  "model": "sonnet"
+}
