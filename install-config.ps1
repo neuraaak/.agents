@@ -104,6 +104,24 @@ function Install-Vibe {
     Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
+function Show-Help {
+    Write-Host @"
+Usage: install-config.ps1 [options]
+
+Installe/regenere les fichiers de configuration des providers a partir
+des templates de ce depot (.claude/CLAUDE.md, .gemini/GEMINI.md, etc.).
+
+Options:
+  --claude, -C   Installer la config Claude (defaut si aucune option)
+  --gemini, -G   Installer la config Gemini
+  --codex,  -X   Installer la config Codex
+  --vibe,   -B   Installer la config Mistral Vibe
+  --help,   -h   Afficher cette aide
+
+Plusieurs options peuvent etre combinees dans un meme appel.
+"@
+}
+
 $knownFlags = @{
     "--claude" = "claude"
     "-C"       = "claude"
@@ -112,7 +130,19 @@ $knownFlags = @{
     "--codex"  = "codex"
     "-X"       = "codex"
     "--vibe"   = "vibe"
-    "-V"       = "vibe"
+    "-B"       = "vibe"
+}
+
+# NB: certaines lettres seules (-V, -D, -W, -E, -I, -O, -P...) sont reservees
+# par PowerShell comme abreviations des parametres communs (-Verbose, -Debug,
+# -WarningAction, -ErrorAction...) et sont absorbees silencieusement AVANT
+# d'atteindre $RawArgs, meme sans [CmdletBinding()]. Ne jamais leur associer
+# un flag ici : l'argument disparaitrait sans erreur (c'est ce qui causait
+# "-V" -> installation Claude au lieu de Vibe).
+
+if ($RawArgs -contains "--help" -or $RawArgs -contains "-h") {
+    Show-Help
+    exit 0
 }
 
 $targets = @()
@@ -120,7 +150,7 @@ foreach ($arg in $RawArgs) {
     if ($knownFlags.ContainsKey($arg)) {
         $targets += $knownFlags[$arg]
     } else {
-        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -V"
+        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --help, -h"
         exit 1
     }
 }
