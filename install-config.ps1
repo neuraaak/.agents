@@ -32,35 +32,25 @@ function Write-FromTemplate {
     Write-Host "$TargetFile genere"
 }
 
-function Install-Claude {
-    $templateFile = Join-Path $repoDir "templates\CLAUDE.template.md"
-    $targetFile = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
-    Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
-}
+function Write-FromTemplateWithInlinedRules {
+    # Pour les providers sans mecanisme d'import (Codex, Vibe) : inline le
+    # contenu des rules a la place de chaque placeholder {{INCLUDE:chemin/relatif.md}}.
+    param(
+        [string]$TemplateFile,
+        [string]$TargetFile
+    )
 
-function Install-Gemini {
-    $templateFile = Join-Path $repoDir "templates\GEMINI.template.md"
-    $targetFile = Join-Path $env:USERPROFILE ".gemini\GEMINI.md"
-    Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
-}
-
-function Install-Codex {
-    # Codex n'a pas de mecanisme d'import : on inline le contenu des rules
-    # a la place de chaque placeholder {{INCLUDE:chemin/relatif.md}}.
-    $templateFile = Join-Path $repoDir "templates\AGENTS.template.md"
-    $targetFile = Join-Path $env:USERPROFILE ".codex\AGENTS.md"
-
-    if (-not (Test-Path $templateFile)) {
-        Write-Error "$templateFile introuvable"
+    if (-not (Test-Path $TemplateFile)) {
+        Write-Error "$TemplateFile introuvable"
         exit 1
     }
 
-    $targetDir = Split-Path -Parent $targetFile
+    $targetDir = Split-Path -Parent $TargetFile
     if (-not (Test-Path $targetDir)) {
         New-Item -ItemType Directory -Path $targetDir | Out-Null
     }
 
-    $content = [System.IO.File]::ReadAllText($templateFile, $utf8NoBom)
+    $content = [System.IO.File]::ReadAllText($TemplateFile, $utf8NoBom)
     $content = $content.Replace("{{AGENTS_DIR}}", $repoDir)
 
     $rulesDir = (Resolve-Path (Join-Path $repoDir "rules")).Path
@@ -82,9 +72,36 @@ function Install-Codex {
         [System.IO.File]::ReadAllText($resolvedRuleFile, $utf8NoBom).Trim()
     })
 
-    [System.IO.File]::WriteAllText($targetFile, $content, $utf8NoBom)
+    [System.IO.File]::WriteAllText($TargetFile, $content, $utf8NoBom)
 
-    Write-Host "$targetFile genere"
+    Write-Host "$TargetFile genere"
+}
+
+function Install-Claude {
+    $templateFile = Join-Path $repoDir "templates\CLAUDE.template.md"
+    $targetFile = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
+    Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
+}
+
+function Install-Gemini {
+    $templateFile = Join-Path $repoDir "templates\GEMINI.template.md"
+    $targetFile = Join-Path $env:USERPROFILE ".gemini\GEMINI.md"
+    Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
+}
+
+function Install-Codex {
+    # Codex n'a pas de mecanisme d'import (memes conventions que Vibe : AGENTS.md, pas d'include).
+    $templateFile = Join-Path $repoDir "templates\AGENTS.template.md"
+    $targetFile = Join-Path $env:USERPROFILE ".codex\AGENTS.md"
+    Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
+}
+
+function Install-Vibe {
+    # Mistral Vibe suit exactement la meme convention que Codex : fichier
+    # AGENTS.md, pas de mecanisme d'import. Meme template reutilise.
+    $templateFile = Join-Path $repoDir "templates\AGENTS.template.md"
+    $targetFile = Join-Path $env:USERPROFILE ".vibe\AGENTS.md"
+    Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
 $knownFlags = @{
@@ -94,6 +111,8 @@ $knownFlags = @{
     "-G"       = "gemini"
     "--codex"  = "codex"
     "-X"       = "codex"
+    "--vibe"   = "vibe"
+    "-V"       = "vibe"
 }
 
 $targets = @()
@@ -101,7 +120,7 @@ foreach ($arg in $RawArgs) {
     if ($knownFlags.ContainsKey($arg)) {
         $targets += $knownFlags[$arg]
     } else {
-        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X"
+        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -V"
         exit 1
     }
 }
@@ -115,5 +134,6 @@ foreach ($target in ($targets | Select-Object -Unique)) {
         "claude" { Install-Claude }
         "gemini" { Install-Gemini }
         "codex"  { Install-Codex }
+        "vibe"   { Install-Vibe }
     }
 }
