@@ -1,63 +1,6 @@
-# ==============================================================================
-# GITIGNORE INVERSÉ OPTIMISÉ POUR WORKSPACE AGENT / CLAUDE
-# Objectif : Suivre uniquement les fichiers utilisateur (skills, plugins, etc.)
-# et ignorer tous les fichiers système et de fonctionnement de l'agent.
-# ==============================================================================
-
-# 1. Ignorer absolument tout par défaut
-*
-
-# 2. Autoriser la traversée des répertoires (permet à Git d'inspecter les dossiers)
-!**/
-
-# 3. FICHIERS ET DOSSIERS UTILISATEUR À TRACKER
-# ------------------------------------------------------------------------------
-# Fichiers de configuration et documentation à la racine
-!/.gitignore
-!/CLAUDE.md
-!/README.md
-!/package.json
-!/claude_desktop_config.json
-!/config.json
-!/settings.json
-!/sync-config.cmd
-
-# Dossiers gérés à la main par l'utilisateur (et tout leur contenu)
-!rules/**
-!skills/**
-!mcp-servers/**
-!tools/**
-!src/**
-
-# NOTE plugins/ : état managé par Claude Code (chemins absolus machine-
-# spécifiques, timestamps, caches, clones git de marketplaces distantes).
-# Volontairement NON tracké car trompeur entre postes. La réinstallation se
-# fait via un manifeste déclaratif + bootstrap (à venir).
-# On garde uniquement le manifeste s'il existe :
-!plugins.manifest
-
-# 4. EXCLUSIONS - FICHIERS CORE CLAUDE / SYSTÈME À IGNORER
-# (Ces règles de blocage prévalent sur les autorisations ci-dessus)
-# ------------------------------------------------------------------------------
-# État managé par Claude Code (cf. note section 3). Ancré pour neutraliser
-# le `!**/` de traversée, y compris les clones git de marketplaces.
-/plugins/
-
-# Fichiers de fonctionnement interne de l'agent
-**/tasks/
-**/daemon/
-**/history/
-**/logs/
-**/cache/
-**/.cache/
-**/.claude/
-**/*.log
-
-# Bases de données locales et temporaires
-**/db/
-**/*.db
-**/*.sqlite
-**/*.sqlite3
+# Fichiers système
+**/.DS_Store
+Thumbs.db
 
 # Dépendances, environnements virtuels et builds
 **/node_modules/
@@ -67,6 +10,9 @@
 **/.venv/
 **/__pycache__/
 
-# Fichiers système divers
-**/.DS_Store
-Thumbs.db
+# Logs et caches
+**/*.log
+**/.cache/
+
+# Specs et plans de travail superpowers (voir rules/common/skills.md)
+.superpowers/
