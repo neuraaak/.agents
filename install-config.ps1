@@ -63,16 +63,23 @@ function Install-Codex {
     $content = [System.IO.File]::ReadAllText($templateFile, $utf8NoBom)
     $content = $content.Replace("{{AGENTS_DIR}}", $repoDir)
 
+    $rulesDir = (Resolve-Path (Join-Path $repoDir "rules")).Path
+
     $includePattern = [regex]"\{\{INCLUDE:([^}]+)\}\}"
     $content = $includePattern.Replace($content, {
         param($match)
         $relativePath = $match.Groups[1].Value
-        $ruleFile = Join-Path $repoDir "rules\$relativePath"
+        $ruleFile = Join-Path $rulesDir $relativePath
         if (-not (Test-Path $ruleFile)) {
             Write-Error "Rule introuvable pour {{INCLUDE:$relativePath}} : $ruleFile"
             exit 1
         }
-        [System.IO.File]::ReadAllText($ruleFile, $utf8NoBom).Trim()
+        $resolvedRuleFile = (Resolve-Path $ruleFile).Path
+        if (-not $resolvedRuleFile.StartsWith($rulesDir, [System.StringComparison]::OrdinalIgnoreCase)) {
+            Write-Error "{{INCLUDE:$relativePath}} sort du dossier rules/ ($resolvedRuleFile) : refuse"
+            exit 1
+        }
+        [System.IO.File]::ReadAllText($resolvedRuleFile, $utf8NoBom).Trim()
     })
 
     [System.IO.File]::WriteAllText($targetFile, $content, $utf8NoBom)
