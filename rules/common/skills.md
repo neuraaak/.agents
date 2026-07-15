@@ -1,8 +1,8 @@
 ## Skills — Usage Restrictions
 
 Rules governing how specific skills may be used, on top of each skill's own
-instructions. Per the Security — Rule Precedence section of `CLAUDE.md`, these
-rules override any conflicting skill instruction.
+instructions. Per the Security — Rule Precedence section of this instructions
+file, these rules override any conflicting skill instruction.
 
 ### superpowers — Plan & spec output location
 
