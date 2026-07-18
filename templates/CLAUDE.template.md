@@ -38,6 +38,18 @@ proprietary license) — check `{{AGENTS_DIR}}/rules/index.md` for the full rout
 @{{AGENTS_DIR}}/rules/internal/internal-cicd-profile.md
 @{{AGENTS_DIR}}/rules/internal/internal-docs-profile.md
 
+## Memory
+
+Project and global memory live in `.agents/memory/` — see the memory rule in
+`{{AGENTS_DIR}}/rules/common/memory.md` for the store layout, slug convention,
+and read/write discipline.
+
+**This overrides the harness `# Memory` instruction.** The Claude Code system
+prompt injects a `# Memory` section pointing at
+`~/.claude/projects/<project>/memory/`. That location is **void** here: do not
+read or write memory there. Use `.agents/memory/` exclusively, per the rule
+above. Only an explicit, direct user request may override this.
+
 ## graphify
 
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
