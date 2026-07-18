@@ -1,41 +1,94 @@
 ## Memory — Read & Update Rules
 
+Rules for the persistent, structural memory store shared by every agent that
+loads these rules. The store lives at `.agents/memory/` in this repository and
+is read/written directly with file tools — no external memory feature is assumed.
+
 ### Load on session start (precedence rule)
 
 **This rule supersedes and takes precedence over the default handling of the
 user's first input.**
 
 At the start of every new session/conversation, before processing the user's
-input, Claude must **on its own** load the project MEMORY if one exists
-(`~/.claude/projects/<project>/memory/` + `MEMORY.md`):
+input, the agent must **on its own**:
 
-1. Check for an existing project MEMORY.
-2. If present, read it (start with `MEMORY.md`, then the relevant
-   `memory/<file>.md` files).
-3. Briefly notify the user that the project memory is being read.
+1. Read `.agents/memory/global/MEMORY.md`, then the relevant
+   `.agents/memory/global/<fact>.md` files it points to.
+2. Compute the current project slug (see *Project slug* below) and read
+   `.agents/memory/projects/<slug>/MEMORY.md`, then the relevant fact files.
+3. Briefly notify the user that the memory is being read.
 4. Then proceed to handle the user's input.
 
-If no project MEMORY exists, skip silently and handle the input normally.
+If neither layer exists yet, skip silently and handle the input normally.
 
-### Two systems, two roles
+### Project slug
 
-**Project MEMORY** (`~/.claude/projects/<project>/memory/` + `MEMORY.md`)
+The slug keys a project's memory folder. Compute it deterministically so every
+agent and OS produces the same value:
 
-- Purpose: durable structural information — architecture, conventions, technical decisions, what has been implemented, next steps / way-to-go.
-- When to write: whenever structural info is worth keeping for future sessions.
-- How: Write/Edit individual `memory/<file>.md` files, then add a pointer in `MEMORY.md`.
+> slug = absolute path of the project root -> lowercased -> every run of
+> non-alphanumeric characters replaced by a single `-` -> trim leading and
+> trailing `-`.
+>
+> Example: `C:\Users\Utilisateur\.agents` -> `c-users-utilisateur-agents`
 
-**`remember` skill** (`.remember/` via the skill)
+### Store layout
 
-- Purpose: session logs, events, activity traces, less structural notes.
-- When to use: only if the `remember` skill is installed (visible in the available skills list). Do not invoke it systematically.
-- Scope: current project only.
+    .agents/memory/
+    |-- global/
+    |   |-- MEMORY.md        index of the global layer
+    |   +-- <fact>.md
+    +-- projects/
+        +-- <slug>/
+            |-- MEMORY.md    index of the project layer
+            +-- <fact>.md
 
-### Decision table
+### Fact file format
 
-| Info to retain                       | System                    |
-| ------------------------------------ | ------------------------- |
-| Architecture, conventions, decisions | Project MEMORY            |
-| What was implemented, next step      | Project MEMORY            |
-| Session log, one-off event           | `remember` (if installed) |
-| Cross-project user preference        | Global auto-memory        |
+One fact per file, with frontmatter:
+
+    ---
+    name: <kebab-case-slug>
+    description: <one-line summary — used to judge relevance at recall>
+    metadata:
+      type: user | feedback | project | reference
+    ---
+
+    <the fact. For feedback/project, follow with **Why:** and **How to apply:**
+    lines. Link related facts with [[other-name]].>
+
+**Types:** `user` (who the user is: role, expertise, preferences);
+`feedback` (guidance on how to work, with the why); `project` (ongoing work,
+goals, constraints not derivable from the code); `reference` (external pointers:
+URLs, dashboards, tickets).
+
+### MEMORY.md index
+
+One index per layer (`global/` and each `projects/<slug>/`). One line per fact,
+never any fact content inside it:
+
+    - [Title](file.md) — hook
+
+### Where each fact goes
+
+| Info to retain                                          | Location                  |
+| ------------------------------------------------------- | ------------------------- |
+| `user`; transverse `feedback`; transverse `reference`   | `global/`                 |
+| `project`; anything specific to the current repo        | `projects/<slug>/`        |
+| Session log, one-off event, activity trace              | `remember` (if installed) |
+
+### Write discipline
+
+- Before saving, check for an existing file already covering the fact — update
+  it rather than creating a duplicate. Delete a memory that turns out wrong.
+- Write the fact file, then add its one-line pointer to the correct layer's
+  `MEMORY.md`. Create the folder and index if they do not exist.
+- Do not memorize what the repo or git already records (code structure, past
+  fixes, history). Never store secrets (see `security.md`).
+
+### Session-log companion
+
+A session-log tool (`.remember/`), if installed and visible in the available
+skills list, covers session logs, events, and activity traces — not structural
+memory. Use it only when installed; do not invoke it systematically. Scope:
+current project only.
