@@ -16,3 +16,6 @@ Thumbs.db
 
 # Specs et plans de travail superpowers (voir rules/common/skills.md)
 .superpowers/
+
+# Store mémoire partagé, local par machine (voir rules/common/memory.md)
+/memory/
