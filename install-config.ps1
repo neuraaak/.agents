@@ -57,20 +57,21 @@ function Write-FromTemplateWithInlinedRules {
 
     $includePattern = [regex]"\{\{INCLUDE:([^}]+)\}\}"
     $content = $includePattern.Replace($content, {
-        param($match)
-        $relativePath = $match.Groups[1].Value
-        $ruleFile = Join-Path $rulesDir $relativePath
-        if (-not (Test-Path $ruleFile)) {
-            Write-Error "Rule introuvable pour {{INCLUDE:$relativePath}} : $ruleFile"
-            exit 1
-        }
-        $resolvedRuleFile = (Resolve-Path $ruleFile).Path
-        if (-not $resolvedRuleFile.StartsWith($rulesDir, [System.StringComparison]::OrdinalIgnoreCase)) {
-            Write-Error "{{INCLUDE:$relativePath}} sort du dossier rules/ ($resolvedRuleFile) : refuse"
-            exit 1
-        }
-        [System.IO.File]::ReadAllText($resolvedRuleFile, $utf8NoBom).Trim()
-    })
+            param($match)
+            $relativePath = $match.Groups[1].Value
+            $ruleFile = Join-Path $rulesDir $relativePath
+            if (-not (Test-Path $ruleFile)) {
+                Write-Error "Rule introuvable pour {{INCLUDE:$relativePath}} : $ruleFile"
+                exit 1
+            }
+            $resolvedRuleFile = (Resolve-Path $ruleFile).Path
+            $rulesDirPrefix = $rulesDir + [System.IO.Path]::DirectorySeparatorChar
+            if (-not $resolvedRuleFile.StartsWith($rulesDirPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+                Write-Error "{{INCLUDE:$relativePath}} sort du dossier rules/ ($resolvedRuleFile) : refuse"
+                exit 1
+            }
+            [System.IO.File]::ReadAllText($resolvedRuleFile, $utf8NoBom).Trim()
+        })
 
     [System.IO.File]::WriteAllText($TargetFile, $content, $utf8NoBom)
 
@@ -84,9 +85,12 @@ function Install-Claude {
 }
 
 function Install-Gemini {
+    # Gemini CLI refuse les @import en chemin absolu hors du basePath de
+    # GEMINI.md (~/.gemini/) avec "Path traversal attempt". On inline donc
+    # les rules, comme pour Codex/Vibe, au lieu de les referencer via @.
     $templateFile = Join-Path $repoDir "templates\GEMINI.template.md"
     $targetFile = Join-Path $env:USERPROFILE ".gemini\GEMINI.md"
-    Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
+    Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
 function Install-Codex {
@@ -149,7 +153,8 @@ $targets = @()
 foreach ($arg in $RawArgs) {
     if ($knownFlags.ContainsKey($arg)) {
         $targets += $knownFlags[$arg]
-    } else {
+    }
+    else {
         Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --help, -h"
         exit 1
     }
@@ -163,7 +168,7 @@ foreach ($target in ($targets | Select-Object -Unique)) {
     switch ($target) {
         "claude" { Install-Claude }
         "gemini" { Install-Gemini }
-        "codex"  { Install-Codex }
-        "vibe"   { Install-Vibe }
+        "codex" { Install-Codex }
+        "vibe" { Install-Vibe }
     }
 }
