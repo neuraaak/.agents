@@ -6,9 +6,15 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Forme a slashs pour substituer {{AGENTS_DIR}} : les fichiers generes affichent
+# ainsi C:/Users/.../.agents (coherent avec les @import ~/ et les conventions
+# markdown). $repoDir reste en backslashs pour Join-Path / operations fichier.
+$repoDirFwd = $repoDir.Replace('\', '/')
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 function Write-FromTemplate {
+    # Copie le template en remplacant {{AGENTS_DIR}} par le chemin du depot,
+    # sans toucher aux @import : le provider les resout au demarrage de session.
     param(
         [string]$TemplateFile,
         [string]$TargetFile
@@ -25,16 +31,58 @@ function Write-FromTemplate {
     }
 
     $content = [System.IO.File]::ReadAllText($TemplateFile, $utf8NoBom)
-    $content = $content.Replace("{{AGENTS_DIR}}", $repoDir)
+    $content = $content.Replace("{{AGENTS_DIR}}", $repoDirFwd)
 
     [System.IO.File]::WriteAllText($TargetFile, $content, $utf8NoBom)
 
     Write-Host "$TargetFile genere"
 }
 
+function Set-RulesJunction {
+    # Cree/repare une jonction de dossier <LinkDir> -> <repo>/rules pour que les
+    # @import "~/.../rules/..." des templates resolvent vers la source unique
+    # (.agents/rules) sans dupliquer le contenu. Jonction et non symlink : ne
+    # demande NI privileges admin NI Developer Mode (contrairement a New-Item
+    # -ItemType SymbolicLink). Les @import en chemin absolu Windows (C:\...)
+    # n'etant pas resolus de facon fiable, cette indirection donne une forme
+    # "~/" que le resolveur reconnait.
+    param(
+        [string]$LinkDir
+    )
+
+    $target = (Resolve-Path (Join-Path $repoDir "rules")).Path
+
+    $existing = Get-Item -LiteralPath $LinkDir -ErrorAction SilentlyContinue
+    if ($existing) {
+        if ($existing.LinkType -eq "Junction" -and (($existing.Target -join "") -ieq $target)) {
+            Write-Host "$LinkDir -> $target (jonction deja en place)"
+            return
+        }
+        if ($existing.LinkType -eq "Junction" -or $existing.LinkType -eq "SymbolicLink") {
+            # Lien existant mais mauvaise cible : on le refait.
+            Remove-Item -LiteralPath $LinkDir -Force
+        }
+        else {
+            Write-Error "$LinkDir existe et n'est pas un lien (dossier/fichier reel) : refuse d'ecraser"
+            exit 1
+        }
+    }
+
+    $parent = Split-Path -Parent $LinkDir
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent | Out-Null
+    }
+
+    New-Item -ItemType Junction -Path $LinkDir -Target $target | Out-Null
+    Write-Host "$LinkDir -> $target (jonction creee)"
+}
+
 function Write-FromTemplateWithInlinedRules {
-    # Pour les providers sans mecanisme d'import (Codex, Vibe) : inline le
-    # contenu des rules a la place de chaque placeholder {{INCLUDE:chemin/relatif.md}}.
+    # Inline le contenu des rules a la place de chaque placeholder
+    # {{INCLUDE:chemin/relatif.md}}. Utilise pour les providers sans @import
+    # exploitable (Codex, Vibe : pas de mecanisme d'import ; Gemini : refuse les
+    # @import hors basePath en "path traversal"). Claude, lui, passe par des
+    # @import + jonction (voir Set-RulesJunction / Install-Claude).
     param(
         [string]$TemplateFile,
         [string]$TargetFile
@@ -51,7 +99,7 @@ function Write-FromTemplateWithInlinedRules {
     }
 
     $content = [System.IO.File]::ReadAllText($TemplateFile, $utf8NoBom)
-    $content = $content.Replace("{{AGENTS_DIR}}", $repoDir)
+    $content = $content.Replace("{{AGENTS_DIR}}", $repoDirFwd)
 
     $rulesDir = (Resolve-Path (Join-Path $repoDir "rules")).Path
 
@@ -79,6 +127,12 @@ function Write-FromTemplateWithInlinedRules {
 }
 
 function Install-Claude {
+    # Claude Code n'expanse pas les @import en chemin absolu Windows (C:\...).
+    # On garde donc un CLAUDE.md court (@import) et on redirige ~/.claude/rules
+    # vers .agents/rules par une jonction : les rules restent une source unique
+    # et sont modifiables sans regenerer ce fichier.
+    Set-RulesJunction -LinkDir (Join-Path $env:USERPROFILE ".claude\rules")
+
     $templateFile = Join-Path $repoDir "templates\CLAUDE.template.md"
     $targetFile = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
     Write-FromTemplate -TemplateFile $templateFile -TargetFile $targetFile
