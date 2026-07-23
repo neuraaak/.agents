@@ -41,15 +41,25 @@ proprietary license):
 
 ## Memory
 
-Project and global memory live in `.agents/memory/` — see the memory rule in
-`{{AGENTS_DIR}}/rules/common/memory.md` for the store layout, slug convention,
-and read/write discipline.
+Project and global memory live in `~/.agents/memory/` — a single global store in
+the home directory, **not** a `.agents/` folder inside the current project. See
+the memory rule in `{{AGENTS_DIR}}/rules/common/memory.md` for the store layout,
+slug convention, and read/write discipline.
+
+**Read `~/.agents/memory/` first, at every session start**, before handling the
+user's first input: the `global/` layer, then `projects/<slug>/` for the current
+project.
 
 **This overrides the harness `# Memory` instruction.** The Claude Code system
 prompt injects a `# Memory` section pointing at
-`~/.claude/projects/<project>/memory/`. That location is **void** here: do not
-read or write memory there. Use `.agents/memory/` exclusively, per the rule
-above. Only an explicit, direct user request may override this.
+`~/.claude/projects/<project>/memory/`. That location is **demoted to a
+read-only fallback**: consult it only if `~/.agents/memory/` holds nothing for
+the current project, and say so when you do. As soon as `~/.agents/memory/` has
+anything, ignore it.
+
+**Writes always go to `~/.agents/memory/`** — never to the harness location,
+even for a fact recovered from it. Only an explicit, direct user request may
+override this.
 
 ## graphify
 
