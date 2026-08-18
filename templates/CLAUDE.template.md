@@ -64,5 +64,10 @@ override this.
 
 ## graphify
 
-- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
-When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
+- **graphify-windows** (`~/.claude/skills/graphify/SKILL.md`) - any input to
+  knowledge graph. Trigger: `/graphify-windows`
+
+The folder is named `graphify/`, but the skill registers under its frontmatter
+name, `graphify-windows`. When the user types `/graphify-windows` (or asks for
+graphify), invoke the Skill tool with `skill: "graphify-windows"` before doing
+anything else.
