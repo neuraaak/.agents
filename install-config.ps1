@@ -39,18 +39,21 @@ function Write-FromTemplate {
 }
 
 function Set-RulesJunction {
-    # Cree/repare une jonction de dossier <LinkDir> -> <repo>/rules pour que les
-    # @import "~/.../rules/..." des templates resolvent vers la source unique
-    # (.agents/rules) sans dupliquer le contenu. Jonction et non symlink : ne
-    # demande NI privileges admin NI Developer Mode (contrairement a New-Item
-    # -ItemType SymbolicLink). Les @import en chemin absolu Windows (C:\...)
-    # n'etant pas resolus de facon fiable, cette indirection donne une forme
-    # "~/" que le resolveur reconnait.
+    # Cree/repare une jonction de dossier <LinkDir> -> <repo>/rules/common.
+    # Claude Code decouvre et charge automatiquement tout ~/.claude/rules/*.md
+    # (recursivement) : aucun @import n'est necessaire. La jonction cible
+    # volontairement rules/common/ SEUL, car cette decouverte est
+    # inconditionnelle -- exposer rules/ en entier chargerait aussi
+    # rules/internal/, reserve aux projets prives, et rules/index.md qui arbitre
+    # ce choix. Ces deux-la restent lus a la demande via leur chemin absolu
+    # (voir templates/CLAUDE.template.md).
+    # Jonction et non symlink : ne demande NI privileges admin NI Developer Mode
+    # (contrairement a New-Item -ItemType SymbolicLink).
     param(
         [string]$LinkDir
     )
 
-    $target = (Resolve-Path (Join-Path $repoDir "rules")).Path
+    $target = (Resolve-Path (Join-Path $repoDir "rules\common")).Path
 
     $existing = Get-Item -LiteralPath $LinkDir -ErrorAction SilentlyContinue
     if ($existing) {
@@ -81,8 +84,8 @@ function Write-FromTemplateWithInlinedRules {
     # Inline le contenu des rules a la place de chaque placeholder
     # {{INCLUDE:chemin/relatif.md}}. Utilise pour les providers sans @import
     # exploitable (Codex, Vibe : pas de mecanisme d'import ; Gemini : refuse les
-    # @import hors basePath en "path traversal"). Claude, lui, passe par des
-    # @import + jonction (voir Set-RulesJunction / Install-Claude).
+    # @import hors basePath en "path traversal"). Claude, lui, passe par une
+    # jonction + decouverte native (voir Set-RulesJunction / Install-Claude).
     param(
         [string]$TemplateFile,
         [string]$TargetFile
@@ -127,10 +130,10 @@ function Write-FromTemplateWithInlinedRules {
 }
 
 function Install-Claude {
-    # Claude Code n'expanse pas les @import en chemin absolu Windows (C:\...).
-    # On garde donc un CLAUDE.md court (@import) et on redirige ~/.claude/rules
-    # vers .agents/rules par une jonction : les rules restent une source unique
-    # et sont modifiables sans regenerer ce fichier.
+    # ~/.claude/rules est une jonction vers .agents/rules/common : Claude Code
+    # y decouvre et charge les rules communes tout seul, sans @import. Elles
+    # restent une source unique, modifiables sans regenerer ce fichier ; seul
+    # CLAUDE.md est produit depuis le template.
     Set-RulesJunction -LinkDir (Join-Path $env:USERPROFILE ".claude\rules")
 
     $templateFile = Join-Path $repoDir "templates\CLAUDE.template.md"
