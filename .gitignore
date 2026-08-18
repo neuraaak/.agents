@@ -20,9 +20,7 @@ Thumbs.db
 # Store mémoire partagé, local par machine (voir rules/common/memory.md)
 /memory/
 
-# Skills tiers : installes et mis a jour par leurs propres outils
-# (install.sh, CLI amont, marketplace). Ce depot ne suit que les skills
-# ezai-*, dont il est la source unique via les symlinks ~/.claude/skills.
-/skills/agent-skill-creator/
-/skills/graphify/
-/skills/ui-ux-pro-max/
+# Skills : installes et mis a jour par leurs propres outils
+# (install.sh, CLI amont, marketplace) ou edites en place via les symlinks
+# ~/.claude/skills. Ce depot ne suit plus aucun skill.
+/skills/
