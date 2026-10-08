@@ -27,8 +27,9 @@ input, the agent must **on its own**:
 `~/.agents/memory/` is the **primary** store and always takes priority: read it
 first, and write **every** new or updated fact there — never anywhere else.
 
-Some hosts ship their own native memory store (e.g. Claude Code points a
-`# Memory` section at `~/.claude/projects/<project>/memory/`). Such a store is a
+Some hosts ship their own native memory store, usually injected as a `# Memory`
+section pointing somewhere inside the host's own config directory (Claude Code:
+`~/.claude/projects/<project>/memory/`). Such a store is a
 **read-only fallback**, used only when step 1 and step 2 above both come back
 empty for the current project:
 
