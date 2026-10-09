@@ -46,7 +46,9 @@ Subject line: `type(scope): description`
 - **scope** (optional): the module/area touched, e.g. `feat(auth): …`.
 - **description**: imperative mood, lowercase start, no trailing period,
   ≤ 72 characters.
-- **language**: French, to match the existing history.
+- **language**: the repository's own convention — see `common/language.md`
+  (read `git log --format=%B -20`; French by default on internal/private
+  repos, English on public/personal ones).
 
 Body (optional, after a blank line): explain the *why*, wrap at ~72 cols.
 Use bullet points for multiple changes.

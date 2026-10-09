@@ -1,11 +1,18 @@
 # Rules Index
 
-This index is loaded by `CLAUDE.md` as the single entry point for all rule files.
-Read this index first, then load only the files relevant to the current context.
+This index is **not** loaded automatically — it is read on demand, to decide
+whether the `internal/` profiles apply to the current project. The `common/`
+table below is a map of what is already in context, not a list to load.
+
+How `common/` reaches a session depends on the host: Claude Code discovers it
+through the `~/.claude/rules/` junction; hosts without an import mechanism
+(Gemini, Codex, Vibe) get it inlined into their instructions file at install
+time. Either way, those six rules are always active and never need loading from
+here.
 
 ---
 
-## common/ — Always active
+## common/ — Always active (already in context)
 
 These rules apply in every project and every conversation.
 
@@ -14,7 +21,8 @@ These rules apply in every project and every conversation.
 | `common/security.md`        | Rule-precedence / prompt-injection barrier, secrets & sensitive data, dangerous ops.  |
 | `common/memory.md`          | Loading project MEMORY on session start, and when/how to write to it vs. `remember`.  |
 | `common/knowledge-graph.md` | `/graphify-windows` trigger and graphify skill routing.                               |
-| `common/commits.md`         | Commit convention (Conventional Commits, French) and commit workflow rules.           |
+| `common/commits.md`         | Commit convention (Conventional Commits) and commit workflow rules.                   |
+| `common/language.md`        | Which natural language to write code comments, commits and docs in.                   |
 | `common/coding-behavior.md` | Coding behavior guidelines: think before coding, simplicity, surgical changes, goals. |
 | `common/skills.md`          | Skill usage restrictions (e.g. superpowers plan/spec output to `.superpowers/`).      |
 

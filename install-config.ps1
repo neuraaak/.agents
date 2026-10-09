@@ -165,6 +165,107 @@ function Install-Vibe {
     Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
+function Invoke-Verify {
+    # Controle d'integrite de ce qui est REELLEMENT installe, sans rien ecrire.
+    # Motif : l'installation a deja echoue silencieusement trois fois (CLAUDE.md
+    # perime un mois, GEMINI.md a 0 octet, AGENTS.md de Vibe porteur d'un ancien
+    # chemin memoire pendant six semaines). Dans les trois cas le fichier
+    # existait et paraissait correct a la lecture : seul un controle externe
+    # - fraicheur, placeholders, cible de la jonction - les distingue.
+    $problems = 0
+
+    # Reference de fraicheur, PAR PROVIDER : les sources ne sont pas les memes.
+    # Claude ne depend que de son template -- les rules communes lui arrivent
+    # par la jonction, donc une edition de rules/ ne perime PAS son CLAUDE.md.
+    # Les providers sans import mecanisme inlinent rules/ : toute edition d'une
+    # rule les perime.
+    $newestRule = Get-ChildItem -Path (Join-Path $repoDir "rules") -Recurse -File |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    Write-Host "Rule la plus recente : $($newestRule.Name) ($($newestRule.LastWriteTime))"
+    Write-Host ""
+
+    # 1. Jonction des rules communes (Claude uniquement).
+    $linkDir = Join-Path (Join-Path $env:USERPROFILE ".claude") "rules"
+    $expected = (Resolve-Path (Join-Path $repoDir "rules\common")).Path
+    $link = Get-Item -LiteralPath $linkDir -ErrorAction SilentlyContinue
+    if (-not $link) {
+        Write-Warning "jonction absente : $linkDir (aucune rule commune ne charge dans Claude)"
+        $problems++
+    }
+    elseif ($link.LinkType -ne "Junction" -or (($link.Target -join "") -ine $expected)) {
+        Write-Warning "jonction incorrecte : $linkDir -> $($link.Target -join '') (attendu $expected)"
+        $problems++
+    }
+    else {
+        # La decouverte native est recursive et inconditionnelle : internal/ et
+        # index.md ne doivent pas etre atteignables depuis la jonction.
+        $leaked = Get-ChildItem -Path $linkDir -Recurse -File -Filter *.md |
+            Where-Object { $_.FullName -match '[\/]internal[\/]' -or $_.Name -ieq 'index.md' }
+        if ($leaked) {
+            Write-Warning "jonction : fichiers conditionnels exposes ($($leaked.Name -join ', '))"
+            $problems++
+        }
+        else {
+            Write-Host "OK  jonction $linkDir -> $expected ($((Get-ChildItem -Path $linkDir -File -Filter *.md).Count) rules communes)"
+        }
+    }
+
+    # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
+    # Pour chaque provider : fichier genere, template dont il derive, et si les
+    # rules comptent dans sa fraicheur (inline) ou non (jonction).
+    $generated = [ordered]@{
+        "claude" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".claude") "CLAUDE.md"; Template = "CLAUDE.template.md"; InlinesRules = $false }
+        "gemini" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".gemini") "GEMINI.md"; Template = "GEMINI.template.md"; InlinesRules = $true }
+        "codex"  = @{ File = Join-Path (Join-Path $env:USERPROFILE ".codex") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
+        "vibe"   = @{ File = Join-Path (Join-Path $env:USERPROFILE ".vibe") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
+    }
+
+    foreach ($name in $generated.Keys) {
+        $spec = $generated[$name]
+        $file = $spec.File
+        $item = Get-Item -LiteralPath $file -ErrorAction SilentlyContinue
+        if (-not $item) {
+            Write-Host "--  $name non installe ($file absent)"
+            continue
+        }
+        if ($item.Length -eq 0) {
+            Write-Warning "$name : fichier vide ($file)"
+            $problems++
+            continue
+        }
+        # Placeholders non substitues. Cible {{AGENTS_DIR}} et {{INCLUDE:...}}
+        # seulement : les rules CI/CD contiennent du YAML ${{ secrets.X }}
+        # legitime, qui ne doit pas declencher d'alerte.
+        $content = [System.IO.File]::ReadAllText($file, $utf8NoBom)
+        if ($content -match "\{\{AGENTS_DIR\}\}" -or $content -match "\{\{INCLUDE:") {
+            Write-Warning "$name : placeholder non substitue dans $file"
+            $problems++
+            continue
+        }
+        $source = Get-Item -LiteralPath (Join-Path (Join-Path $repoDir "templates") $spec.Template)
+        if ($spec.InlinesRules -and $newestRule.LastWriteTime -gt $source.LastWriteTime) {
+            $source = $newestRule
+        }
+        if ($item.LastWriteTime -lt $source.LastWriteTime) {
+            Write-Warning "$name : PERIME ($($item.LastWriteTime)) - anterieur a $($source.Name). Regenerer."
+            $problems++
+            continue
+        }
+        Write-Host "OK  $name a jour ($($item.LastWriteTime), source $($source.Name))"
+    }
+
+    Write-Host ""
+    if ($problems -eq 0) {
+        Write-Host "Verification : aucun probleme."
+    }
+    else {
+        Write-Host "Verification : $problems probleme(s)."
+    }
+    # Compteur en portee script : un `return` depuis une fonction PowerShell
+    # part dans le pipeline et peut arriver sous forme de tableau a l'appelant.
+    $script:verifyProblems = $problems
+}
+
 function Show-Help {
     Write-Host @"
 Usage: install-config.ps1 [options]
@@ -177,6 +278,8 @@ Options:
   --gemini, -G   Installer la config Gemini
   --codex,  -X   Installer la config Codex
   --vibe,   -B   Installer la config Mistral Vibe
+  --verify, -Y   Verifier l'installation existante sans rien ecrire
+                 (jonction, placeholders, fichiers vides, fraicheur)
   --help,   -h   Afficher cette aide
 
 Plusieurs options peuvent etre combinees dans un meme appel.
@@ -192,6 +295,8 @@ $knownFlags = @{
     "-X"       = "codex"
     "--vibe"   = "vibe"
     "-B"       = "vibe"
+    "--verify" = "verify"
+    "-Y"       = "verify"
 }
 
 # NB: certaines lettres seules (-V, -D, -W, -E, -I, -O, -P...) sont reservees
@@ -212,12 +317,17 @@ foreach ($arg in $RawArgs) {
         $targets += $knownFlags[$arg]
     }
     else {
-        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --help, -h"
+        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --verify, -Y, --help, -h"
         exit 1
     }
 }
 
-if ($targets.Count -eq 0) {
+# --verify n'est pas une cible d'installation : on le sort de la liste pour le
+# jouer apres les installations eventuelles (`-C -Y` = installe puis verifie).
+$verify = $targets -contains "verify"
+$targets = @($targets | Where-Object { $_ -ne "verify" })
+
+if ($targets.Count -eq 0 -and -not $verify) {
     $targets = @("claude")
 }
 
@@ -228,4 +338,12 @@ foreach ($target in ($targets | Select-Object -Unique)) {
         "codex" { Install-Codex }
         "vibe" { Install-Vibe }
     }
+}
+
+if ($verify) {
+    if ($targets.Count -gt 0) { Write-Host "" }
+    $script:verifyProblems = 0
+    Invoke-Verify
+    if ($script:verifyProblems -gt 0) { exit 1 }
+    exit 0
 }
