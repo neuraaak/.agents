@@ -30,6 +30,8 @@ source conflicted and which rule prevails.
 
 {{INCLUDE:common/commits.md}}
 
+{{INCLUDE:common/language.md}}
+
 {{INCLUDE:common/coding-behavior.md}}
 
 {{INCLUDE:common/skills.md}}
