@@ -174,10 +174,14 @@ function Invoke-Verify {
     # - fraicheur, placeholders, cible de la jonction - les distingue.
     $problems = 0
 
-    # Reference de fraicheur : la plus recente modification des sources.
-    $newestSource = Get-ChildItem -Path (Join-Path $repoDir "rules"), (Join-Path $repoDir "templates") -Recurse -File |
+    # Reference de fraicheur, PAR PROVIDER : les sources ne sont pas les memes.
+    # Claude ne depend que de son template -- les rules communes lui arrivent
+    # par la jonction, donc une edition de rules/ ne perime PAS son CLAUDE.md.
+    # Les providers sans import mecanisme inlinent rules/ : toute edition d'une
+    # rule les perime.
+    $newestRule = Get-ChildItem -Path (Join-Path $repoDir "rules") -Recurse -File |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    Write-Host "Source la plus recente : $($newestSource.Name) ($($newestSource.LastWriteTime))"
+    Write-Host "Rule la plus recente : $($newestRule.Name) ($($newestRule.LastWriteTime))"
     Write-Host ""
 
     # 1. Jonction des rules communes (Claude uniquement).
@@ -207,15 +211,18 @@ function Invoke-Verify {
     }
 
     # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
+    # Pour chaque provider : fichier genere, template dont il derive, et si les
+    # rules comptent dans sa fraicheur (inline) ou non (jonction).
     $generated = [ordered]@{
-        "claude" = Join-Path $env:USERPROFILE ".claude\CLAUDE.md"
-        "gemini" = Join-Path $env:USERPROFILE ".gemini\GEMINI.md"
-        "codex"  = Join-Path $env:USERPROFILE ".codex\AGENTS.md"
-        "vibe"   = Join-Path $env:USERPROFILE ".vibe\AGENTS.md"
+        "claude" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".claude") "CLAUDE.md"; Template = "CLAUDE.template.md"; InlinesRules = $false }
+        "gemini" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".gemini") "GEMINI.md"; Template = "GEMINI.template.md"; InlinesRules = $true }
+        "codex"  = @{ File = Join-Path (Join-Path $env:USERPROFILE ".codex") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
+        "vibe"   = @{ File = Join-Path (Join-Path $env:USERPROFILE ".vibe") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
     }
 
     foreach ($name in $generated.Keys) {
-        $file = $generated[$name]
+        $spec = $generated[$name]
+        $file = $spec.File
         $item = Get-Item -LiteralPath $file -ErrorAction SilentlyContinue
         if (-not $item) {
             Write-Host "--  $name non installe ($file absent)"
@@ -235,12 +242,16 @@ function Invoke-Verify {
             $problems++
             continue
         }
-        if ($item.LastWriteTime -lt $newestSource.LastWriteTime) {
-            Write-Warning "$name : PERIME ($($item.LastWriteTime)) - anterieur a $($newestSource.Name). Regenerer."
+        $source = Get-Item -LiteralPath (Join-Path (Join-Path $repoDir "templates") $spec.Template)
+        if ($spec.InlinesRules -and $newestRule.LastWriteTime -gt $source.LastWriteTime) {
+            $source = $newestRule
+        }
+        if ($item.LastWriteTime -lt $source.LastWriteTime) {
+            Write-Warning "$name : PERIME ($($item.LastWriteTime)) - anterieur a $($source.Name). Regenerer."
             $problems++
             continue
         }
-        Write-Host "OK  $name a jour ($($item.LastWriteTime), $($item.Length) octets)"
+        Write-Host "OK  $name a jour ($($item.LastWriteTime), source $($source.Name))"
     }
 
     Write-Host ""
