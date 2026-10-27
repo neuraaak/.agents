@@ -165,6 +165,20 @@ function Install-Vibe {
     Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
+function Install-Kimi {
+    # Kimi Code lit $KIMI_CODE_HOME/AGENTS.md, par defaut ~/.kimi-code/AGENTS.md
+    # (et non ~/.kimi/, chemin de l'ancien kimi-cli Python). Memes conventions
+    # que Codex/Vibe : AGENTS.md, pas de mecanisme d'import. Meme template.
+    $templateFile = Join-Path $repoDir "templates\AGENTS.template.md"
+    $targetFile = Join-Path (Get-KimiHome) "AGENTS.md"
+    Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
+}
+
+function Get-KimiHome {
+    if ($env:KIMI_CODE_HOME) { return $env:KIMI_CODE_HOME }
+    return (Join-Path $env:USERPROFILE ".kimi-code")
+}
+
 function Invoke-Verify {
     # Controle d'integrite de ce qui est REELLEMENT installe, sans rien ecrire.
     # Motif : l'installation a deja echoue silencieusement trois fois (CLAUDE.md
@@ -218,6 +232,7 @@ function Invoke-Verify {
         "gemini" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".gemini") "GEMINI.md"; Template = "GEMINI.template.md"; InlinesRules = $true }
         "codex"  = @{ File = Join-Path (Join-Path $env:USERPROFILE ".codex") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
         "vibe"   = @{ File = Join-Path (Join-Path $env:USERPROFILE ".vibe") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
+        "kimi"   = @{ File = Join-Path (Get-KimiHome) "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
     }
 
     foreach ($name in $generated.Keys) {
@@ -278,6 +293,7 @@ Options:
   --gemini, -G   Installer la config Gemini
   --codex,  -X   Installer la config Codex
   --vibe,   -B   Installer la config Mistral Vibe
+  --kimi,   -K   Installer la config Kimi Code
   --verify, -Y   Verifier l'installation existante sans rien ecrire
                  (jonction, placeholders, fichiers vides, fraicheur)
   --help,   -h   Afficher cette aide
@@ -295,6 +311,8 @@ $knownFlags = @{
     "-X"       = "codex"
     "--vibe"   = "vibe"
     "-B"       = "vibe"
+    "--kimi"   = "kimi"
+    "-K"       = "kimi"
     "--verify" = "verify"
     "-Y"       = "verify"
 }
@@ -317,7 +335,7 @@ foreach ($arg in $RawArgs) {
         $targets += $knownFlags[$arg]
     }
     else {
-        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --verify, -Y, --help, -h"
+        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --kimi, -K, --verify, -Y, --help, -h"
         exit 1
     }
 }
@@ -337,6 +355,7 @@ foreach ($target in ($targets | Select-Object -Unique)) {
         "gemini" { Install-Gemini }
         "codex" { Install-Codex }
         "vibe" { Install-Vibe }
+        "kimi" { Install-Kimi }
     }
 }
 
