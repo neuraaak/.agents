@@ -8,8 +8,10 @@ under `projects/<slug>/`, never by their location on disk.
 There is **exactly one store per context**, and the context is resolved
 **once**, at session start, before anything is read or written:
 
-- **personal context** (the default) → `~/.agents/memory/` (the user's home
-  directory — *not* a `.agents/` folder inside the current project);
+- **personal context** (the default) → the `memory/` folder at the root of the
+  rules repository, whose absolute path this instructions file gives at the top
+  (`~/.agents/memory/` on a default clone) — *not* a `.agents/` folder inside
+  the current project;
 - **internal/professional context** → the memory root that
   `common/internal-context.md` resolves.
 
@@ -38,7 +40,7 @@ input, the agent must **on its own**:
 4. Then proceed to handle the user's input.
 
 **Reading is a union, writing is routed.** In an internal context, read the
-personal `~/.agents/memory/global/` as well — your own habits and pitfalls still
+personal store's `global/` as well — your own habits and pitfalls still
 apply at work. Write only to the resolved root. On conflict, the internal store
 wins for anything specific to that context.
 
@@ -76,7 +78,7 @@ agent and OS produces the same value:
 
 ### Store layout
 
-    <store root>/            ~/.agents/memory/ in a personal context
+    <store root>/            the repository's memory/ in a personal context
     |-- global/
     |   |-- MEMORY.md        index of the global layer
     |   +-- <fact>.md
