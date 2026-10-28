@@ -189,9 +189,11 @@ function Invoke-Verify {
     # Reference de fraicheur, PAR PROVIDER : les sources ne sont pas les memes.
     # Claude ne depend que de son template -- les rules communes lui arrivent
     # par la jonction, donc une edition de rules/ ne perime PAS son CLAUDE.md.
-    # Les providers sans import mecanisme inlinent rules/ : toute edition d'une
-    # rule les perime.
-    $newestRule = Get-ChildItem -Path (Join-Path $repoDir "rules") -Recurse -File |
+    # Les providers sans import mecanisme inlinent rules/common/ : toute
+    # edition d'une rule commune les perime. On scrute common/ SEUL : rules/
+    # contient aussi index.md, qui n'est ni inline ni expose par la jonction,
+    # et qui perimait donc les quatre providers sans rien changer pour eux.
+    $newestRule = Get-ChildItem -Path (Join-Path $repoDir "rules\common") -Recurse -File |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
     Write-Host "Rule la plus recente : $($newestRule.Name) ($($newestRule.LastWriteTime))"
     Write-Host ""

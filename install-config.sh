@@ -150,7 +150,9 @@ verify() {
     # placeholders, cible du lien - les distingue.
     local problems=0 newest_rule newest_rule_mtime
 
-    newest_rule=$(find "$rules_dir" -type f -printf '%T@ %p\n' |
+    # common/ SEUL : rules/ contient aussi index.md, qui n'est ni inline ni
+    # expose par le lien, et qui perimait donc les quatre providers pour rien.
+    newest_rule=$(find "$rules_dir/common" -type f -printf '%T@ %p\n' |
         sort -nr | head -1 | cut -d' ' -f2-)
     newest_rule_mtime=$(mtime "$newest_rule")
     printf 'Rule la plus recente : %s (%s)\n\n' \
@@ -186,7 +188,7 @@ verify() {
 
     # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
     # Claude ne depend que de son template (les rules lui arrivent par le lien) ;
-    # les autres inlinent rules/, donc toute edition de rule les perime.
+    # les autres inlinent rules/common/, donc toute edition de rule les perime.
     local spec name file template inlines source source_mtime file_mtime
     for spec in \
         "claude|$HOME/.claude/CLAUDE.md|CLAUDE.template.md|0" \
