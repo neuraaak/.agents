@@ -44,9 +44,7 @@ function Set-RulesJunction {
     # (recursivement) : aucun @import n'est necessaire. La jonction cible
     # volontairement rules/common/ SEUL, car cette decouverte est
     # inconditionnelle -- exposer rules/ en entier chargerait aussi
-    # rules/internal/, reserve aux projets prives, et rules/index.md qui arbitre
-    # ce choix. Ces deux-la restent lus a la demande via leur chemin absolu
-    # (voir templates/CLAUDE.template.md).
+    # rules/index.md, qui est une carte du depot et non une rule.
     # Jonction et non symlink : ne demande NI privileges admin NI Developer Mode
     # (contrairement a New-Item -ItemType SymbolicLink).
     param(
@@ -267,6 +265,33 @@ function Invoke-Verify {
             continue
         }
         Write-Host "OK  $name a jour ($($item.LastWriteTime), source $($source.Name))"
+    }
+
+    # 3. Regles pro externes (rules/common/internal-context.md). La variable est
+    # optionnelle : non definie = aucun contexte pro installe, ce n'est pas une
+    # anomalie. Definie mais invalide, en revanche, est une panne muette de plus
+    # - l'agent chercherait un index.md absent et retomberait sur les defauts
+    # publics sans rien signaler. Le controle "hors du projet courant" ne se fait
+    # pas ici (aucun projet courant a l'installation) : il est a la charge de la
+    # rule, en session.
+    Write-Host ""
+    if (-not $env:AI_INTERNAL_RULES) {
+        Write-Host "--  AI_INTERNAL_RULES non defini (aucune regle pro externe)"
+    }
+    elseif (-not [System.IO.Path]::IsPathRooted($env:AI_INTERNAL_RULES)) {
+        Write-Warning "AI_INTERNAL_RULES : chemin non absolu ($env:AI_INTERNAL_RULES)"
+        $problems++
+    }
+    elseif (-not (Test-Path -LiteralPath $env:AI_INTERNAL_RULES -PathType Container)) {
+        Write-Warning "AI_INTERNAL_RULES : dossier introuvable ($env:AI_INTERNAL_RULES)"
+        $problems++
+    }
+    elseif (-not (Test-Path -LiteralPath (Join-Path $env:AI_INTERNAL_RULES "index.md") -PathType Leaf)) {
+        Write-Warning "AI_INTERNAL_RULES : index.md absent de $env:AI_INTERNAL_RULES (point d'entree obligatoire)"
+        $problems++
+    }
+    else {
+        Write-Host "OK  AI_INTERNAL_RULES -> $env:AI_INTERNAL_RULES (index.md present)"
     }
 
     Write-Host ""

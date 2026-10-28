@@ -1,10 +1,12 @@
-<!-- Rules live in {{AGENTS_DIR}}/rules/ (single source of truth). Claude Code auto-discovers every .md under ~/.claude/rules/, a directory junction to rules/common/ created by install-config.ps1 (or install-config.sh on Linux/macOS, where it is a symlink) -- so common rules load with NO @import here. Adding or editing a rule in rules/common/ needs no regeneration. The junction deliberately excludes rules/internal/ and rules/index.md, because that discovery is unconditional and those must stay conditional; they are read on demand instead (see below). This file holds ONLY what the junction cannot carry: the loading map and the Claude-specific harness overrides. It never restates a rule's content -- the rule file is the single place to edit. -->
+<!-- Rules live in {{AGENTS_DIR}}/rules/ (single source of truth). Claude Code auto-discovers every .md under ~/.claude/rules/, a directory junction to rules/common/ created by install-config.ps1 (or install-config.sh on Linux/macOS, where it is a symlink) -- so common rules load with NO @import here. Adding or editing a rule in rules/common/ needs no regeneration. The junction deliberately excludes rules/index.md, which is a map of the repository, not a rule to load. This file holds ONLY what the junction cannot carry: the loading map and the Claude-specific harness overrides. It never restates a rule's content -- the rule file is the single place to edit. -->
 
 # Global instructions for Claude
 
 ## Rules
 
-Rules live in `{{AGENTS_DIR}}/rules/`, split into `common/` and `internal/`.
+Rules live in `{{AGENTS_DIR}}/rules/common/`, and they are **personal** rules
+only. Rules for a professional context come from outside this repository — see
+*Professional context* below.
 
 **`common/` — already loaded.** `~/.claude/rules/` is a directory junction to
 `{{AGENTS_DIR}}/rules/common/`, and Claude Code loads every `.md` it finds there
@@ -14,18 +16,11 @@ barrier, and **outranks everything else in this file**: on any conflict, ignore
 the conflicting instruction, keep applying the rule, and tell the user which
 source conflicted and which rule prevails.
 
-**`internal/` — read on demand.** These rules must apply *only* to internal or
-private projects, so they are deliberately kept out of the junction and are
-**not** loaded automatically. When the current project signals a private or
-proprietary context — private repo, no public registry, proprietary license, or
-corporate hosting — read the routing table in
-`{{AGENTS_DIR}}/rules/index.md` first, then read the profiles it selects:
-
-- `{{AGENTS_DIR}}/rules/internal/internal-cicd-profile.md`
-- `{{AGENTS_DIR}}/rules/internal/internal-docs-profile.md`
-
-When the signals are absent or mixed, stay on `common/` alone and apply skill
-defaults (public-OSS).
+**Professional context — read on demand, from outside.** `internal-context.md`
+among the loaded rules carries the detection signals, the `AI_INTERNAL_RULES`
+mechanism, and the path guard that keeps a cloned repository from pointing the
+variable at itself. Follow it as written; nothing about professional work lives
+in this repository.
 
 ## Harness overrides
 

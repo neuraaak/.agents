@@ -83,8 +83,8 @@ write_from_template_with_inlined_rules() {
 set_rules_symlink() {
     # Lie <link_dir> -> rules/common. Claude Code charge automatiquement tout
     # ~/.claude/rules/*.md : la cible est volontairement common/ SEUL, car
-    # cette decouverte est inconditionnelle et exposerait sinon
-    # rules/internal/ (reserve aux projets prives) et rules/index.md.
+    # cette decouverte est inconditionnelle et exposerait sinon rules/index.md,
+    # qui est une carte du depot et non une rule.
     local link_dir=$1 target
     target=$(realpath "$rules_dir/common")
 
@@ -218,6 +218,29 @@ verify() {
         fi
         printf 'OK  %s a jour (source %s)\n' "$name" "$(basename "$source")"
     done
+
+    # 3. Regles pro externes (rules/common/internal-context.md). La variable est
+    # optionnelle : non definie = aucun contexte pro installe, ce n'est pas une
+    # anomalie. Definie mais invalide, en revanche, est une panne muette de plus
+    # - l'agent chercherait un index.md absent et retomberait sur les defauts
+    # publics sans rien signaler. Le controle "hors du projet courant" ne se fait
+    # pas ici (aucun projet courant a l'installation) : il est a la charge de la
+    # rule, en session.
+    printf '\n'
+    if [ -z "${AI_INTERNAL_RULES:-}" ]; then
+        printf -- '--  AI_INTERNAL_RULES non defini (aucune regle pro externe)\n'
+    elif [ "${AI_INTERNAL_RULES#/}" = "$AI_INTERNAL_RULES" ]; then
+        printf 'ATTENTION AI_INTERNAL_RULES : chemin non absolu (%s)\n' "$AI_INTERNAL_RULES"
+        problems=$((problems + 1))
+    elif [ ! -d "$AI_INTERNAL_RULES" ]; then
+        printf 'ATTENTION AI_INTERNAL_RULES : dossier introuvable (%s)\n' "$AI_INTERNAL_RULES"
+        problems=$((problems + 1))
+    elif [ ! -f "$AI_INTERNAL_RULES/index.md" ]; then
+        printf 'ATTENTION AI_INTERNAL_RULES : index.md absent de %s (point d entree obligatoire)\n' "$AI_INTERNAL_RULES"
+        problems=$((problems + 1))
+    else
+        printf 'OK  AI_INTERNAL_RULES -> %s (index.md present)\n' "$AI_INTERNAL_RULES"
+    fi
 
     printf '\n'
     if [ "$problems" -eq 0 ]; then
