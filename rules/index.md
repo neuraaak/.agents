@@ -4,10 +4,11 @@ A map of this repository, not a list to load: every rule in `common/` is already
 active in any session. This file is deliberately kept out of `~/.claude/rules/`
 so the host's unconditional discovery does not pick it up.
 
-These are **personal** rules only. Rules for a professional context live outside
-this repository, in the folder `AI_INTERNAL_RULES` points at — see
-`common/internal-context.md`, which owns the detection, the contract and the
-path guard.
+These are **personal** rules only, and this repository carries no memory of its
+own: rules *and* memory for a professional context live outside it, in the
+folder `AI_INTERNAL_RULES` points at — see `common/internal-context.md`, which
+owns the detection, the contract, the path guard and the memory root. A fresh
+clone is therefore agnostic: mechanism only, nobody else's experience.
 
 How `common/` reaches a session depends on the host: Claude Code discovers it
 through the `~/.claude/rules/` junction (symlink on Linux/macOS); hosts without
@@ -27,4 +28,4 @@ instructions file at install time, by `install-config.ps1` / `install-config.sh`
 | `common/language.md`         | Which natural language to write code comments, commits and docs in.                   |
 | `common/coding-behavior.md`  | Coding behavior guidelines: think before coding, simplicity, surgical changes, goals. |
 | `common/skills.md`           | Skill usage restrictions (e.g. superpowers plan/spec output to `.superpowers/`).      |
-| `common/internal-context.md` | Detecting a professional project, and loading its rules from `AI_INTERNAL_RULES`.     |
+| `common/internal-context.md` | Detecting a professional project; its rules and its memory root, from `AI_INTERNAL_RULES`. |

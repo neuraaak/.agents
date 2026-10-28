@@ -292,6 +292,26 @@ function Invoke-Verify {
     }
     else {
         Write-Host "OK  AI_INTERNAL_RULES -> $env:AI_INTERNAL_RULES (index.md present)"
+        # Racine memoire pro. Absente = normale : elle est creee a la premiere
+        # ecriture, et index.md peut la rediriger ailleurs (ce script ne lit pas
+        # index.md). Presente mais non inscriptible = panne muette : l'agent
+        # ecrirait dans le vide ou, pire, retomberait sur le store perso.
+        $memRoot = Join-Path $env:AI_INTERNAL_RULES "memory"
+        if (-not (Test-Path -LiteralPath $memRoot -PathType Container)) {
+            Write-Host "--  memoire pro : $memRoot absent (cree a la premiere ecriture, ou redirige par index.md)"
+        }
+        else {
+            $probe = Join-Path $memRoot ".write-probe"
+            try {
+                [System.IO.File]::WriteAllText($probe, "", $utf8NoBom)
+                Remove-Item -LiteralPath $probe -Force
+                Write-Host "OK  memoire pro -> $memRoot (inscriptible)"
+            }
+            catch {
+                Write-Warning "memoire pro : $memRoot non inscriptible"
+                $problems++
+            }
+        }
     }
 
     Write-Host ""

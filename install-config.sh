@@ -240,6 +240,19 @@ verify() {
         problems=$((problems + 1))
     else
         printf 'OK  AI_INTERNAL_RULES -> %s (index.md present)\n' "$AI_INTERNAL_RULES"
+        # Racine memoire pro. Absente = normale : elle est creee a la premiere
+        # ecriture, et index.md peut la rediriger ailleurs (ce script ne lit pas
+        # index.md). Presente mais non inscriptible = panne muette : l'agent
+        # ecrirait dans le vide ou, pire, retomberait sur le store perso.
+        mem_root="$AI_INTERNAL_RULES/memory"
+        if [ ! -d "$mem_root" ]; then
+            printf -- '--  memoire pro : %s absent (cree a la premiere ecriture, ou redirige par index.md)\n' "$mem_root"
+        elif [ ! -w "$mem_root" ]; then
+            printf 'ATTENTION memoire pro : %s non inscriptible\n' "$mem_root"
+            problems=$((problems + 1))
+        else
+            printf 'OK  memoire pro -> %s (inscriptible)\n' "$mem_root"
+        fi
     fi
 
     printf '\n'
