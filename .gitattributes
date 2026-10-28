@@ -1,0 +1,4 @@
+# core.autocrlf=true sur cette machine : sans cette regle, un checkout Windows
+# ecrit install-config.sh en CRLF et le shebang devient inexploitable depuis
+# WSL ou un partage monte sous Linux.
+*.sh text eol=lf

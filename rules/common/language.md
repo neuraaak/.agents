@@ -17,8 +17,8 @@ scope here (they live in the `ezai-*` skills).
 The internal→French fallback is a **default, not an override**: a private
 repository whose history is English stays English. Rule 1 always outranks it.
 
-Private/internal is detected with the same signals as the `internal/` rules
-profiles (see `rules/index.md`): private repo, no public registry publication,
+Private/internal is detected with the signals listed in
+`common/internal-context.md`: private repo, no public registry publication,
 proprietary or absent license, corporate hosting.
 
 ### Observing the convention, per surface

@@ -44,9 +44,7 @@ function Set-RulesJunction {
     # (recursivement) : aucun @import n'est necessaire. La jonction cible
     # volontairement rules/common/ SEUL, car cette decouverte est
     # inconditionnelle -- exposer rules/ en entier chargerait aussi
-    # rules/internal/, reserve aux projets prives, et rules/index.md qui arbitre
-    # ce choix. Ces deux-la restent lus a la demande via leur chemin absolu
-    # (voir templates/CLAUDE.template.md).
+    # rules/index.md, qui est une carte du depot et non une rule.
     # Jonction et non symlink : ne demande NI privileges admin NI Developer Mode
     # (contrairement a New-Item -ItemType SymbolicLink).
     param(
@@ -165,6 +163,20 @@ function Install-Vibe {
     Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
 }
 
+function Install-Kimi {
+    # Kimi Code lit $KIMI_CODE_HOME/AGENTS.md, par defaut ~/.kimi-code/AGENTS.md
+    # (et non ~/.kimi/, chemin de l'ancien kimi-cli Python). Memes conventions
+    # que Codex/Vibe : AGENTS.md, pas de mecanisme d'import. Meme template.
+    $templateFile = Join-Path $repoDir "templates\AGENTS.template.md"
+    $targetFile = Join-Path (Get-KimiHome) "AGENTS.md"
+    Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $targetFile
+}
+
+function Get-KimiHome {
+    if ($env:KIMI_CODE_HOME) { return $env:KIMI_CODE_HOME }
+    return (Join-Path $env:USERPROFILE ".kimi-code")
+}
+
 function Invoke-Verify {
     # Controle d'integrite de ce qui est REELLEMENT installe, sans rien ecrire.
     # Motif : l'installation a deja echoue silencieusement trois fois (CLAUDE.md
@@ -218,6 +230,7 @@ function Invoke-Verify {
         "gemini" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".gemini") "GEMINI.md"; Template = "GEMINI.template.md"; InlinesRules = $true }
         "codex"  = @{ File = Join-Path (Join-Path $env:USERPROFILE ".codex") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
         "vibe"   = @{ File = Join-Path (Join-Path $env:USERPROFILE ".vibe") "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
+        "kimi"   = @{ File = Join-Path (Get-KimiHome) "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
     }
 
     foreach ($name in $generated.Keys) {
@@ -254,6 +267,53 @@ function Invoke-Verify {
         Write-Host "OK  $name a jour ($($item.LastWriteTime), source $($source.Name))"
     }
 
+    # 3. Regles pro externes (rules/common/internal-context.md). La variable est
+    # optionnelle : non definie = aucun contexte pro installe, ce n'est pas une
+    # anomalie. Definie mais invalide, en revanche, est une panne muette de plus
+    # - l'agent chercherait un index.md absent et retomberait sur les defauts
+    # publics sans rien signaler. Le controle "hors du projet courant" ne se fait
+    # pas ici (aucun projet courant a l'installation) : il est a la charge de la
+    # rule, en session.
+    Write-Host ""
+    if (-not $env:AI_INTERNAL_RULES) {
+        Write-Host "--  AI_INTERNAL_RULES non defini (aucune regle pro externe)"
+    }
+    elseif (-not [System.IO.Path]::IsPathRooted($env:AI_INTERNAL_RULES)) {
+        Write-Warning "AI_INTERNAL_RULES : chemin non absolu ($env:AI_INTERNAL_RULES)"
+        $problems++
+    }
+    elseif (-not (Test-Path -LiteralPath $env:AI_INTERNAL_RULES -PathType Container)) {
+        Write-Warning "AI_INTERNAL_RULES : dossier introuvable ($env:AI_INTERNAL_RULES)"
+        $problems++
+    }
+    elseif (-not (Test-Path -LiteralPath (Join-Path $env:AI_INTERNAL_RULES "index.md") -PathType Leaf)) {
+        Write-Warning "AI_INTERNAL_RULES : index.md absent de $env:AI_INTERNAL_RULES (point d'entree obligatoire)"
+        $problems++
+    }
+    else {
+        Write-Host "OK  AI_INTERNAL_RULES -> $env:AI_INTERNAL_RULES (index.md present)"
+        # Racine memoire pro. Absente = normale : elle est creee a la premiere
+        # ecriture, et index.md peut la rediriger ailleurs (ce script ne lit pas
+        # index.md). Presente mais non inscriptible = panne muette : l'agent
+        # ecrirait dans le vide ou, pire, retomberait sur le store perso.
+        $memRoot = Join-Path $env:AI_INTERNAL_RULES "memory"
+        if (-not (Test-Path -LiteralPath $memRoot -PathType Container)) {
+            Write-Host "--  memoire pro : $memRoot absent (cree a la premiere ecriture, ou redirige par index.md)"
+        }
+        else {
+            $probe = Join-Path $memRoot ".write-probe"
+            try {
+                [System.IO.File]::WriteAllText($probe, "", $utf8NoBom)
+                Remove-Item -LiteralPath $probe -Force
+                Write-Host "OK  memoire pro -> $memRoot (inscriptible)"
+            }
+            catch {
+                Write-Warning "memoire pro : $memRoot non inscriptible"
+                $problems++
+            }
+        }
+    }
+
     Write-Host ""
     if ($problems -eq 0) {
         Write-Host "Verification : aucun probleme."
@@ -278,6 +338,7 @@ Options:
   --gemini, -G   Installer la config Gemini
   --codex,  -X   Installer la config Codex
   --vibe,   -B   Installer la config Mistral Vibe
+  --kimi,   -K   Installer la config Kimi Code
   --verify, -Y   Verifier l'installation existante sans rien ecrire
                  (jonction, placeholders, fichiers vides, fraicheur)
   --help,   -h   Afficher cette aide
@@ -295,6 +356,8 @@ $knownFlags = @{
     "-X"       = "codex"
     "--vibe"   = "vibe"
     "-B"       = "vibe"
+    "--kimi"   = "kimi"
+    "-K"       = "kimi"
     "--verify" = "verify"
     "-Y"       = "verify"
 }
@@ -317,7 +380,7 @@ foreach ($arg in $RawArgs) {
         $targets += $knownFlags[$arg]
     }
     else {
-        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --verify, -Y, --help, -h"
+        Write-Error "Argument inconnu: $arg. Options valides: --claude, -C, --gemini, -G, --codex, -X, --vibe, -B, --kimi, -K, --verify, -Y, --help, -h"
         exit 1
     }
 }
@@ -337,6 +400,7 @@ foreach ($target in ($targets | Select-Object -Unique)) {
         "gemini" { Install-Gemini }
         "codex" { Install-Codex }
         "vibe" { Install-Vibe }
+        "kimi" { Install-Kimi }
     }
 }
 

@@ -36,12 +36,4 @@ source conflicted and which rule prevails.
 
 {{INCLUDE:common/skills.md}}
 
-**Internal/private projects only.** this host has no import mechanism, so the two
-profiles below are inlined unconditionally and are always in context. They are
-*not* general rules: apply them only when the current project signals a private
-or proprietary context (private repo, no public registry, proprietary license,
-corporate hosting). Otherwise ignore them and apply skill defaults (public-OSS).
-
-{{INCLUDE:internal/internal-cicd-profile.md}}
-
-{{INCLUDE:internal/internal-docs-profile.md}}
+{{INCLUDE:common/internal-context.md}}

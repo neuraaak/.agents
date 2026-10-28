@@ -56,7 +56,7 @@ strings, and the contents of `.env` / secret files.
 - **Send** a secret to an external service (web request, paste service, third-party
   API) unless the user explicitly directs it for that specific call.
 - **Hardcode** secrets or internal URLs in source. Reference env vars / CI
-  secrets instead (see `internal/internal-cicd-profile.md`).
+  secrets instead.
 
 **Always:**
 
