@@ -183,18 +183,8 @@ function Invoke-Verify {
     # perime un mois, GEMINI.md a 0 octet, AGENTS.md de Vibe porteur d'un ancien
     # chemin memoire pendant six semaines). Dans les trois cas le fichier
     # existait et paraissait correct a la lecture : seul un controle externe
-    # - fraicheur, placeholders, cible de la jonction - les distingue.
+    # - contenu reellement produit, cible de la jonction - les distingue.
     $problems = 0
-
-    # Reference de fraicheur, PAR PROVIDER : les sources ne sont pas les memes.
-    # Claude ne depend que de son template -- les rules communes lui arrivent
-    # par la jonction, donc une edition de rules/ ne perime PAS son CLAUDE.md.
-    # Les providers sans import mecanisme inlinent rules/ : toute edition d'une
-    # rule les perime.
-    $newestRule = Get-ChildItem -Path (Join-Path $repoDir "rules") -Recurse -File |
-        Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    Write-Host "Rule la plus recente : $($newestRule.Name) ($($newestRule.LastWriteTime))"
-    Write-Host ""
 
     # 1. Jonction des rules communes (Claude uniquement).
     $linkDir = Join-Path (Join-Path $env:USERPROFILE ".claude") "rules"
@@ -222,9 +212,16 @@ function Invoke-Verify {
         }
     }
 
-    # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
-    # Pour chaque provider : fichier genere, template dont il derive, et si les
-    # rules comptent dans sa fraicheur (inline) ou non (jonction).
+    # 2. Fichiers generes : on re-rend ce que les templates produisent
+    # AUJOURD'HUI et on compare au fichier installe. Un seul controle qui
+    # remplace les quatre approximations precedentes (presence, taille,
+    # placeholders, fraicheur) et qui attrape en plus ce qu'aucune ne voyait :
+    # fichier edite a la main, {{INCLUDE:}} disparu d'un template, mauvais
+    # AGENTS_DIR. Surtout, il ne repose plus sur les dates : un `git checkout`
+    # reecrit tout l'arbre et rendait la comparaison de mtime arbitrairement
+    # fausse. InlinesRules ne sert plus qu'a choisir la fonction de rendu.
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("install-config-verify-" + [guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Path $tmp | Out-Null
     $generated = [ordered]@{
         "claude" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".claude") "CLAUDE.md"; Template = "CLAUDE.template.md"; InlinesRules = $false }
         "gemini" = @{ File = Join-Path (Join-Path $env:USERPROFILE ".gemini") "GEMINI.md"; Template = "GEMINI.template.md"; InlinesRules = $true }
@@ -233,38 +230,42 @@ function Invoke-Verify {
         "kimi"   = @{ File = Join-Path (Get-KimiHome) "AGENTS.md"; Template = "AGENTS.template.md"; InlinesRules = $true }
     }
 
-    foreach ($name in $generated.Keys) {
-        $spec = $generated[$name]
-        $file = $spec.File
-        $item = Get-Item -LiteralPath $file -ErrorAction SilentlyContinue
-        if (-not $item) {
-            Write-Host "--  $name non installe ($file absent)"
-            continue
+    try {
+        foreach ($name in $generated.Keys) {
+            $spec = $generated[$name]
+            $file = $spec.File
+            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+                Write-Host "--  $name non installe ($file absent)"
+                continue
+            }
+            $expected = Join-Path $tmp $name
+            $templateFile = Join-Path (Join-Path $repoDir "templates") $spec.Template
+            # 6>$null : les fonctions de rendu annoncent "genere" via Write-Host,
+            # qui ecrit sur le flux information -- Out-Null ne le capterait pas.
+            if ($spec.InlinesRules) {
+                Write-FromTemplateWithInlinedRules -TemplateFile $templateFile -TargetFile $expected 6>$null
+            }
+            else {
+                Write-FromTemplate -TemplateFile $templateFile -TargetFile $expected 6>$null
+            }
+            # -ceq : -eq compare les chaines SANS tenir compte de la casse et
+            # laisserait donc passer une edition qui ne change que la casse.
+            # Les CRLF sont normalises : le .ps1 conserve ceux des rules la ou
+            # l'awk de MSYS les avale, donc deux installations correctes
+            # peuvent differer d'un CR.
+            $expectedText = [System.IO.File]::ReadAllText($expected, $utf8NoBom) -replace "`r`n", "`n"
+            $actualText = [System.IO.File]::ReadAllText($file, $utf8NoBom) -replace "`r`n", "`n"
+            if ($expectedText -ceq $actualText) {
+                Write-Host "OK  $name conforme aux templates"
+            }
+            else {
+                Write-Warning "$name : differe de ce que les templates produisent ($file). Regenerer."
+                $problems++
+            }
         }
-        if ($item.Length -eq 0) {
-            Write-Warning "$name : fichier vide ($file)"
-            $problems++
-            continue
-        }
-        # Placeholders non substitues. Cible {{AGENTS_DIR}} et {{INCLUDE:...}}
-        # seulement : les rules CI/CD contiennent du YAML ${{ secrets.X }}
-        # legitime, qui ne doit pas declencher d'alerte.
-        $content = [System.IO.File]::ReadAllText($file, $utf8NoBom)
-        if ($content -match "\{\{AGENTS_DIR\}\}" -or $content -match "\{\{INCLUDE:") {
-            Write-Warning "$name : placeholder non substitue dans $file"
-            $problems++
-            continue
-        }
-        $source = Get-Item -LiteralPath (Join-Path (Join-Path $repoDir "templates") $spec.Template)
-        if ($spec.InlinesRules -and $newestRule.LastWriteTime -gt $source.LastWriteTime) {
-            $source = $newestRule
-        }
-        if ($item.LastWriteTime -lt $source.LastWriteTime) {
-            Write-Warning "$name : PERIME ($($item.LastWriteTime)) - anterieur a $($source.Name). Regenerer."
-            $problems++
-            continue
-        }
-        Write-Host "OK  $name a jour ($($item.LastWriteTime), source $($source.Name))"
+    }
+    finally {
+        Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     # 3. Regles pro externes (rules/common/internal-context.md). La variable est
@@ -340,7 +341,7 @@ Options:
   --vibe,   -B   Installer la config Mistral Vibe
   --kimi,   -K   Installer la config Kimi Code
   --verify, -Y   Verifier l'installation existante sans rien ecrire
-                 (jonction, placeholders, fichiers vides, fraicheur)
+                 (jonction, et conformite des fichiers aux templates)
   --help,   -h   Afficher cette aide
 
 Plusieurs options peuvent etre combinees dans un meme appel.

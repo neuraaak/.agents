@@ -8,6 +8,19 @@ repo_dir=$(cd "$(dirname "$0")" && pwd -P)
 rules_dir="$repo_dir/rules"
 templates_dir="$repo_dir/templates"
 
+# Forme substituee dans {{AGENTS_DIR}}, distincte de celle des operations
+# fichier -- meme separation que $repoDir / $repoDirFwd dans le .ps1. Sous MSYS,
+# pwd -P rend /c/Users/... quand le .ps1 ecrit C:/Users/... : sans alignement,
+# --verify croit voir un ecart sur une installation saine, et les fichiers
+# generes porteraient un chemin qu'un provider Windows ne sait pas lire.
+# repo_dir lui-meme n'est PAS converti : rules_dir en derive, et le garde-fou
+# des {{INCLUDE:}} compare un realpath (forme /c/...) a ce prefixe.
+if command -v cygpath >/dev/null 2>&1; then
+    repo_dir_sub=$(cygpath -m "$repo_dir")
+else
+    repo_dir_sub=$repo_dir
+fi
+
 die() {
     printf 'Erreur: %s\n' "$1" >&2
     exit 1
@@ -34,7 +47,7 @@ write_from_template() {
     local template_file=$1 target_file=$2
     [ -f "$template_file" ] || die "$template_file introuvable"
     ensure_dir "$(dirname "$target_file")"
-    sed "s|{{AGENTS_DIR}}|$repo_dir|g" "$template_file" > "$target_file"
+    sed "s|{{AGENTS_DIR}}|$repo_dir_sub|g" "$template_file" > "$target_file"
     printf '%s genere\n' "$target_file"
 }
 
@@ -50,7 +63,7 @@ write_from_template_with_inlined_rules() {
 
     : > "$target_file"
     while IFS= read -r line || [ -n "$line" ]; do
-        line=${line//'{{AGENTS_DIR}}'/$repo_dir}
+        line=${line//'{{AGENTS_DIR}}'/$repo_dir_sub}
         case $line in
         *'{{INCLUDE:'*)
             local prefix rest rel suffix rule_file resolved
@@ -100,6 +113,16 @@ set_rules_symlink() {
 
     ensure_dir "$(dirname "$link_dir")"
     ln -s "$target" "$link_dir"
+    # Sous MSYS/Git Bash, `ln -s` ne cree pas de lien par defaut : il COPIE le
+    # dossier et renvoie 0. Sans ce controle le script annonce un succes alors
+    # que les rules sont figees et qu'aucune edition ne les atteindra plus.
+    if [ ! -L "$link_dir" ]; then
+        # Rien n'existait a cet emplacement avant le `ln -s` ci-dessus : les
+        # branches plus haut sortent sinon. Ce qui s'y trouve est donc la copie
+        # qu'il vient de creer, et elle seule : on peut la retirer sans risque.
+        rm -rf "$link_dir"
+        die "$link_dir n'est pas un lien apres ln -s (shell MSYS/Git Bash ?) : copie retiree, passer par install-config.cmd sous Windows"
+    fi
     printf '%s -> %s (symlink cree)\n' "$link_dir" "$target"
 }
 
@@ -131,20 +154,16 @@ install_kimi() {
         "${KIMI_CODE_HOME:-$HOME/.kimi-code}/AGENTS.md"
 }
 
-mtime() { stat -c %Y "$1" 2>/dev/null || stat -f %m "$1"; }
-
 verify() {
     # Controle d'integrite de ce qui est REELLEMENT installe, sans rien ecrire.
     # L'installation a deja echoue silencieusement trois fois avec des fichiers
-    # presents et d'apparence correcte : seul un controle externe - fraicheur,
-    # placeholders, cible du lien - les distingue.
-    local problems=0 newest_rule newest_rule_mtime
-
-    newest_rule=$(find "$rules_dir" -type f -printf '%T@ %p\n' |
-        sort -nr | head -1 | cut -d' ' -f2-)
-    newest_rule_mtime=$(mtime "$newest_rule")
-    printf 'Rule la plus recente : %s (%s)\n\n' \
-        "$(basename "$newest_rule")" "$(date -d "@$newest_rule_mtime" 2>/dev/null || date -r "$newest_rule_mtime")"
+    # presents et d'apparence correcte : seul un controle externe les distingue.
+    local problems=0
+    # tmp n'est PAS local : le trap EXIT s'evalue a la sortie du shell, quand
+    # une locale de verify() n'existe plus -- il effacerait alors "" sans rien
+    # nettoyer, et chaque --verify laisserait un dossier derriere lui.
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
 
     # 1. Symlink des rules communes (Claude uniquement).
     local link_dir="$HOME/.claude/rules" expected leaked
@@ -163,8 +182,12 @@ verify() {
     else
         # La decouverte native est recursive : internal/ et index.md ne doivent
         # pas etre atteignables depuis le lien.
+        # basename plutot que -printf : cette option est propre a GNU find et
+        # manque sur macOS/BSD, ou --verify echouait avant d'afficher quoi que
+        # ce soit.
         leaked=$(find -L "$link_dir" -type f -name '*.md' \
-            \( -path '*/internal/*' -o -name 'index.md' \) -printf '%f ' || true)
+            \( -path '*/internal/*' -o -name 'index.md' \) \
+            -exec basename {} ';' | tr '\n' ' ' || true)
         if [ -n "$leaked" ]; then
             printf 'ATTENTION lien : fichiers conditionnels exposes (%s)\n' "$leaked"
             problems=$((problems + 1))
@@ -174,10 +197,16 @@ verify() {
         fi
     fi
 
-    # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
-    # Claude ne depend que de son template (les rules lui arrivent par le lien) ;
-    # les autres inlinent rules/, donc toute edition de rule les perime.
-    local spec name file template inlines source source_mtime file_mtime
+    # 2. Fichiers generes : on re-rend ce que les templates produisent AUJOURD'HUI
+    # et on compare au fichier installe. Un seul controle qui remplace les quatre
+    # approximations precedentes (presence, taille, placeholders, fraicheur) et
+    # qui attrape en plus ce qu'aucune ne voyait : fichier edite a la main,
+    # {{INCLUDE:}} disparu d'un template, mauvais AGENTS_DIR. Surtout, il ne
+    # repose plus sur les dates : un `git checkout` reecrit tout l'arbre et
+    # rendait la comparaison de mtime arbitrairement fausse.
+    # --strip-trailing-cr : le .ps1 conserve le CRLF des rules la ou l'awk de
+    # MSYS l'avale, donc deux installations correctes peuvent differer d'un CR.
+    local spec name file template inlines rendered
     for spec in \
         "claude|$HOME/.claude/CLAUDE.md|CLAUDE.template.md|0" \
         "gemini|$HOME/.gemini/GEMINI.md|GEMINI.template.md|1" \
@@ -190,33 +219,20 @@ verify() {
             printf -- '--  %s non installe (%s absent)\n' "$name" "$file"
             continue
         fi
-        if [ ! -s "$file" ]; then
-            printf 'ATTENTION %s : fichier vide (%s)\n' "$name" "$file"
+        rendered="$tmp/$name"
+        if [ "$inlines" = 1 ]; then
+            write_from_template_with_inlined_rules \
+                "$templates_dir/$template" "$rendered" >/dev/null
+        else
+            write_from_template "$templates_dir/$template" "$rendered" >/dev/null
+        fi
+        if diff -q --strip-trailing-cr "$rendered" "$file" >/dev/null; then
+            printf 'OK  %s conforme aux templates\n' "$name"
+        else
+            printf 'ATTENTION %s : differe de ce que les templates produisent (%s). Regenerer.\n' \
+                "$name" "$file"
             problems=$((problems + 1))
-            continue
         fi
-        # Placeholders non substitues. {{AGENTS_DIR}} et {{INCLUDE:...}}
-        # seulement : les rules CI/CD contiennent du YAML ${{ secrets.X }}
-        # legitime, qui ne doit pas declencher d'alerte.
-        if grep -qF -e '{{AGENTS_DIR}}' -e '{{INCLUDE:' "$file"; then
-            printf 'ATTENTION %s : placeholder non substitue dans %s\n' "$name" "$file"
-            problems=$((problems + 1))
-            continue
-        fi
-        source="$templates_dir/$template"
-        source_mtime=$(mtime "$source")
-        if [ "$inlines" = 1 ] && [ "$newest_rule_mtime" -gt "$source_mtime" ]; then
-            source=$newest_rule
-            source_mtime=$newest_rule_mtime
-        fi
-        file_mtime=$(mtime "$file")
-        if [ "$file_mtime" -lt "$source_mtime" ]; then
-            printf 'ATTENTION %s : PERIME - anterieur a %s. Regenerer.\n' \
-                "$name" "$(basename "$source")"
-            problems=$((problems + 1))
-            continue
-        fi
-        printf 'OK  %s a jour (source %s)\n' "$name" "$(basename "$source")"
     done
 
     # 3. Regles pro externes (rules/common/internal-context.md). La variable est
@@ -278,7 +294,7 @@ Options:
   --vibe,   -B   Installer la config Mistral Vibe
   --kimi,   -K   Installer la config Kimi Code
   --verify, -Y   Verifier l'installation existante sans rien ecrire
-                 (lien, placeholders, fichiers vides, fraicheur)
+                 (lien, et conformite des fichiers aux templates)
   --help,   -h   Afficher cette aide
 
 Plusieurs options peuvent etre combinees dans un meme appel.
