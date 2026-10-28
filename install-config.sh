@@ -8,6 +8,19 @@ repo_dir=$(cd "$(dirname "$0")" && pwd -P)
 rules_dir="$repo_dir/rules"
 templates_dir="$repo_dir/templates"
 
+# Forme substituee dans {{AGENTS_DIR}}, distincte de celle des operations
+# fichier -- meme separation que $repoDir / $repoDirFwd dans le .ps1. Sous MSYS,
+# pwd -P rend /c/Users/... quand le .ps1 ecrit C:/Users/... : sans alignement,
+# --verify croit voir un ecart sur une installation saine, et les fichiers
+# generes porteraient un chemin qu'un provider Windows ne sait pas lire.
+# repo_dir lui-meme n'est PAS converti : rules_dir en derive, et le garde-fou
+# des {{INCLUDE:}} compare un realpath (forme /c/...) a ce prefixe.
+if command -v cygpath >/dev/null 2>&1; then
+    repo_dir_sub=$(cygpath -m "$repo_dir")
+else
+    repo_dir_sub=$repo_dir
+fi
+
 die() {
     printf 'Erreur: %s\n' "$1" >&2
     exit 1
@@ -34,7 +47,7 @@ write_from_template() {
     local template_file=$1 target_file=$2
     [ -f "$template_file" ] || die "$template_file introuvable"
     ensure_dir "$(dirname "$target_file")"
-    sed "s|{{AGENTS_DIR}}|$repo_dir|g" "$template_file" > "$target_file"
+    sed "s|{{AGENTS_DIR}}|$repo_dir_sub|g" "$template_file" > "$target_file"
     printf '%s genere\n' "$target_file"
 }
 
@@ -50,7 +63,7 @@ write_from_template_with_inlined_rules() {
 
     : > "$target_file"
     while IFS= read -r line || [ -n "$line" ]; do
-        line=${line//'{{AGENTS_DIR}}'/$repo_dir}
+        line=${line//'{{AGENTS_DIR}}'/$repo_dir_sub}
         case $line in
         *'{{INCLUDE:'*)
             local prefix rest rel suffix rule_file resolved
