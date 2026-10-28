@@ -100,6 +100,16 @@ set_rules_symlink() {
 
     ensure_dir "$(dirname "$link_dir")"
     ln -s "$target" "$link_dir"
+    # Sous MSYS/Git Bash, `ln -s` ne cree pas de lien par defaut : il COPIE le
+    # dossier et renvoie 0. Sans ce controle le script annonce un succes alors
+    # que les rules sont figees et qu'aucune edition ne les atteindra plus.
+    if [ ! -L "$link_dir" ]; then
+        # Rien n'existait a cet emplacement avant le `ln -s` ci-dessus : les
+        # branches plus haut sortent sinon. Ce qui s'y trouve est donc la copie
+        # qu'il vient de creer, et elle seule : on peut la retirer sans risque.
+        rm -rf "$link_dir"
+        die "$link_dir n'est pas un lien apres ln -s (shell MSYS/Git Bash ?) : copie retiree, passer par install-config.cmd sous Windows"
+    fi
     printf '%s -> %s (symlink cree)\n' "$link_dir" "$target"
 }
 
