@@ -141,22 +141,16 @@ install_kimi() {
         "${KIMI_CODE_HOME:-$HOME/.kimi-code}/AGENTS.md"
 }
 
-mtime() { stat -c %Y "$1" 2>/dev/null || stat -f %m "$1"; }
-
 verify() {
     # Controle d'integrite de ce qui est REELLEMENT installe, sans rien ecrire.
     # L'installation a deja echoue silencieusement trois fois avec des fichiers
-    # presents et d'apparence correcte : seul un controle externe - fraicheur,
-    # placeholders, cible du lien - les distingue.
-    local problems=0 newest_rule newest_rule_mtime
-
-    # common/ SEUL : rules/ contient aussi index.md, qui n'est ni inline ni
-    # expose par le lien, et qui perimait donc les quatre providers pour rien.
-    newest_rule=$(find "$rules_dir/common" -type f -printf '%T@ %p\n' |
-        sort -nr | head -1 | cut -d' ' -f2-)
-    newest_rule_mtime=$(mtime "$newest_rule")
-    printf 'Rule la plus recente : %s (%s)\n\n' \
-        "$(basename "$newest_rule")" "$(date -d "@$newest_rule_mtime" 2>/dev/null || date -r "$newest_rule_mtime")"
+    # presents et d'apparence correcte : seul un controle externe les distingue.
+    local problems=0
+    # tmp n'est PAS local : le trap EXIT s'evalue a la sortie du shell, quand
+    # une locale de verify() n'existe plus -- il effacerait alors "" sans rien
+    # nettoyer, et chaque --verify laisserait un dossier derriere lui.
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
 
     # 1. Symlink des rules communes (Claude uniquement).
     local link_dir="$HOME/.claude/rules" expected leaked
@@ -186,10 +180,16 @@ verify() {
         fi
     fi
 
-    # 2. Fichiers generes : presents, non vides, sans placeholder, a jour.
-    # Claude ne depend que de son template (les rules lui arrivent par le lien) ;
-    # les autres inlinent rules/common/, donc toute edition de rule les perime.
-    local spec name file template inlines source source_mtime file_mtime
+    # 2. Fichiers generes : on re-rend ce que les templates produisent AUJOURD'HUI
+    # et on compare au fichier installe. Un seul controle qui remplace les quatre
+    # approximations precedentes (presence, taille, placeholders, fraicheur) et
+    # qui attrape en plus ce qu'aucune ne voyait : fichier edite a la main,
+    # {{INCLUDE:}} disparu d'un template, mauvais AGENTS_DIR. Surtout, il ne
+    # repose plus sur les dates : un `git checkout` reecrit tout l'arbre et
+    # rendait la comparaison de mtime arbitrairement fausse.
+    # --strip-trailing-cr : le .ps1 conserve le CRLF des rules la ou l'awk de
+    # MSYS l'avale, donc deux installations correctes peuvent differer d'un CR.
+    local spec name file template inlines rendered
     for spec in \
         "claude|$HOME/.claude/CLAUDE.md|CLAUDE.template.md|0" \
         "gemini|$HOME/.gemini/GEMINI.md|GEMINI.template.md|1" \
@@ -202,33 +202,20 @@ verify() {
             printf -- '--  %s non installe (%s absent)\n' "$name" "$file"
             continue
         fi
-        if [ ! -s "$file" ]; then
-            printf 'ATTENTION %s : fichier vide (%s)\n' "$name" "$file"
+        rendered="$tmp/$name"
+        if [ "$inlines" = 1 ]; then
+            write_from_template_with_inlined_rules \
+                "$templates_dir/$template" "$rendered" >/dev/null
+        else
+            write_from_template "$templates_dir/$template" "$rendered" >/dev/null
+        fi
+        if diff -q --strip-trailing-cr "$rendered" "$file" >/dev/null; then
+            printf 'OK  %s conforme aux templates\n' "$name"
+        else
+            printf 'ATTENTION %s : differe de ce que les templates produisent (%s). Regenerer.\n' \
+                "$name" "$file"
             problems=$((problems + 1))
-            continue
         fi
-        # Placeholders non substitues. {{AGENTS_DIR}} et {{INCLUDE:...}}
-        # seulement : les rules CI/CD contiennent du YAML ${{ secrets.X }}
-        # legitime, qui ne doit pas declencher d'alerte.
-        if grep -qF -e '{{AGENTS_DIR}}' -e '{{INCLUDE:' "$file"; then
-            printf 'ATTENTION %s : placeholder non substitue dans %s\n' "$name" "$file"
-            problems=$((problems + 1))
-            continue
-        fi
-        source="$templates_dir/$template"
-        source_mtime=$(mtime "$source")
-        if [ "$inlines" = 1 ] && [ "$newest_rule_mtime" -gt "$source_mtime" ]; then
-            source=$newest_rule
-            source_mtime=$newest_rule_mtime
-        fi
-        file_mtime=$(mtime "$file")
-        if [ "$file_mtime" -lt "$source_mtime" ]; then
-            printf 'ATTENTION %s : PERIME - anterieur a %s. Regenerer.\n' \
-                "$name" "$(basename "$source")"
-            problems=$((problems + 1))
-            continue
-        fi
-        printf 'OK  %s a jour (source %s)\n' "$name" "$(basename "$source")"
     done
 
     # 3. Regles pro externes (rules/common/internal-context.md). La variable est
