@@ -294,7 +294,7 @@ Options:
   --vibe,   -B   Installer la config Mistral Vibe
   --kimi,   -K   Installer la config Kimi Code
   --verify, -Y   Verifier l'installation existante sans rien ecrire
-                 (lien, placeholders, fichiers vides, fraicheur)
+                 (lien, et conformite des fichiers aux templates)
   --help,   -h   Afficher cette aide
 
 Plusieurs options peuvent etre combinees dans un meme appel.
