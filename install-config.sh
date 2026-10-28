@@ -182,8 +182,12 @@ verify() {
     else
         # La decouverte native est recursive : internal/ et index.md ne doivent
         # pas etre atteignables depuis le lien.
+        # basename plutot que -printf : cette option est propre a GNU find et
+        # manque sur macOS/BSD, ou --verify echouait avant d'afficher quoi que
+        # ce soit.
         leaked=$(find -L "$link_dir" -type f -name '*.md' \
-            \( -path '*/internal/*' -o -name 'index.md' \) -printf '%f ' || true)
+            \( -path '*/internal/*' -o -name 'index.md' \) \
+            -exec basename {} ';' | tr '\n' ' ' || true)
         if [ -n "$leaked" ]; then
             printf 'ATTENTION lien : fichiers conditionnels exposes (%s)\n' "$leaked"
             problems=$((problems + 1))
